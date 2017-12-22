@@ -1,9 +1,19 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Working with lists
-;
-; P01 (*) Find the last box of a list.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; P01 (*) Find the last box of a list.
 ; Example:
 ; * (my-last '(a b c d))
 ; (D)
+
+;; my-last
+;; check if cdr of list is null.
+;; if is: return the car of list.
+;; if is not: call the function recusrivelly with
+;;            the cdr of the list as parameter.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P02 (*) Find the last but one box of a list.
 ; Example:
