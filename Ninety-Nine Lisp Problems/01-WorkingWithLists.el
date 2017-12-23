@@ -20,6 +20,18 @@
 ; * (my-but-last '(a b c d))
 ; (C D)
 
+;; my-but-last list
+;; check if the paraeter list is null
+;; if is: return null
+;; check if the cdr of parameter list is null
+;; if is: return null
+;; check if the cdr of the cdr is null
+;; if is: return car of list
+;; if is not: call the function recursively with
+;;            the cdr of the list as parameter
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P03 (*) Find the K'th element of a list.
 ; The first element in the list is number 1.
 ; Example:
