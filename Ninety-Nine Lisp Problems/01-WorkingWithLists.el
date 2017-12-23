@@ -7,10 +7,12 @@
 ; * (my-last '(a b c d))
 ; (D)
 
-;; my-last
+;; my-last list
+;; check if the parameter list is null
+;; if is: return null
 ;; check if cdr of list is null.
 ;; if is: return the car of list.
-;; if is not: call the function recusrivelly with
+;; if is not: call the function recursively with
 ;;            the cdr of the list as parameter.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
