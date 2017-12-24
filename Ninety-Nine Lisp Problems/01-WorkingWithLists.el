@@ -40,6 +40,22 @@
 ; * (element-at '(a b c d e) 3)
 ; C
 
+;; element-at list pos
+;; check if list is null
+;; if is: return null
+;; check if pos < 0
+;; if is: return null
+;; call elemtent-at-rec list pos 0
+
+;; element-at-rec list pos num
+;; check if list is null
+;; if is: return null
+;; check if pos == num
+;; if is: return car list
+;; if is not: call element-at-rec (cdr of list) pos (num+1)
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P04 (*) Find the number of elements of a list.
 
 ; P05 (*) Reverse a list.
