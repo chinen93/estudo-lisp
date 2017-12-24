@@ -52,11 +52,29 @@
 ;; if is: return null
 ;; check if pos == num
 ;; if is: return car list
-;; if is not: call element-at-rec (cdr of list) pos (num+1)
+;; if is not: call element-at-rec (cdr of list) pos (num + 1)
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P04 (*) Find the number of elements of a list.
+
+;; list-length-rec list
+;; check if list is null
+;; if is: return 0
+;; if is not: return 1 + call list-length-rec (cdr list)
+
+
+;; list-length list
+;; check if list is null
+;; if is: return 0
+;; if is not: return call list-length-aux (cdr list) 1
+
+;; list-length-aux list length
+;; check if list is null
+;; if is: return length
+;; if is not: return call list-length-aux (cdr list) (lenght + 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P05 (*) Reverse a list.
 
