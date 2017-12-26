@@ -53,7 +53,7 @@
 ;; check if pos == num
 ;; if is: return car list
 ;; if is not: call element-at-rec (cdr of list) pos (num + 1)
- 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P04 (*) Find the number of elements of a list.
@@ -90,6 +90,22 @@
 
 ; P06 (*) Find out whether a list is a palindrome.
 ; A palindrome can be read forward or backward; e.g. (x a m a x).
+
+;;;; Uses Exercise 04, 05
+;; palindrome list
+;; find the number of element of the list
+;; let HALF be ceiling of half of the number of elements
+;; if list is odd DO NOT include the middle element
+;; reverse the second half of the list
+;; compare the first half and the reversed second half
+;; if equal: return T
+;; if not: return F
+
+;;;; Uses Exercise 05
+;; palindrome list
+;; return equal list (revert list)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P07 (**) Flatten a nested list structure.
 ; Transform a list, possibly holding lists as elements into a `flat' list by
