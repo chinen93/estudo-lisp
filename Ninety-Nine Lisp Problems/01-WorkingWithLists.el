@@ -78,6 +78,16 @@
 
 ; P05 (*) Reverse a list.
 
+;; revert list
+;; return revert-aux list ()
+
+;; revert-aux list ret
+;; check if list is null
+;; if is: return ret
+;; if is not: return revert-aux (cdr list) (cons (car list) ret)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P06 (*) Find out whether a list is a palindrome.
 ; A palindrome can be read forward or backward; e.g. (x a m a x).
 
@@ -252,7 +262,7 @@
 ;
 ; Note that we do not want permutations of the group members; i.e.
 ; ((ALDO BEAT) ...) is the same solution as ((BEAT ALDO) ...). However, we
-; make a difference between ((ALDO BEAT) (CARLA DAVID) ...) and 
+; make a difference between ((ALDO BEAT) (CARLA DAVID) ...) and
 ; ((CARLA DAVID) (ALDO BEAT) ...).
 ;
 ; You may find more about this combinatorial problem in a good book on
