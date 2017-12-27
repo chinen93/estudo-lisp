@@ -117,6 +117,17 @@
 ;
 ; Hint: Use the predefined functions list and append.
 
+;; my-flatten elem
+;; check if elem is null
+;; return null
+;; let CAR be car elem
+;; let CDR be cdr elem
+;; check if CAR is a list
+;; if is: append (my-flatten CAR) (my-flatten CDR)
+;; if is not: append (list CAR) (my-flatten CDR)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P08 (**) Eliminate consecutive duplicates of list elements.
 ; If a list contains repeated elements they should be replaced with a single
 ; copy of the element. The order of the elements should not be changed.
