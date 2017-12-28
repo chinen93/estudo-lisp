@@ -136,6 +136,20 @@
 ; * (compress '(a a a a b c c a a d e e e e))
 ; (A B C A D E)
 
+;; compress list
+;; check if list is null
+;; if is: return null
+;; return compress-aux list null
+
+;; compress-aux list last-elem
+;; check if list is null
+;; if is: return null
+;; check if (car list) is equal to last-elem
+;; if is: return (compress-aux (cdr list) (car list))
+;; if is not: return (append (list (car list)) (compress-aux (cdr list) (car list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P09 (**) Pack consecutive duplicates of list elements into sublists.
 ; If a list contains repeated elements they should be placed in separate
 ; sublists.
