@@ -158,6 +158,21 @@
 ; * (pack '(a a a a b c c a a d e e e e))
 ; ((A A A A) (B) (C C) (A A) (D) (E E E E))
 
+;; compress list
+;; check if list is null
+;; if is: return null
+;; return compress-aux list null null
+
+;; compress-aux list last-elem list-elem
+;; check if list is null
+;; if is: return null
+;; check if (car list) is equal to last-elem
+;; if is: (append (list (car list)) list-elem)
+;;        (compress-aux (cdr list) (car list) list-elem)
+;; if is not: return (append (list-elem) (compress-aux (cdr list) (car list) null))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P10 (*) Run-length encoding of a list.
 ; Use the result of problem P09 to implement the so-called run-length
 ; encoding data compression method. Consecutive duplicates of elements are
