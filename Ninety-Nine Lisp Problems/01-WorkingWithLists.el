@@ -45,14 +45,39 @@
 ; (C D)
 
 ;; my-but-last list
-;; check if the paraeter list is null
-;; if is: return null
-;; check if the cdr of parameter list is null
-;; if is: return null
-;; check if the cdr of the cdr is null
-;; if is: return car of list
-;; if is not: call the function recursively with
-;;            the cdr of the list as parameter
+(defun my-but-last (list)
+
+  ;; check if the paraeter list is null
+  (if (null list)
+
+      ;; if is: return null
+      nil
+
+    ;; check if the cdr of parameter list is null
+    (if (null (cdr list))
+
+	;; if is: return null
+	nil
+
+      ;; check if the cdr of the cdr is null
+      (if (null (cdr (cdr list)))
+
+	  ;; if is: return rest of list
+	  list
+
+	;; if is not: call the function recursively with
+	;;            the cdr of the list as parameter
+	(my-but-last (cdr list))))))
+
+;;; Tests
+(ert-deftest my-but-last-01 ()
+  (should (equal (my-but-last '(a b c d)) '(c d))))
+
+(ert-deftest my-but-last-02 ()
+  (should (equal (my-but-last '()) '())))
+
+(ert-deftest my-but-last-03 ()
+  (should (equal (my-but-last '(a)) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
