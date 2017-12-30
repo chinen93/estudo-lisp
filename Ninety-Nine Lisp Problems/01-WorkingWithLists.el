@@ -8,12 +8,34 @@
 ; (D)
 
 ;; my-last list
-;; check if the parameter list is null
-;; if is: return null
-;; check if cdr of list is null.
-;; if is: return the car of list.
-;; if is not: call the function recursively with
-;;            the cdr of the list as parameter.
+(defun my-list (list)
+  
+  ;; check if the parameter list is null
+  (if (null list)
+      
+      ;; if is: return null
+      nil
+    
+    ;; if is not:  check if cdr of list is null.
+    (if (null (cdr list))
+	
+	;; if is: return list.
+	list
+      
+      ;; if is not: call the function recursively with
+      ;;            the cdr of the list as parameter.
+      (my-list (cdr list)))))
+
+
+;;; Tests
+(ert-deftest my-list-01 ()
+  (should (equal (my-list '(a b c d)) '(d))))
+
+(ert-deftest my-list-02 ()
+  (should (equal (my-list '()) '())))
+
+(ert-deftest my-list-03 ()
+  (should (equal (my-list '(a)) '(a))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
