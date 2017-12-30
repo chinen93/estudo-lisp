@@ -88,18 +88,50 @@
 ; C
 
 ;; element-at list pos
-;; check if list is null
-;; if is: return null
-;; check if pos < 0
-;; if is: return null
-;; call elemtent-at-rec list pos 0
+(defun element-at (list pos)
+
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return null
+      nil
+
+    ;; check if pos < 0
+    (if (< pos 0)
+
+	;; if is: return null
+	nil
+
+      ;; call elemtent-at-rec list pos 0
+      (element-at-rec list pos 0))))
 
 ;; element-at-rec list pos num
-;; check if list is null
-;; if is: return null
-;; check if pos == num
-;; if is: return car list
-;; if is not: call element-at-rec (cdr of list) pos (num + 1)
+(defun element-at-rec (list pos num)
+
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return null
+      nil
+
+    ;; check if pos == num
+    (if (= pos num)
+
+	;; if is: return car list
+	(car list)
+
+      ;; if is not: call element-at-rec (cdr of list) pos (num + 1)
+      (element-at-rec (cdr list) pos (+ num 1)))))
+
+;;; Tests
+(ert-deftest element-at-01 ()
+  (should (equal (element-at '(a b c d e) 0) 'a)))
+
+(ert-deftest element-at-02 ()
+  (should (equal (element-at '() 3) '())))
+
+(ert-deftest element-at-03 ()
+  (should (equal (element-at '(a b c d e) 2) 'c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
