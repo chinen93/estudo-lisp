@@ -188,13 +188,36 @@
 
 ; P05 (*) Reverse a list.
 
-;; revert list
-;; return revert-aux list ()
+;; reverse list
+(defun list-reverse (list)
 
-;; revert-aux list ret
-;; check if list is null
-;; if is: return ret
-;; if is not: return revert-aux (cdr list) (cons (car list) ret)
+  ;; return revert-aux list ()
+  (reverse-aux list ()))
+
+;; reverse-aux list ret
+(defun reverse-aux (list ret)
+  
+  ;; check if list is null
+  (if (null list)
+      
+      ;; if is: return ret
+      ret
+    
+    ;; if is not: return reverse-aux (cdr list) (cons (car list) ret)
+    (reverse-aux (cdr list) (cons (car list) ret))))
+
+;; list     ret
+;; (a b c)  ()
+;; (b c)    (a)
+;; (c)      (b a)
+;; ()       (c b a)
+
+;;; Tests
+(ert-deftest list-reverse-01()
+  (should (equal (list-reverse '(a b c)) '(c b a))))
+
+(ert-deftest list-reverse-02()
+  (should (equal (list-reverse '()) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
