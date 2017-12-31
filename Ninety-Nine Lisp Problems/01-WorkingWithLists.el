@@ -138,20 +138,51 @@
 ; P04 (*) Find the number of elements of a list.
 
 ;; list-length-rec list
-;; check if list is null
-;; if is: return 0
-;; if is not: return 1 + call list-length-rec (cdr list)
+(defun list-length-rec (list)
+  
+  ;; check if list is null
+  (if (null list)
+      
+      ;; if is: return 0
+      0
+
+    ;; if is not: return 1 + call list-length-rec (cdr list)
+    (+ 1 (list-length-rec (cdr list)))))
+
 
 
 ;; list-length list
-;; check if list is null
-;; if is: return 0
-;; if is not: return call list-length-aux (cdr list) 1
+(defun list-length (list)
+  ;; check if list is null
+  (if (null list)
+      
+      ;; if is: return 0
+      0
+    
+    ;; if is not: return call list-length-aux (cdr list) 1
+    (list-length-aux (cdr list) 1)))
 
 ;; list-length-aux list length
 ;; check if list is null
 ;; if is: return length
 ;; if is not: return call list-length-aux (cdr list) (lenght + 1)
+(defun list-length-aux (list length)
+  (if (null list)
+      length
+    (list-length-aux (cdr list) (+ length 1))))
+
+;;; Tests
+(ert-deftest list-length-rec-01 ()
+  (should (equal (list-length-rec '(a b c d)) 4)))
+
+(ert-deftest list-length-rec-02 ()
+  (should (equal (list-length-rec '()) 0)))
+
+(ert-deftest list-length-01 ()
+  (should (equal (list-length '(a b c d)) 4)))
+
+(ert-deftest list-length-02 ()
+  (should (equal (list-length '()) 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
