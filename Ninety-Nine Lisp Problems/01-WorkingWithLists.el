@@ -251,13 +251,32 @@
 ; Hint: Use the predefined functions list and append.
 
 ;; my-flatten elem
-;; check if elem is null
-;; return null
-;; let CAR be car elem
-;; let CDR be cdr elem
-;; check if CAR is a list
-;; if is: append (my-flatten CAR) (my-flatten CDR)
-;; if is not: append (list CAR) (my-flatten CDR)
+(defun my-flatten (elem)
+  
+  ;; check if elem is null
+  (if (null elem)
+
+      ;; return null
+      nil
+
+    ;; check if CAR is a list
+    (if (listp (car elem))
+
+	;; if is: append (my-flatten CAR) (my-flatten CDR)
+	(append (my-flatten (car elem)) (my-flatten (cdr elem)))
+
+      ;; if is not: append (list CAR) (my-flatten CDR)
+      (append (list (car elem)) (my-flatten (cdr elem))))))
+
+;;; Tests
+(ert-deftest my-flatten-01 ()
+  (should (equal (my-flatten '(a (b (c d) e))) '(a b c d e))))
+
+(ert-deftest my-flatten-02 ()
+  (should (equal (my-flatten '()) '())))
+
+(ert-deftest my-flatten-03 ()
+  (should (equal (my-flatten '(a b c d)) '(a b c d))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
