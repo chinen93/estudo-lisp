@@ -224,19 +224,20 @@
 ; P06 (*) Find out whether a list is a palindrome.
 ; A palindrome can be read forward or backward; e.g. (x a m a x).
 
-;;;; Uses Exercise 04, 05
-;; palindrome list
-;; find the number of element of the list
-;; let HALF be ceiling of half of the number of elements
-;; if list is odd DO NOT include the middle element
-;; reverse the second half of the list
-;; compare the first half and the reversed second half
-;; if equal: return T
-;; if not: return F
-
 ;;;; Uses Exercise 05
+
 ;; palindrome list
-;; return equal list (revert list)
+(defun palindrome (list)
+
+  ;; return if the list is equal its reverse
+  (equal list (list-reverse list)))
+
+;;; Tests
+(ert-deftest palindrome-01 ()
+  (should (equal (palindrome '(x a m a x)) 't)))
+
+(ert-deftest palindrome-02 ()
+  (should (equal (palindrome '(x a m a y)) 'nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -289,16 +290,46 @@
 ; (A B C A D E)
 
 ;; compress list
-;; check if list is null
-;; if is: return null
-;; return compress-aux list null
+(defun compress (list)
+  
+  ;; check if list is null
+  (if (null list)
+      
+      ;; if is: return null
+      nil
+    
+    ;; return compress-aux list null
+    (compress-aux list nil nil)))
 
-;; compress-aux list last-elem
-;; check if list is null
-;; if is: return null
-;; check if (car list) is equal to last-elem
-;; if is: return (compress-aux (cdr list) (car list))
-;; if is not: return (append (list (car list)) (compress-aux (cdr list) (car list)))
+;; compress-aux list last-elem ret
+(defun compress-aux (list last ret)
+
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return the result
+      (list-reverse ret)
+
+    ;; check if (car list) is equal to last-elem
+    (if (equal (car list) last)
+
+	;; if is: return (compress-aux (cdr list) (car list) ret)
+	(compress-aux (cdr list) (car list) ret)
+      
+      ;; if is not: return (compress-aux (cdr list)
+      ;;                                 (car list)
+      ;;                                 (append (list (car list)) ret)))
+      (compress-aux (cdr list) (car list) (append (list (car list)) ret)))))
+
+;;; Tests
+(ert-deftest compress-01 ()
+  (should (equal (compress '(a a a a b c c a a d e e e e)) '(a b c a d e))))
+
+(ert-deftest compress-02 ()
+  (should (equal (compress '()) '())))
+
+(ert-deftest compress-03 ()
+  (should (equal (compress '(a a a a)) '(a))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
