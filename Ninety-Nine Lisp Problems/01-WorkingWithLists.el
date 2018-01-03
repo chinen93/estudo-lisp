@@ -341,18 +341,75 @@
 ; * (pack '(a a a a b c c a a d e e e e))
 ; ((A A A A) (B) (C C) (A A) (D) (E E E E))
 
-;; compress list
-;; check if list is null
-;; if is: return null
-;; return compress-aux list null null
+;; pack-duplicates list
+(defun pack-duplicates (list)
 
-;; compress-aux list last-elem list-elem
-;; check if list is null
-;; if is: return null
-;; check if (car list) is equal to last-elem
-;; if is: (append (list (car list)) list-elem)
-;;        (compress-aux (cdr list) (car list) list-elem)
-;; if is not: return (append (list-elem) (compress-aux (cdr list) (car list) null))
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return null
+      nil
+
+    ;; return compress-aux list null null
+    (cons (pack-duplicates-atom (car list) list)
+	  (pack-duplicates (remove-duplicates-first-atom (car list) list)))))
+
+;; pack-duplicates-atom elem list
+(defun pack-duplicates-atom (elem list)
+
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return null
+      nil
+
+    ;; if is not: check if elem is equal to car of list
+    (if (equal elem (car list))
+
+	;; if is: create a list with the elem and function with cdr of list
+	(append (list elem) (pack-duplicates-atom elem (cdr list)))
+
+      ;; if is not: return nil to close the list
+      nil)))
+
+;; remove-duplicates-first-atom elem list
+(defun remove-duplicates-first-atom (elem list)
+
+  ;; check if list is null
+  (if (null list)
+
+      ;; if is: return nil
+      nil
+
+    ;; if is not: check if elem is equal to car of list
+    (if (equal elem (car list))
+
+	;; if is: create a list without the duplicates of the first atom
+	(append (remove-duplicates-first-atom elem (cdr list)))
+
+      ;; if is not: return the rest of the list
+      list)))
+
+;; (a a a a)  nil  nil       nil
+;; (a a a)    a    (a)       nil
+;; (a a)      a    (a a)     nil
+;; (a)        a    (a a a)   nil
+;;  nil       a    (a a a a) nil
+;;  nil       nil  (a a a a) (a a a a)
+
+ 
+;;; Tests
+(ert-deftest pack-duplicates-01 ()
+  (should (equal (pack-duplicates  '(a a a a))
+		 '((a a a a)))))
+
+(ert-deftest pack-duplicates-02 ()
+  (should (equal (pack-duplicates  '())
+		 '())))
+
+(ert-deftest pack-duplicates-03 ()
+  (should (equal (pack-duplicates  '(a a a a b c c a a d e e e e))
+		 '((a a a a) (b) (c c) (a a) (d) (e e e e)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
