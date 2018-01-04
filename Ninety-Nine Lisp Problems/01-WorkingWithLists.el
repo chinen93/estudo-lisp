@@ -561,6 +561,115 @@
 ; * (encode-modified '(a a a a b c c a a d e e e e))
 ; ((4 A) B (2 C) (2 A) D (4 E))
 
+
+;; list-min-encode list
+(defun list-min-encode (list)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: create a list with the encode for the car of list
+    ;;            and the encode of the rest of the list without the car.
+    (cons (list-min-encode-atom (car list) list 0)
+	  (list-min-encode (list-min-encode-remove-atom (car list) (cdr list))))))
+
+;; list-min-encode-atom elem list num
+(defun list-min-encode-atom (elem list num)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: check if the num is 0.
+      (if (equal num 0)
+
+	  ;; if is: there is no elem encoded return nil.
+	  nil
+
+	;; if is not: return the encode for the elem.
+	(list num elem))
+
+    ;; check if elem is equal the car of list.
+    (if (equal elem (car list))
+
+	;; if is: increment num and check the encode for elem in the
+	;;        rest of the list.
+	(list-min-encode-atom elem (cdr list) (+ 1 num))
+
+      ;; if is not: check if the num is equal 1
+      (if (equal 1 num)
+
+	  ;; if is: return only the elem
+	  elem
+
+	;; if is not: return the encode for the elem.
+	(list num elem)))))
+
+;; list-min-encode-remove-atom elem list
+(defun list-min-encode-remove-atom (elem list)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if elem is equal to car of list.
+    (if (equal elem (car list))
+
+	;; if is: remove elem of rest of list.
+	(list-min-encode-remove-atom elem (cdr list))
+
+      ;; if is not: remove is done, return rest of list.
+      list)))
+
+
+;;; Tests
+(ert-deftest list-min-encode-01 ()
+  (should (equal (list-min-encode '(a a))
+		 '((2 a)))))
+
+(ert-deftest list-min-encode-02 ()
+  (should (equal (list-min-encode '())
+		 '())))
+
+(ert-deftest list-min-encode-03 ()
+  (should (equal (list-min-encode '(a a a a b c c a a d e e e e))
+		 '((4 a) b (2 c) (2 a) d (4 e)))))
+
+(ert-deftest list-min-encode-atom-01 ()
+  (should (equal (list-min-encode-atom nil '() 0)
+		 '())))
+
+(ert-deftest list-min-encode-atom-02 ()
+  (should (equal (list-min-encode-atom 'a '(a a a a) 0)
+		 '(4 a))))
+
+(ert-deftest list-min-encode-atom-03 ()
+  (should (equal (list-min-encode-atom 'a '(a b b) 0)
+		 'a)))
+
+(ert-deftest list-min-encode-atom-04 ()
+  (should (equal (list-min-encode-atom 'a '(a a a e e b b) 0)
+		 '(3 a))))
+
+(ert-deftest list-min-encode-remove-atom-01 ()
+  (should (equal (list-min-encode-remove-atom 'a '(a a a))
+		 '())))
+
+(ert-deftest list-min-encode-remove-atom-02 ()
+  (should (equal (list-min-encode-remove-atom 'nil '())
+		 '())))
+
+(ert-deftest list-min-encode-remove-atom-03 ()
+  (should (equal (list-min-encode-remove-atom 'a '(a a a b b))
+		 '(b b))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P12 (**) Decode a run-length encoded list.
 ; Given a run-length code list generated as specified in problem P11.
 ; Construct its uncompressed version.
