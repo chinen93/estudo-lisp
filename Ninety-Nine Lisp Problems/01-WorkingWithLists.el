@@ -10,10 +10,10 @@
 ;; my-last list
 (defun my-list (list)
   
-  ;; check if the parameter list is null
+  ;; check if the parameter list is null.
   (if (null list)
       
-      ;; if is: return null
+      ;; if is: return null.
       nil
     
     ;; if is not:  check if cdr of list is null.
@@ -47,26 +47,26 @@
 ;; my-but-last list
 (defun my-but-last (list)
 
-  ;; check if the paraeter list is null
+  ;; check if the paraeter list is null.
   (if (null list)
 
-      ;; if is: return null
+      ;; if is: return null.
       nil
 
-    ;; check if the cdr of parameter list is null
+    ;; check if the cdr of parameter list is null.
     (if (null (cdr list))
 
-	;; if is: return null
+	;; if is: return null.
 	nil
 
-      ;; check if the cdr of the cdr is null
+      ;; check if the cdr of the cdr is null.
       (if (null (cdr (cdr list)))
 
-	  ;; if is: return rest of list
+	  ;; if is: return rest of list.
 	  list
 
 	;; if is not: call the function recursively with
-	;;            the cdr of the list as parameter
+	;;            the cdr of the list as parameter.
 	(my-but-last (cdr list))))))
 
 ;;; Tests
@@ -90,16 +90,16 @@
 ;; element-at list pos
 (defun element-at (list pos)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return null
+      ;; if is: return null.
       nil
 
     ;; check if pos < 0
     (if (< pos 0)
 
-	;; if is: return null
+	;; if is: return null.
 	nil
 
       ;; call elemtent-at-rec list pos 0
@@ -108,19 +108,19 @@
 ;; element-at-rec list pos num
 (defun element-at-rec (list pos num)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return null
+      ;; if is: return null.
       nil
 
-    ;; check if pos == num
+    ;; check if pos == num.
     (if (= pos num)
 
-	;; if is: return car list
+	;; if is: return car list.
 	(car list)
 
-      ;; if is not: call element-at-rec (cdr of list) pos (num + 1)
+      ;; if is not: call element-at-rec (cdr of list) pos (num + 1).
       (element-at-rec (cdr list) pos (+ num 1)))))
 
 ;;; Tests
@@ -140,35 +140,38 @@
 ;; list-length-rec list
 (defun list-length-rec (list)
   
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
       
-      ;; if is: return 0
+      ;; if is: return 0.
       0
 
-    ;; if is not: return 1 + call list-length-rec (cdr list)
+    ;; if is not: return 1 + call list-length-rec (cdr list).
     (+ 1 (list-length-rec (cdr list)))))
 
 
 
 ;; list-length list
 (defun list-length (list)
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
       
-      ;; if is: return 0
+      ;; if is: return 0.
       0
     
-    ;; if is not: return call list-length-aux (cdr list) 1
+    ;; if is not: return call list-length-aux (cdr list) 1.
     (list-length-aux (cdr list) 1)))
 
 ;; list-length-aux list length
-;; check if list is null
-;; if is: return length
-;; if is not: return call list-length-aux (cdr list) (lenght + 1)
 (defun list-length-aux (list length)
+  
+  ;; check if list is null.
   (if (null list)
+      
+      ;; if is: return length.
       length
+
+    ;; if is not: return call list-length-aux (cdr list) (lenght + 1).
     (list-length-aux (cdr list) (+ length 1))))
 
 ;;; Tests
@@ -191,19 +194,19 @@
 ;; reverse list
 (defun list-reverse (list)
 
-  ;; return revert-aux list ()
+  ;; return revert-aux list ().
   (reverse-aux list ()))
 
 ;; reverse-aux list ret
 (defun reverse-aux (list ret)
   
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
       
-      ;; if is: return ret
+      ;; if is: return ret.
       ret
     
-    ;; if is not: return reverse-aux (cdr list) (cons (car list) ret)
+    ;; if is not: return reverse-aux (cdr list) (cons (car list) ret).
     (reverse-aux (cdr list) (cons (car list) ret))))
 
 ;; list     ret
@@ -229,7 +232,7 @@
 ;; palindrome list
 (defun palindrome (list)
 
-  ;; return if the list is equal its reverse
+  ;; return if the list is equal its reverse.
   (equal list (list-reverse list)))
 
 ;;; Tests
@@ -254,19 +257,19 @@
 ;; my-flatten elem
 (defun my-flatten (elem)
   
-  ;; check if elem is null
+  ;; check if elem is null.
   (if (null elem)
 
-      ;; return null
+      ;; return null.
       nil
 
-    ;; check if CAR is a list
+    ;; check if CAR is a list.
     (if (listp (car elem))
 
-	;; if is: append (my-flatten CAR) (my-flatten CDR)
+	;; if is: append (my-flatten CAR) (my-flatten CDR).
 	(append (my-flatten (car elem)) (my-flatten (cdr elem)))
 
-      ;; if is not: append (list CAR) (my-flatten CDR)
+      ;; if is not: append (list CAR) (my-flatten CDR).
       (append (list (car elem)) (my-flatten (cdr elem))))))
 
 ;;; Tests
@@ -292,33 +295,33 @@
 ;; compress list
 (defun compress (list)
   
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
       
-      ;; if is: return null
+      ;; if is: return null.
       nil
     
-    ;; return compress-aux list null
+    ;; return compress-aux list null.
     (compress-aux list nil nil)))
 
 ;; compress-aux list last-elem ret
 (defun compress-aux (list last ret)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return the result
+      ;; if is: return the result.
       (list-reverse ret)
 
-    ;; check if (car list) is equal to last-elem
+    ;; check if (car list) is equal to last-elem.
     (if (equal (car list) last)
 
-	;; if is: return (compress-aux (cdr list) (car list) ret)
+	;; if is: return (compress-aux (cdr list) (car list) ret).
 	(compress-aux (cdr list) (car list) ret)
       
       ;; if is not: return (compress-aux (cdr list)
       ;;                                 (car list)
-      ;;                                 (append (list (car list)) ret)))
+      ;;                                 (append (list (car list)) ret))).
       (compress-aux (cdr list) (car list) (append (list (car list)) ret)))))
 
 ;;; Tests
@@ -344,50 +347,50 @@
 ;; pack-duplicates list
 (defun pack-duplicates (list)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return null
+      ;; if is: return null.
       nil
 
-    ;; return compress-aux list null null
+    ;; return compress-aux list null null.
     (cons (pack-duplicates-atom (car list) list)
 	  (pack-duplicates (remove-duplicates-first-atom (car list) list)))))
 
 ;; pack-duplicates-atom elem list
 (defun pack-duplicates-atom (elem list)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return null
+      ;; if is: return null.
       nil
 
-    ;; if is not: check if elem is equal to car of list
+    ;; if is not: check if elem is equal to car of list.
     (if (equal elem (car list))
 
-	;; if is: create a list with the elem and function with cdr of list
+	;; if is: create a list with the elem and function with cdr of list.
 	(append (list elem) (pack-duplicates-atom elem (cdr list)))
 
-      ;; if is not: return nil to close the list
+      ;; if is not: return nil to close the list.
       nil)))
 
 ;; remove-duplicates-first-atom elem list
 (defun remove-duplicates-first-atom (elem list)
 
-  ;; check if list is null
+  ;; check if list is null.
   (if (null list)
 
-      ;; if is: return nil
+      ;; if is: return nil.
       nil
 
-    ;; if is not: check if elem is equal to car of list
+    ;; if is not: check if elem is equal to car of list.
     (if (equal elem (car list))
 
-	;; if is: create a list without the duplicates of the first atom
+	;; if is: create a list without the duplicates of the first atom.
 	(append (remove-duplicates-first-atom elem (cdr list)))
 
-      ;; if is not: return the rest of the list
+      ;; if is not: return the rest of the list.
       list)))
 
 ;; (a a a a)  nil  nil       nil
