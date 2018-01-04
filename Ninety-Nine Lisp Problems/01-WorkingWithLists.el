@@ -414,6 +414,30 @@
   (should (equal (pack-duplicates  '(a a a a b c c a a d e e e e))
 		 '((a a a a) (b) (c c) (a a) (d) (e e e e)))))
 
+(ert-deftest pack-duplicates-atom-01 ()
+  (should (equal (pack-duplicates-atom 'a '(a a a a))
+		 '(a a a a))))
+
+(ert-deftest pack-duplicates-atom-02 ()
+  (should (equal (pack-duplicates-atom 'a '())
+		 '())))
+
+(ert-deftest pack-duplicates-atom-03 ()
+  (should (equal (pack-duplicates-atom 'a '(a a a b b b))
+		 '(a a a))))
+
+(ert-deftest remove-duplicates-first-atom-01 ()
+  (should (equal (remove-duplicates-first-atom 'a '(a a a a))
+		 '())))
+
+(ert-deftest remove-duplicates-first-atom-02 ()
+  (should (equal (remove-duplicates-first-atom 'a '())
+		 '())))
+
+(ert-deftest remove-duplicates-first-atom-03 ()
+  (should (equal (remove-duplicates-first-atom 'a '(a a b b))
+		 '(b b))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P10 (*) Run-length encoding of a list.
