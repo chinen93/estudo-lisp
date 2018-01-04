@@ -449,6 +449,109 @@
 ; * (encode '(a a a a b c c a a d e e e e))
 ; ((4 A) (1 B) (2 C) (2 A) (1 D)(4 E))
 
+
+;; list-encode list
+(defun list-encode (list)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: create a list with the encode for the car of list
+    ;;            and the encode of the rest of the list without the car.
+    (cons (list-encode-atom (car list) list 0)
+	  (list-encode (list-encode-remove-atom (car list) (cdr list))))))
+
+;; list-encode-atom elem list num
+(defun list-encode-atom (elem list num)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: check if the num is 0.
+      (if (equal num 0)
+
+	  ;; if is: there is no elem encoded return nil.
+	  nil
+
+	;; if is not: return the encode for the elem.
+	(list num elem))
+
+    ;; check if elem is equal the car of list.
+    (if (equal elem (car list))
+
+	;; if is: increment num and check the encode for elem in the
+	;;        rest of the list.
+	(list-encode-atom elem (cdr list) (+ 1 num))
+
+      ;; if is not: return the encode for the elem.
+      (list num elem))))
+
+;; a (a a b) 0
+;; a (a b)   1
+;; a (b)     2
+
+
+;; list-encode-remove-atom elem list
+(defun list-encode-remove-atom (elem list)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if elem is equal to car of list.
+    (if (equal elem (car list))
+
+	;; if is: remove elem of rest of list.
+	(list-encode-remove-atom elem (cdr list))
+
+      ;; if is not: remove is done, return rest of list.
+      list)))
+
+
+;;; Tests
+(ert-deftest list-encode-01 ()
+  (should (equal (list-encode '(a a))
+		 '((2 a)))))
+
+(ert-deftest list-encode-02 ()
+  (should (equal (list-encode '())
+		 '())))
+
+(ert-deftest list-encode-03 ()
+  (should (equal (list-encode '(a a a a b c c a a d e e e e))
+		 '((4 a) (1 b) (2 c) (2 a) (1 d) (4 e)))))
+
+(ert-deftest list-encode-atom-01 ()
+  (should (equal (list-encode-atom nil '() 0)
+		 '())))
+
+(ert-deftest list-encode-atom-02 ()
+  (should (equal (list-encode-atom 'a '(a a a a) 0)
+		 '(4 a))))
+
+(ert-deftest list-encode-atom-03 ()
+  (should (equal (list-encode-atom 'a '(a a a e e b b) 0)
+		 '(3 a))))
+
+(ert-deftest list-encode-remove-atom-01 ()
+  (should (equal (list-encode-remove-atom 'a '(a a a))
+		 '())))
+
+(ert-deftest list-encode-remove-atom-02 ()
+  (should (equal (list-encode-remove-atom 'nil '())
+		 '())))
+
+(ert-deftest list-encode-remove-atom-03 ()
+  (should (equal (list-encode-remove-atom 'a '(a a a b b))
+		 '(b b))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P11 (*) Modified run-length encoding.
 ; Modify the result of problem P10 in such a way that if an element has no
 ; duplicates it is simply copied into the result list. Only elements with
