@@ -674,6 +674,67 @@
 ; Given a run-length code list generated as specified in problem P11.
 ; Construct its uncompressed version.
 
+(defun list-decode (list)
+
+  ;; Check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if car of list is a list.
+    (if (listp (car list))
+
+	;; if is: append multiplication of the elem by num 
+	;;        and decode rest of list.
+	(append (multiply (car (car list)) (car (cdr (car list))))
+		(list-decode (cdr list)))
+
+      ;; if is not: append elem and decode rest of list.
+      (append (list (car list)) (list-decode (cdr list))))))
+
+;; multiply num elem
+(defun multiply (num elem)
+
+  ;; check if num is equal 0.
+  (if (equal 0 num)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: append elem with multiply (num-1) elem.
+    (append (list elem) (multiply (- num 1) elem))))
+
+
+;;; Tests
+
+(ert-deftest list-decode-01 ()
+  (should (equal (list-decode '((4 a) b (2 c) (2 a) d (4 e)))
+		 '(a a a a b c c a a d e e e e))))
+
+(ert-deftest list-decode-02 ()
+  (should (equal (list-decode '())
+		 '())))
+
+(ert-deftest list-decode-03 ()
+  (should (equal (list-decode '((4 a)))
+		 '(a a a a))))
+
+(ert-deftest multiply-01 ()
+  (should (equal (multiply 4 'a)
+		 '(a a a a))))
+
+(ert-deftest multiply-02 ()
+  (should (equal (multiply 0 'a)
+		 '())))
+
+
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P13 (**) Run-length encoding of a list (direct solution).
 ; Implement the so-called run-length encoding data compression method
 ; directly. I.e. don't explicitly create the sublists containing the
