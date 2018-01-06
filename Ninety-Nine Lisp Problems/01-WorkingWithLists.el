@@ -740,19 +740,85 @@
 ; * (encode-direct '(a a a a b c c a a d e e e e))
 ; ((4 A) B (2 C) (2 A) D (4 E))
 
+;; encode-direct list
 (defun encode-direct (list)
-  )
 
-(defun encode-direct-atom (elem list &optional num)
+  ;; check if list is null.
   (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: construct the encode for first elem of list
+    ;;            with the rest of list without elem.
+    (cons (encode-direct-atom (car list) list)
+	  (encode-direct (encode-direct-remove list)))))
+
+;; encode-direct-atom (elem list &optional num)
+(defun encode-direct-atom (elem list &optional num)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; is is: check if exist num.
       (if (null num)
+
+	  ;; if don't exist: return nil to terminate the list.
 	  'nil
-	(list num elem))
+
+	;; if exist: check if num is 1.
+	(if (equal 1 num)
+
+	    ;; if is: return elem.
+	    elem
+
+	  ;; if is not: return an encode for elem.
+	  (list num elem)))
+
+    ;; if is not: check if elem is equal car of list
     (if (equal (car list) elem)
+
+	;; if is: check if exist num
 	(if (null num)
+
+	    ;; if don't exist: encode elem with 1
 	    (encode-direct-atom elem (cdr list) 1)
+
+	  ;; if exist: encode elem with num+1
 	  (encode-direct-atom elem (cdr list) (+ 1 num)))
-      (list num elem))))
+
+     ;; if exist: check if num is 1.
+      (if (equal 1 num)
+
+	  ;; if is: return elem.
+	  elem
+
+	;; if is not: return an encode for elem.
+	(list num elem)))))
+
+;; encode-direct-remove (list &optional elem)
+(defun encode-direct-remove (list &optional elem)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if exist elem.
+    (if (null elem)
+
+	;; if don't exist: remove from list the car of list.
+	(encode-direct-remove list (car list))
+
+      ;; if exist: check if elem is equal the car of list.
+      (if (equal (car list) elem)
+
+	  ;; if is: remove from rest of list the elem
+	  (encode-direct-remove (cdr list) elem)
+
+	;; if is not: return rest of list.
+	list))))
 
 ;;; Tests
 
@@ -769,13 +835,36 @@
 		 '())))
 
 (ert-deftest encode-direct-atom-02 ()
-  (should (equal (encode-direct-atom 'a '(a a a a b))
-		 '(4 a))))
+  (should (equal (encode-direct-atom 'a '(a b b))
+		 'a)))
 
 (ert-deftest encode-direct-atom-03 ()
   (should (equal (encode-direct-atom 'a '(a a a a))
 		 '(4 a))))
 
+(ert-deftest encode-direct-remove-01 ()
+  (should (equal (encode-direct-remove '(a a a) 'a)
+		 '())))
+
+(ert-deftest encode-direct-remove-02 ()
+  (should (equal (encode-direct-remove '(a a a))
+		 '())))
+
+(ert-deftest encode-direct-remove-03 ()
+  (should (equal (encode-direct-remove '(a a a b b) 'a)
+		 '(b b))))
+
+(ert-deftest encode-direct-remove-04 ()
+  (should (equal (encode-direct-remove '(a a a b b))
+		 '(b b))))
+
+(ert-deftest encode-direct-remove-04 ()
+  (should (equal (encode-direct-remove '() 'a)
+		 '())))
+
+(ert-deftest encode-direct-remove-05 ()
+  (should (equal (encode-direct-remove '())
+		 '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
