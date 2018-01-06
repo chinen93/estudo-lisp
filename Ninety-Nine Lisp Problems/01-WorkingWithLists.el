@@ -728,11 +728,6 @@
   (should (equal (multiply 0 'a)
 		 '())))
 
-
-
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P13 (**) Run-length encoding of a list (direct solution).
@@ -744,6 +739,45 @@
 ; Example:
 ; * (encode-direct '(a a a a b c c a a d e e e e))
 ; ((4 A) B (2 C) (2 A) D (4 E))
+
+(defun encode-direct (list)
+  )
+
+(defun encode-direct-atom (elem list &optional num)
+  (if (null list)
+      (if (null num)
+	  'nil
+	(list num elem))
+    (if (equal (car list) elem)
+	(if (null num)
+	    (encode-direct-atom elem (cdr list) 1)
+	  (encode-direct-atom elem (cdr list) (+ 1 num)))
+      (list num elem))))
+
+;;; Tests
+
+(ert-deftest encode-direct-01 ()
+  (should (equal (encode-direct '(a a a a b c c a a d e e e e))
+		 '((4 a) b (2 c) (2 a) d (4 e)))))
+
+(ert-deftest encode-direct-02 ()
+  (should (equal (encode-direct '())
+		 '())))
+
+(ert-deftest encode-direct-atom-01 ()
+  (should (equal (encode-direct-atom 'a '())
+		 '())))
+
+(ert-deftest encode-direct-atom-02 ()
+  (should (equal (encode-direct-atom 'a '(a a a a b))
+		 '(4 a))))
+
+(ert-deftest encode-direct-atom-03 ()
+  (should (equal (encode-direct-atom 'a '(a a a a))
+		 '(4 a))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P14 (*) Duplicate the elements of a list.
 ; Example:
