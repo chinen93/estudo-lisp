@@ -873,6 +873,42 @@
 ; * (dupli '(a b c c d))
 ; (A A B B C C C C D D)
 
+;; dupli list &optional elem
+(defun dupli (list &optional elem)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if elem exist.
+    (if (null elem)
+
+	;; if don't exist: call dupli with list and car of list.
+	(dupli list (car list))
+
+      ;; if exist: create a list with elem duplicated
+      ;;           append it with dupli rest of list.
+      (append (list elem elem)
+	      (dupli (cdr list))))))
+
+;;; Tests
+
+(ert-deftest dupli-01 ()
+  (should (equal (dupli '(a b c c d))
+		 '(a a b b c c c c d d))))
+
+(ert-deftest dupli-02 ()
+  (should (equal (dupli '())
+		 '())))
+
+(ert-deftest dupli-03 ()
+  (should (equal (dupli '(a a a a))
+		 '(a a a a a a a a))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P15 (**) Replicate the elements of a list a given number of times.
 ; Example:
 ; * (repli '(a b c) 3)
