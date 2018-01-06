@@ -913,7 +913,48 @@
 ; Example:
 ; * (repli '(a b c) 3)
 ; (A A A B B B C C C)
-;
+
+;; repli list num &optional elem
+(defun repli (list num &optional elem)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return end of list.
+    nil)
+
+   ;; if elem is null.
+   ((null elem)
+
+    ;; call repli with car of list.
+    (repli list num (car list)))
+
+   ;; default:
+   (t
+
+    ;; append sublist of repeated elem
+    ;;        with repli of rest of list.
+    (append (make-list num elem)
+	    (repli (cdr list) num)))))
+
+;;; Tests
+
+(ert-deftest repli-01 ()
+  (should (equal (repli '(a b c) 3)
+		 '(a a a b b b c c c))))
+
+(ert-deftest repli-02 ()
+  (should (equal (repli '(a b c) 1)
+		 '(a b c))))
+
+(ert-deftest repli-03 ()
+  (should (equal (repli '() 1)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P16 (**) Drop every N'th element from a list.
 ; Example:
