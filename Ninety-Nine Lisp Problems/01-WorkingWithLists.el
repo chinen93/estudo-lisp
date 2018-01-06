@@ -961,6 +961,68 @@
 ; * (drop '(a b c d e f g h i k) 3)
 ; (A B D E G H K)
 
+;; drop list nth &optional count
+(defun drop (list nth &optional count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if count is null.
+   ((null count)
+
+    ;; call drop with count as nth.
+    (drop list nth nth))
+
+   ;; if nth < 0.
+   ((< nth 1)
+
+    ;; don't drop anyone.
+    list)
+
+   ;; default:
+   (t
+
+    ;; check if count > 1.
+    (if (> count 1)
+
+	;; if is: append first elem of list
+	;;        drop rest of list with count-1.
+	(append (list (car list))
+		(drop (cdr list) nth (- count 1)))
+
+      ;; if is not: drop elem.
+      (drop (cdr list) nth nth)))))
+
+;;; Tests
+
+(ert-deftest drop-01 ()
+  (should (equal (drop '(a b c d e f g h i k) 3)
+		 '(a b d e g h k))))
+
+(ert-deftest drop-02 ()
+  (should (equal (drop '(a b c d e f g h i k) 1)
+		 '())))
+
+(ert-deftest drop-03 ()
+  (should (equal (drop '(a b c d e f g h i k) 0)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest drop-04 ()
+  (should (equal (drop '(a b c d e f g h i k) -3)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest drop-05 ()
+  (should (equal (drop '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P17 (*) Split a list into two parts; the length of the first part is given.
 ; Do not use any predefined predicates.
 ;
