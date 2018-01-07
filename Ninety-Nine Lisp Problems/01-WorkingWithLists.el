@@ -1272,6 +1272,52 @@
 ; Hint: Use the predefined functions length and append, as well as the result
 ; of problem P17.
 
+;; uses P17 (split list nth)
+;; uses P04 (list-length list)
+;; rotate list amount
+(defun rotate (list amount)
+  
+  ;; serial bind of variables.
+  (let* (
+
+	 ;; var split-nth = index of nth element.
+	 (split-nth
+
+	  ;; check if amount > 0.
+	  (if (> amount 0)
+
+	      ;; if is: return amount.
+	      amount
+
+	    ;; if is not: return list length - amount.
+	    (+ (list-length list) amount)))
+
+	 ;; var split-list = split of list on split-nth element.
+	 (split-list (split list split-nth)))
+
+    ;; append second part of split with first part.
+    (append (car (cdr split-list)) (car split-list))))
+
+;;; Tests
+
+(ert-deftest rotate-01 ()
+  (should (equal (rotate '(a b c d e f g h) -2)
+		 '(g h a b c d e f))))
+
+(ert-deftest rotate-02 ()
+  (should (equal (rotate '(a b c d e f g h) 3)
+		 '(d e f g h a b c))))
+
+(ert-deftest rotate-03 ()
+  (should (equal (rotate '(a b c d e f g h) 0)
+		 '(a b c d e f g h))))
+
+(ert-deftest rotate-04 ()
+  (should (equal (rotate '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P20 (*) Remove the K'th element from a list.
 ; Example:
 ; * (remove-at '(a b c d) 2)
