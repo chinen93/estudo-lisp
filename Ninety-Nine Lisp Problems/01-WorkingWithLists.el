@@ -1619,6 +1619,24 @@
 ;
 ; Hint: Use the solution of problem P23.
 
+;; rnd-permu list
+(defun rnd-permu (list)
+  ;; parallel bind
+  (let (
+
+	;; length of list
+	(length (list-length list)))
+
+    ;; call select randomly list length elements
+    (rnd-select list length)))
+
+;;; Tests
+(ert-deftest rnd-permu-01 ()
+  (should (equal (list-length (rnd-permu '(a b c d e f g h i j)))
+		 '10))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P26 (**) Generate the combinations of K distinct objects chosen from the N
 ; elements of a list
 ; In how many ways can a committee of 3 be chosen from a group of 12 people?
