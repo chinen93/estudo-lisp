@@ -1323,6 +1323,57 @@
 ; * (remove-at '(a b c d) 2)
 ; (A C D)
 
+;; remove-at list nth
+(defun remove-at (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil to terminate list.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; don't need to remove anybody return list.
+    list)
+
+   ;; if nth == 1.
+   ((equal nth 1)
+
+    ;; remove car of list returning just cdr of list.
+    (cdr list))
+
+   ;; default
+   (t
+
+    ;; append first elem with rest of list removed nth element.
+    (append (list (car list))
+	    (remove-at (cdr list) (- nth 1))))))
+
+;;; Tests
+
+(ert-deftest remove-at-01 ()
+  (should (equal (remove-at '(a b c d) 2)
+		 '(a c d))))
+
+(ert-deftest remove-at-02 ()
+  (should (equal (remove-at '(a b c d) -2)
+		 '(a b c d))))
+
+(ert-deftest remove-at-03 ()
+  (should (equal (remove-at '(a b c d) 100)
+		 '(a b c d))))
+
+(ert-deftest remove-at-04 ()
+  (should (equal (remove-at '() 2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P21 (*) Insert an element at a given position into a list.
 ; Example:
 ; * (insert-at 'alfa '(a b c d) 2)
