@@ -1473,6 +1473,95 @@
 ;
 ; Hint: Use the built-in random number generator and the result of problem P20.
 
+;; rnd-select list amount
+(defun rnd-select (list amount)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null or amount < 0 or amount > list length.  
+   ((or (null list) (< amount 1) (> amount (list-length list)))
+
+    ;; return nil 'cause there's nothing to select.
+    nil)
+
+
+   ;; get random elem.
+   (t
+    
+    ;; parallel bind
+    (let (
+
+	  ;; position for elem
+	  (pos (+ 1 (random (list-length list)))))
+
+      ;; append selected elem at position with another random elem
+      (append (list (select-at list pos))
+	      (rnd-select (remove-at list pos) (- amount 1)))))))
+
+;; select-at list nth
+(defun select-at (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list if null or nth > list length or nth < 0.
+   ((or (null list) (> nth (list-length list)) (< nth 0))
+
+    ;; return nil
+    nil)
+
+   ;; if nth > 1.
+   ((> nth 1)
+    
+    ;; continue to search for elem.
+    (select-at (cdr list) (- nth 1)))
+
+   ;; if nth == 1.
+   (t
+    
+    ;; return selected elem
+    (car list))))
+
+;;; Tests
+(ert-deftest rnd-select-01 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 3))
+		 3)))
+
+(ert-deftest rnd-select-02 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 6))
+		 6)))
+
+(ert-deftest rnd-select-03 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 100))
+		 0)))
+
+(ert-deftest rnd-select-04 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) -2))
+		 0)))
+
+(ert-deftest rnd-select-05 ()
+  (should (equal (list-length (rnd-select '() 3))
+		 0)))
+
+(ert-deftest select-at-01 ()
+  (should (equal (select-at '(a b c d e) 2)
+		 'b)))
+
+(ert-deftest select-at-02 ()
+  (should (equal (select-at '(a b c d e) -2)
+		 '())))
+
+(ert-deftest select-at-03 ()
+  (should (equal (select-at '(a b c d e) 100)
+		 '())))
+
+(ert-deftest select-at-04 ()
+  (should (equal (select-at '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P24 (*) Lotto: Draw N different random numbers from the set 1..M.
 ; The selected numbers shall be returned in a list.
 ; Example:
