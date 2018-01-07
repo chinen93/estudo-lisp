@@ -1379,6 +1379,51 @@
 ; * (insert-at 'alfa '(a b c d) 2)
 ; (A ALFA B C D)
 
+;; insert-at elem list nth
+(defun insert-at (elem list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if nth < 1
+   ((< nth 1)
+
+    ;; return list 'cause there's nothing to do.
+    list)
+
+   ;; if nth == 1.
+   ((equal nth 1)
+
+    ;; return list with elem as first item and rest of list.
+    (append (list elem) list))
+
+   ;; default:
+   (t
+
+    ;; append first elem with return of insert-at rest of list and nth-1.
+    (append (list (car list))
+	    (insert-at elem (cdr list) (- nth 1))))))
+
+;;; Tests
+
+(ert-deftest insert-at-01 ()
+  (should (equal (insert-at 'alfa '(a b c d) 2)
+		 '(a alfa b c d))))
+
+(ert-deftest insert-at-02 ()
+  (should (equal (insert-at 'alfa '(a b c d) -2)
+		 '(a b c d))))
+
+(ert-deftest insert-at-03 ()
+  (should (equal (insert-at 'alfa '(a b c d) 7)
+		 '(a b c d nil nil alfa))))
+
+(ert-deftest insert-at-04 ()
+  (should (equal (insert-at 'alfa '() 2)
+		 '(nil alfa))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P22 (*) Create a list containing all integers within a given range.
 ; If first argument is smaller than second, produce a list in decreasing order.
 ; Example:
