@@ -1030,6 +1030,155 @@
 ; * (split '(a b c d e f g h i k) 3)
 ; ( (A B C) (D E F G H I K))
 
+
+;; split list nth
+(defun split (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; just return list.
+     list)
+
+   ;; default:
+   (t
+
+    ;; create list with split-list of first part
+    ;; and the as a list rest.
+    (cons (split-list list nth nth)
+	  (list (split-remove list nth nth))))))
+
+;; split-list list nth count
+(defun split-list (list nth count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; return list.
+    list)
+
+   ;; if count < 1.
+   ((< count 1)
+
+    ;; just return list.
+     list)
+
+   ;; if count > 1.
+   ((> count 1)
+
+    ;; append car of list with split of rest of list and count-1.
+    (append (list (car list))
+	    (split-list (cdr list) nth (- count 1))))
+
+   ;; default:
+   (t
+
+    ;; return first elem as a list.
+    (list (car list)))))
+
+
+;; split-remove list nth count
+(defun split-remove (list nth count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; return list.
+    list)
+   
+   ;; if count < 1.
+   ((< count 1)
+
+    ;; just return list.
+     list)
+
+   ;; if count > 0.
+   ((> count 0)
+
+    ;; remove the first elem and try the rest of list.
+    (split-remove (cdr list) nth (- count 1)))
+
+   ;; default:
+   (t
+
+    ;; return list as a list.
+    list)))
+
+;;; Tests
+
+(ert-deftest split-01 ()
+  (should (equal (split '(a b c d e f g h i k) 3)
+		 '((a b c) (d e f g h i k)))))
+
+(ert-deftest split-02 ()
+  (should (equal (split '(a b c d e f g h i k) 1)
+		 '((a) (b c d e f g h i k)))))
+
+(ert-deftest split-03 ()
+  (should (equal (split '(a b c d e f g h i k) 0)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-04 ()
+  (should (equal (split '(a b c d e f g h i k) -1)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-05 ()
+  (should (equal (split '() 3)
+		 '())))
+
+(ert-deftest split-list-01 ()
+  (should (equal (split-list '(a b c d e f g h i k) 3 3)
+		 '(a b c))))
+
+(ert-deftest split-list-02 ()
+  (should (equal (split-list '(a b c d e f g h i k) 3 -2)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-list-03 ()
+  (should (equal (split-list '() 3 3)
+		 '())))
+
+(ert-deftest split-remove-01 ()
+  (should (equal (split-remove '(a b c d e f g h i k) 3 3)
+		 '(d e f g h i k))))
+
+(ert-deftest split-remove-02 ()
+  (should (equal (split-remove '(a b c d e f g h i k) 3 -1)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-remove-03 ()
+  (should (equal (split-remove '() 3 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P18 (**) Extract a slice from a list.
 ; Given two indices, I and K, the slice is the list containing the elements
 ; between the I'th and K'th element of the original list (both limits
