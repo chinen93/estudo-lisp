@@ -1430,6 +1430,41 @@
 ; * (range 4 9)
 ; (4 5 6 7 8 9)
 
+;; range beg end
+(defun range (beg end)
+
+  ;; conditionals:
+  (cond
+
+   ;; if end < beg.
+   ((< end beg)
+
+    ;; return nil, don't have anything to do.
+    nil)
+
+   ;; default
+   (t
+
+    ;; append beg with range of beg+1 end.
+    (append (list beg)
+	    (range (+ 1 beg) end)))))
+
+;;; Tests
+
+(ert-deftest range-01 ()
+  (should (equal (range 4 9)
+		 '(4 5 6 7 8 9))))
+
+(ert-deftest range-02 ()
+  (should (equal (range -5 5)
+		 '(-5 -4 -3 -2 -1 0 1 2 3 4 5))))
+
+(ert-deftest range-03 ()
+  (should (equal (range 5 5)
+		 '(5))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P23 (**) Extract a given number of randomly selected elements from a list.
 ; The selected items shall be returned in a list.
 ; Example:
