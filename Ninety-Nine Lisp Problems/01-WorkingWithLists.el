@@ -1188,6 +1188,79 @@
 ; * (slice '(a b c d e f g h i k) 3 7)
 ; (C D E F G)
 
+;; slice-range list beg end &optional count
+(defun slice-range (list beg end &optional count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if count is null.
+   ((null count)
+
+    ;; slice-range list beg end 1.
+    (slice-range list beg end 1))
+
+   ;; if beg < 1.
+   ((< beg 1)
+    
+    ;; call function with beg as 1.
+    (slice-range list 1 end 1))
+
+   ;; if end < beg.
+   ((< end beg)
+
+    ;; return nil 'cause there's nothing to do.
+    nil)
+
+   ;; if count < beg.
+   ((< count beg)
+
+    ;; advance list and count.
+    (slice-range (cdr list) beg end (+ count 1)))
+
+   ;; if count > end.
+   ((> count end)
+
+    ;; return nil 'cause there's nothing to do.
+    nil)
+
+   ;; default:
+   (t
+
+    ;; append first elem with slice-range count+1 and rest of list.
+    (append (list (car list))
+	    (slice-range (cdr list) beg end (+ count 1))))))
+
+;;; Tests
+
+(ert-deftest slice-range-01 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 3 7)
+		 '(c d e f g))))
+
+(ert-deftest slice-range-02 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 4 2)
+		 '())))
+
+(ert-deftest slice-range-03 ()
+  (should (equal (slice-range '(a b c d e f g h i k) -1 3)
+		 '(a b c))))
+
+(ert-deftest slice-range-04 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 1 100)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest slice-range-05 ()
+  (should (equal (slice-range '() 4 2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P19 (**) Rotate a list N places to the left.
 ; Examples:
 ; * (rotate '(a b c d e f g h) 3)
