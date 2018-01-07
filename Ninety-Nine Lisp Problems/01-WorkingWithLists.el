@@ -1570,6 +1570,48 @@
 ;
 ; Hint: Combine the solutions of problems P22 and P23.
 
+;; Uses P22 (range beg end)
+;; Uses P23 (rnd-select list amount)
+;; lotto-select amount maxrange
+(defun lotto-select (amount maxrange)
+
+  ;; conditionals:
+  (cond
+
+   ;; if amount > maxrange or maxrange < 1 or amount < 1.
+   ((or (> amount maxrange) (< maxrange 1) (< amount 1))
+
+    ;; return nil 'cause elements can't be select.
+    nil)
+
+   ;; select elements.
+   (t
+
+    ;; parallel bind.
+    (let (
+	  
+	  ;; create a list with range of elements.
+	  (range (range 1 maxrange)))
+
+      ;; select amount of elements randomly from range.
+      (rnd-select range amount)))))
+
+;;; Tests
+
+(ert-deftest lotto-select-01 ()
+  (should (equal (list-length (lotto-select 6 49))
+		 '6)))
+
+(ert-deftest lotto-select-02 ()
+  (should (equal (lotto-select 100 49)
+		 '())))
+
+(ert-deftest lotto-select-03 ()
+  (should (equal (lotto-select 6 -2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P25 (*) Generate a random permutation of the elements of a list.
 ; Example:
 ; * (rnd-permu '(a b c d e f))
