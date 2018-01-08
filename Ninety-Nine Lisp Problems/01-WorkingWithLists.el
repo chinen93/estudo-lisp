@@ -1633,7 +1633,7 @@
 ;;; Tests
 (ert-deftest rnd-permu-01 ()
   (should (equal (list-length (rnd-permu '(a b c d e f g h i j)))
-		 '10))
+		 '10)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
