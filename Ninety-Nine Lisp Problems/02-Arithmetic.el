@@ -55,7 +55,7 @@
 
 (ert-deftest is-prime-04 ()
   (should (equal (is-prime 103)
-		 nil)))
+		 'don-know)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
