@@ -1,9 +1,63 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arithmetic
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;
 ; P31 (**) Determine whether a given integer number is prime.
 ; Example:
 ; * (is-prime 7)
 ; T
+
+(defun is-prime (num)
+
+  (cond
+
+   ((or (= num 2)
+	(= num 3)
+	(= num 5)
+	(= num 7)
+	(= num 11)
+	(= num 19)
+	(= num 23)
+	(= num 29)
+	(= num 31))
+    t)
+   
+   ((or (< num 1)
+	(= 1 num)
+	(= (mod num 2) 0)
+	(= (mod num 3) 0)
+	(= (mod num 5) 0)
+	(= (mod num 7) 0)
+	(= (mod num 11) 0)
+	(= (mod num 19) 0)
+	(= (mod num 23) 0)
+	(= (mod num 29) 0)
+	(= (mod num 31) 0))
+    nil)
+   
+   (t
+    'dont-know)))
+
+;;; Tests
+
+(ert-deftest is-prime-01 ()
+  (should (equal (is-prime 7)
+		 t)))
+
+(ert-deftest is-prime-02 ()
+  (should (equal (is-prime 8)
+		 nil)))
+
+(ert-deftest is-prime-03 ()
+  (should (equal (is-prime 1)
+		 nil)))
+
+(ert-deftest is-prime-04 ()
+  (should (equal (is-prime 103)
+		 nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P32 (**) Determine the greatest common divisor of two positive integer
 ; numbers.
