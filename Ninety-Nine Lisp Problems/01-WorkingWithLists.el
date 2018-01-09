@@ -1648,6 +1648,102 @@
 ; * (combination 3 '(a b c d e f))
 ; ((A B C) (A B D) (A B E) ... )
 
+;;; https://groups.google.com/forum/#!topic/comp.lang.lisp/85MTsSUqjO4
+;;; comb1
+(defun combination (elem-list size)
+
+  ;; conditionals:
+  (cond
+
+   ;; if size < 1
+   ((< size 1)
+
+    ;; return nil.
+    (list nil))
+
+   ;; if elem-list is empty.
+   ((null elem-list)
+
+    ;; return nil.
+    nil)
+
+   ;; default:
+   (t
+
+    ;; concatenate lists
+    (nconc
+
+     ;; For each element of (combination (cdr elem-list) (1- size)) call the
+     ;; lambda function. Which get an element and construct a list with
+     ;; the (car elem-list).
+     (mapcar #'(lambda (c)
+		 (cons (car elem-list) c))
+	     (combination (cdr elem-list) (1- size)))
+
+     ;; call combination recursively with (cdr elem-list)
+     (combination (cdr elem-list) size)))))
+
+;; (combination '(a b c d) 2) -> [(combination '(b c d) 1)]  ((a b) (a c) (a d))
+;;                               (combination '(b c d) 2)    ((b c) (b d) (c d))
+;; ((a b) (a c) (a d) (b c) (b d) (c d))
+
+;; (combination '(b c d) 1) -> [(combination '(c d) 0)]  (b)
+;;                             (combination '(c d) 1)    ((c) (d))
+;; ((b) (c) (d))
+
+;; (combination '(c d) 1) -> [(combination '(d) 0)]  (c)
+;;                           (combination '(d) 1)    (d)
+;; ((c) (d))
+
+;; (combination '(d) 1) -> [(combination '() 0)]  (d)
+;;                         (combination '() 1)    ()
+;; ((d))
+
+;; (combination '(b c d) 2) -> [(combination '(c d) 1)]  ((b c) (b d))
+;;                             (combination '(c d) 2)    ((c d))
+;; ((b c) (b d) (c d))
+
+;; (combination '(c d) 2) -> [(combination '(d) 1)]  (c d) 
+;;                           (combination '(d) 2)    ()
+;; ((c d))
+
+;; (combination '(d) 2) -> [(combination '() 1)]  (d) 
+;;                         (combination '() 2)    ()
+;; ((d))
+
+;;; Tests
+
+(ert-deftest combination-01()
+  (should (equal (combination '(a b c d e) 3)
+		 '((a b c)
+		   (a b d)
+		   (a b e)
+		   (a c d)
+		   (a c e)
+		   (a d e)
+		   (b c d)
+		   (b c e)
+		   (b d e)
+		   (c d e)))))
+
+(ert-deftest combination-02 ()
+  (should (equal (combination '() 3)
+		 '())))
+
+(ert-deftest combination-03 ()
+  (should (equal (combination '(a b c d) 0)
+		 '(()))))
+
+(ert-deftest combination-04 ()
+  (should (equal (combination '(a b c d) -2)
+		 '(()))))
+
+(ert-deftest combination-05 ()
+  (should (equal (combination '(a b c d) 100)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
 ; P27 (**) Group the elements of a set into disjoint subsets.
 ; a) In how many ways can a group of 9 people work in 3 disjoint subgroups of
 ; 2, 3 and 4 persons? Write a function that generates all the possibilities
