@@ -90,6 +90,10 @@
   (should (equal (gcd 36 63)
 		 9)))
 
+(ert-deftest gcd-02 ()
+  (should (equal (gcd 2 6)
+		 2)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P33 (*) Determine whether two positive integer numbers are coprime.
