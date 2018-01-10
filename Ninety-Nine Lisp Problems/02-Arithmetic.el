@@ -148,6 +148,66 @@
 ; that we shall discuss later).
 ;
 
+;; totient-phi num
+(defun totient-phi (num)
+
+  ;; conditional
+  (cond
+
+   ;; if num = 1.
+   ((= num 1)
+
+    ;; return 1
+    1)
+
+   ;; if num neg.
+   ((< num 1)
+
+    ;; return that I don't know
+    'dont-know)
+
+   ;; default. 
+   (t
+
+    ;; call a recusive function.
+    (totient-phi-rec num (1- num)))))
+
+;; totient-phi-rec num num-rec
+(defun totient-phi-rec (num num-rec)
+
+  ;; conditional.
+  (cond
+
+   ;; if num-rec = 1.
+   ((= num-rec 1)
+
+    ;; return 1.
+    1)
+
+   ;; check if num e the num-rec are coprime
+   ((coprime num num-rec)
+
+    ;; if they are add 1 and call recursive again.
+    (1+ (totient-phi-rec num (1- num-rec))))
+
+   ;; they are not coprime.
+   (t
+
+    ;; just call the recursive again.
+    (totient-phi-rec num (1- num-rec)))))
+
+;;; Tests
+
+(ert-deftest totient-phi-01 ()
+  (should (equal (totient-phi 10)
+		 4)))
+
+(ert-deftest totient-phi-02 ()
+  (should (equal (totient-phi -10)
+		 'dont-know)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P35 (**) Determine the prime factors of a given positive integer.
 ; Construct a flat list containing the prime factors in ascending order.
 ; Example:
