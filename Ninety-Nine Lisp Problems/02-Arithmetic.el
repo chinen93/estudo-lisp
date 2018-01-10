@@ -66,6 +66,32 @@
 ; * (gcd 36 63)
 ; 9
 
+;; gcd numA numB
+(defun gcd (numA numB)
+
+  (cond
+
+   ;; If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
+   ((zerop numA)
+    numB)
+
+   ;; If B = 0 then GCD(A,B)=A, since the GCD(A,0)=A, and we can stop.  
+   ((zerop numB)
+    numA)
+   
+   ;; Write A in quotient remainder form (A = B⋅Q + R)
+   ;; Find GCD(B,R) using the Euclidean Algorithm since GCD(A,B) = GCD(B,R)
+   (t
+    (gcd numB (% numA numB)))))
+
+;;; Tests
+
+(ert-deftest gcd-01 ()
+  (should (equal (gcd 36 63)
+		 9)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P33 (*) Determine whether two positive integer numbers are coprime.
 ; Two numbers are coprime if their greatest common divisor equals 1.
 ; Example:
