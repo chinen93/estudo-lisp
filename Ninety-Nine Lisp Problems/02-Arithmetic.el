@@ -102,6 +102,36 @@
 ; * (coprime 35 64)
 ; T
 
+;; coprime numA numB
+(defun coprime (numA numB)
+
+  ;; conditional:
+  (cond
+
+   ;; check if the greatest common divisor of A and B is equal 1.
+   ((= (gcd numA numB) 1)
+
+    ;; if is: return true.
+    t)
+
+   ;; default:
+   (t
+
+    ;; return nil.
+    nil)))
+
+;;; Tests
+
+(ert-deftest coprime-01 ()
+  (should (equal (coprime 35 64)
+		 t)))
+
+(ert-deftest coprime-02 ()
+  (should (equal (coprime 5 25)
+		 nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P34 (**) Calculate Euler's totient function phi(m).
 ; Euler's so-called totient function phi(m) is defined as the number of
 ; positive integers r (1 <= r < m) that are coprime to m.
