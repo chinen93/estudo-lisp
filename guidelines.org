@@ -5,4 +5,4 @@
 #+DATE-UPDATED: [2018-01-13 Sat]
 
 * References
-https://google.github.io/styleguide/lispguide.xml#Spelling_and_Abbreviations
+https://google.github.io/styleguide/lispguide.xml
