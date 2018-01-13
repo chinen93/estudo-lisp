@@ -1,0 +1,8 @@
+#+TITLE:        Guiderlines
+#+AUTHOR:       Pedro Chinen
+#+EMAIL:        ph.u.chinen@gmail.com
+#+DATE-CREATED: [2018-01-13 Sat]
+#+DATE-UPDATED: [2018-01-13 Sat]
+
+* References
+https://google.github.io/styleguide/lispguide.xml#Spelling_and_Abbreviations
