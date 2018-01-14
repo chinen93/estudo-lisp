@@ -2,7 +2,97 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-13 Sat]
+#+DATE-UPDATED: [2018-01-14 Sun]
 
 * References
 https://google.github.io/styleguide/lispguide.xml
+https://github.com/bbatsov/emacs-lisp-style-guide
+
+* Meta-Guide
+:PROPERTIES:
+:ID:       649c41ac-40d1-46ff-8d91-74d43bccbb75
+:END:
+
+Coisas para serem feitas que não estão diretamente ligadas ao código
+em si, mas com relação ao uso deste guia.
+
+** Cógido Legado / Código Antigo
+:PROPERTIES:
+:ID:       3700fb21-ac05-4a76-86a7-3a90d3b204bb
+:END:
+
+Muito código foi feito antes da criação deste guia, dessa forma tente
+manter todos os código utilizando tal guia. Tornando a leitura dos
+códigos mais intuitiva e fácil para os seus programas.
+
+As alterações nos códigos legados não devem alterar a lógica que
+estava criada, apenas o seu estilo e apresentação.
+
+Caso haja outras pessoas alterando os códigos que devem ser
+atualizados para seguir este guia informe tais pessoas, para que não
+haja muitos problemas na hora de juntar as alterações. Preferivelmente
+peça para que a outra pessoa mude o estilo do código.
+
+* Formatação
+
+** Gramática e Abreviações
+:PROPERTIES:
+:ID:       2c2b4fb7-76c9-4bdb-bf14-11b84220691d
+:END:
+
+Deve-se escrever comentários utilizando a gramática
+correta. Utilizando pontuações quando necessário.
+
+Ao utilizar abreviações seja consistente.
+
+** Tamanho da linha
+:PROPERTIES:
+:ID:       7beb3f56-c6fc-43d6-a68f-abd2237b0485
+:END:
+
+Sua linha de código não deve ter mais do que 80 caracteres.
+
+** Identação
+:PROPERTIES:
+:ID:       2b923221-59d0-4a8d-8ff3-50c98c9eb597
+:END:
+
+Mantenha a identação consistente pelo projeto.
+
+Idente de forma a facilitar o entendimento do código.
+
+Idealmente utilize a identação padrão utilizada no Emacs. Caso a
+identação do projeto seja diferente da padrão será preciso configurar
+para manter a consistência.
+
+Use identação fazendo funções complexas com muitos argumentos mais
+fáceis de ler. Caso os argumentos da função não caibam numa linha de
+código separe os argumentos em várias linhas de forma a melhorar a
+leitura.
+
+#+begin_src emacs-lisp
+  ;; Bad
+  (do-something first-argument second-argument (lambda (x)
+    (frob x)) fourth-argument last-argument)
+
+  ;; Better
+  (do-something first-argument
+                second-argument
+                #'(lambda (x) (frob x))
+                fourth-argument
+                last-argument)
+#+end_src
+
+** File Header
+:PROPERTIES:
+:ID:       21d0532a-1849-4918-9b2c-bd8b25244656
+:END:
+
+Deve-se incluir uma pequena descrição no topo de cada arquivo de código.
+
+** Espaço Verticals
+:PROPERTIES:
+:ID:       0a8e0812-2440-4a0b-9e21-553af26c502d
+:END:
+
+Um espaço em branco entre cada "top-level form"
