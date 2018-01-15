@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-14 Sun]
+#+DATE-UPDATED: [2018-01-15 Mon]
 
 * References
 https://google.github.io/styleguide/lispguide.xml
@@ -88,7 +88,7 @@ leitura.
 :ID:       21d0532a-1849-4918-9b2c-bd8b25244656
 :END:
 
-Deve-se incluir uma pequena descrição no topo de cada arquivo de código.
+Deve-se incluir uma pequena descrição no topo de cada arquivo de código. 
 
 ** Espaço Verticals
 :PROPERTIES:
@@ -96,3 +96,54 @@ Deve-se incluir uma pequena descrição no topo de cada arquivo de código.
 :END:
 
 Um espaço em branco entre cada "top-level form"
+
+#+begin_src emacs-lisp
+
+;;; CORRECT
+(defun function1 () 'body) 
+
+(defun function2 ()) 'body)
+
+(defvar var 'value)
+
+;;; WRONG
+(defun function1 () 'body) 
+(defun function2 ()) 'body)
+(defvar var 'value)
+#+end_src
+
+** Espaço Horizontal
+:PROPERTIES:
+:ID:       5fd5ca2c-f700-4f3b-a83c-cc68b87acf6d
+:END:
+
+Sem espaços entre parenteses.
+
+Não se deve colocar espaços antes nem depois de parenteses ou
+símbolos.
+
+Linhas sem código não devem ter espaços em branco, nem tabs.
+
+Fecha Parenteses não devem ser colocados por si só na linha. 
+
+#+begin_src emacs-lisp
+;; Ruim
+( defun factorial ( limit )
+  ( let (( product 1 ))
+    ( loop for i from 1 upto limit
+          do (setf product ( * product i ) ) )
+    product
+  )
+)
+;; Bom
+(defun factorial (limit)
+  (let ((product 1))
+    (loop for i from 1 upto limit
+          do (setf product (* product i)))
+    product))
+#+end_src
+
+* Documentação
+:PROPERTIES:
+:ID:       025cb4ca-bfde-4690-acb1-32f40ff583c4
+:END:
