@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-15 Mon]
+#+DATE-UPDATED: [2018-01-16 Tue]
 
 * References
 https://google.github.io/styleguide/lispguide.xml
@@ -147,3 +147,79 @@ Fecha Parenteses não devem ser colocados por si só na linha.
 :PROPERTIES:
 :ID:       025cb4ca-bfde-4690-acb1-32f40ff583c4
 :END:
+
+** Documente TUDO
+:PROPERTIES:
+:ID:       eaf7873e-2bea-4bc2-8e1c-b449b786c20f
+:END:
+
+Deve-se documentar tudo que for possível.
+
+Utilizar DOCSTRINGS para explicar o máximo possível.
+
+Para funções a documentação deve mostrar:
+- O que ela faz.
+- Seus argumentos e o que eles fazem.
+- Qual o valor retornado.
+- Quais condições a função pode sinalizar.
+
+Em DOCSTRINGS deixe argumentos em maiuscula.
+
+#+begin_src emacs-lisp
+  (defun small-prime-number-p (n)
+    "Return T if N, an integer, is a prime number. Otherwise, return NIL."
+    (cond ((or (< n 2))
+           nil)
+          ((= n 2)
+           t)
+          ((divisorp 2 n)
+           nil)
+          (t
+           (loop for i from 3 upto (sqrt n) by 2
+                 never (divisorp i n)))))
+  (defgeneric table-clear (table)
+    (:documentation
+      "Like clrhash, empties the TABLE of all
+      associations, and returns the table itself."))
+#+end_src
+
+Quando arrumar um código, veja se a documentação esta de acordo com o
+código alterado.
+
+** Comentários
+:PROPERTIES:
+:ID:       93d86c9c-a45f-4471-9b55-7d94458cbe3f
+:END:
+
+Use o número correto de ; para comentar 
+
+*** ;;;; (4) Comentários Importantes
+:PROPERTIES:
+:ID:       1c3b720b-80b4-4086-bb61-8f7e691d9697
+:END:
+
+File Headers e comentários importantes que funcionam para grande parte
+do código.
+
+*** ;;; (3) Comentários Locais
+:PROPERTIES:
+:ID:       069cf4dd-6388-4f66-9c1b-6ac402e4cdf5
+:END:
+
+Comentário que é aplicado a apenas um top-level form ou um grupo
+pequeno de top-level.
+
+*** ;; (2) Comentários Dentro Top-Level
+:PROPERTIES:
+:ID:       69b83011-21c1-43d0-814b-3992059432a3
+:END:
+
+Comentários internos de um top-level. Comentário que aparece entre linhas.
+
+*** ; (1) Comentário Linha
+:PROPERTIES:
+:ID:       97422790-7a3b-4d5a-87c3-0d2c62cbc8ec
+:END:
+
+Comentário para explicar o que a expressão na linha significa. Ela
+deve ser colocada na mesma linha que o código.
