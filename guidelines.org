@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-16 Tue]
+#+DATE-UPDATED: [2018-01-17 Wed]
 
 * References
 https://google.github.io/styleguide/lispguide.xml
@@ -223,3 +223,96 @@ Comentários internos de um top-level. Comentário que aparece entre linhas.
 
 Comentário para explicar o que a expressão na linha significa. Ela
 deve ser colocada na mesma linha que o código.
+
+** Gramática e Pontuação
+:PROPERTIES:
+:ID:       177dc8c3-504d-4f68-940f-4d7d6c1af352
+:END:
+
+Deve-se usar pontuações corretamente ao documentar.
+
+Começar com letra maiúscula, terminar com pontuações, etc.
+
+* Nomeação
+:PROPERTIES:
+:ID:       a456d6d2-a2cc-43e1-b63d-a1be45c7ef6a
+:END:
+
+** Símbolos
+:PROPERTIES:
+:ID:       fd61d440-af90-419c-9016-10a631a6a832
+:END:
+
+Use caixa-baixa para todos os símbolos. Tornando-os mais legíveis e
+fáceis de serem encontrados.
+
+Coloque hífen entrre palavras de um símbolo. Tornando a nomeação de
+símbolos padronizada.
+
+#+begin_src emacs-lisp
+  ;; Ruim
+  (defvar maxWidgetCnt 200 "DOCSTRING")
+
+  ;; Bom
+  (defvar max-widget-count 200 "DOCSTRING")
+#+end_src
+
+** Demonstre Intenção e não Conteúdo
+:PROPERTIES:
+:ID:       7bd71be9-33f4-4fa2-bd6e-ccc9898dce60
+:END:
+
+Deve-se escolher um nome que seja de acordo com a ideia mais abstrata
+do que a variável deve conter. Não como ela deve ser implementada.
+
+Seja consistente. Casa uma variável seja passada de uma função para
+outra preserve o nome da variável na segunda função.
+
+** Variáveis Globais e Constantes
+:PROPERTIES:
+:ID:       04e584da-8e3d-4475-93d7-00afa876312c
+:END:
+
+Variáveis Globais devem ser precedidas e sucedidas do caracter "*".
+
+Constantes devem ser precedidae e sucedidade do caracter "+".
+
+Como não há distinção entre variáveis locais, globais e constantes na
+maneira como elas manipuladas dentro de um programa. Esse tipo de
+convenção facilita a identificação rápida de tais símbolos.
+
+#+begin_src emacs-lisp
+  (defconst +const+ 'value "DOCSTRING")
+
+  (defvar *global* 'value "DOCSTRING")
+#+end_src
+
+** Predicados (True/False)
+:PROPERTIES:
+:ID:       f9f1edc5-3ad3-4a16-98a2-cff3586e7560
+:END:
+
+Funções que retornam apenas (True/False) são chamadas de
+predicados. Por convenção os nomes das funções terminam com
+"-p". Indicando que elas são predicados, tornando mais fácil sua
+identificação.
+
+* Formas Apropriadas
+:PROPERTIES:
+:ID:       8f2cb7d8-8510-4f1d-8bfc-807ac24076cb
+:END:
+
+** Expressões Condicionais
+:PROPERTIES:
+:ID:       c835d92e-515f-4ce8-9726-93a0c19086b7
+:END:
+
+** Identidade, Comparações
+:PROPERTIES:
+:ID:       12c9bb78-1c50-4c23-8abc-76c810be2d83
+:END:
+
+** Iterações, Loops
+:PROPERTIES:
+:ID:       c8f0a8ec-2440-4a71-a6dc-1aa4fc203e50
+:END:
