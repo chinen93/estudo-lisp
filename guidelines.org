@@ -2,11 +2,12 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-17 Wed]
+#+DATE-UPDATED: [2018-01-18 Thu]
 
 * References
-https://google.github.io/styleguide/lispguide.xml
-https://github.com/bbatsov/emacs-lisp-style-guide
+https://google.github.io/styleguide/lispguide.xml [Terminar]
+https://github.com/bbatsov/emacs-lisp-style-guide [Terminar]
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html#Tips
 
 * Meta-Guide
 :PROPERTIES:
@@ -57,6 +58,8 @@ Sua linha de código não deve ter mais do que 80 caracteres.
 :ID:       2b923221-59d0-4a8d-8ff3-50c98c9eb597
 :END:
 
+Use <espaços> ao invés de <tabs> para identar
+
 Mantenha a identação consistente pelo projeto.
 
 Idente de forma a facilitar o entendimento do código.
@@ -81,6 +84,51 @@ leitura.
                 #'(lambda (x) (frob x))
                 fourth-argument
                 last-argument)
+#+end_src
+
+Se o primeiro argumento de uma função esta numa nova linha, idente-a
+de forma a ficar na mesma posição horizontal do nome da função.
+
+#+begin_src emacs-lisp
+  ;; Ruim
+  (format
+          "%s %d"
+          'something
+          'something-else)
+
+  ;; Bom
+  (format
+   "%s %d"
+   'something
+   'something-else)
+#+end_src
+
+Algumas formas são especiais, e possuem alguns argumentos e depois um
+corpo da forma. Por exemplo "if", "let", "with-current-buffer", etc
+são algumas dessas formas especias. Os argumentos dessas formas
+especiais devem ser colocas na mesma linha que o nome da forma. Se não
+for possível identar com 4 <espaços> o corpo da forma deve ser
+identada com 2 <espaços>.
+
+#+begin_src emacs-lisp
+  ;; Bom
+  (when 'something
+    'something-else)
+
+  (when
+      'something
+    'something-else)
+
+  ;; Ruim
+
+  (when 'something
+        'something-else)
+
+  ;; Parecendo uma função comum.
+  (when
+   'something
+   'something-else)
+
 #+end_src
 
 ** File Header
@@ -119,29 +167,40 @@ Um espaço em branco entre cada "top-level form"
 
 Sem espaços entre parenteses.
 
-Não se deve colocar espaços antes nem depois de parenteses ou
-símbolos.
+Se algum texto precede uma abertura, "(" "[" "{", ou é sucedido por
+uma fechadura, ")" "]" "}", devem ser separadas por um espaço. Caso
+isso não aconteça não se deve colocar espaços antes nem depois de
+parenteses ou símbolos.
 
 Linhas sem código não devem ter espaços em branco, nem tabs.
 
 Fecha Parenteses não devem ser colocados por si só na linha. 
 
 #+begin_src emacs-lisp
-;; Ruim
-( defun factorial ( limit )
-  ( let (( product 1 ))
-    ( loop for i from 1 upto limit
-          do (setf product ( * product i ) ) )
-    product
+  ;; Ruim
+  ( defun factorial ( limit )
+    ( let (( product 1 ))
+      ( loop for i from 1 upto limit
+            do (setf product ( * product i ) ) )
+      product
+    )
   )
-)
-;; Bom
-(defun factorial (limit)
-  (let ((product 1))
-    (loop for i from 1 upto limit
-          do (setf product (* product i)))
-    product))
+
+  (defun factorial(limit)
+    (let((product 1))
+      (loop for i from 1 upto limit
+            do(setf product(* product i)))
+      product))
+
+  ;; Bom
+  (defun factorial (limit)
+    (let ((product 1))
+      (loop for i from 1 upto limit
+            do (setf product (* product i)))
+      product))
 #+end_src
+
+Não se deve deixar espaços em branco depois do final da linha.
 
 * Documentação
 :PROPERTIES:
