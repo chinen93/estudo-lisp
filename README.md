@@ -17,4 +17,4 @@ convencional são chamadas de outras formas.
 ## Exercícios
 - [Land of Lisp: Learn to Program in Lisp, One Game at a Time!](http://landoflisp.com/)
 - [L-99: Ninety-Nine Lisp Problems](https://www.ic.unicamp.br/~meidanis/courses/problemas-lisp/L-99_Ninety-Nine_Lisp_Problems.html)
-  
+- [EXERCISM Emacs Lisp](http://exercism.io/languages/elisp/exercises)
