@@ -5,7 +5,7 @@
 #+DATE-UPDATED: [2018-01-18 Thu]
 
 * References
-https://google.github.io/styleguide/lispguide.xml [Terminar]
+https://google.github.io/styleguide/lispguide.xml [Ainda tem coisa avançadas]
 https://github.com/bbatsov/emacs-lisp-style-guide [Terminar]
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html#Tips
 
@@ -375,3 +375,63 @@ identificação.
 :PROPERTIES:
 :ID:       c8f0a8ec-2440-4a71-a6dc-1aa4fc203e50
 :END:
+
+* Representação de Estruturas de dados
+:PROPERTIES:
+:ID:       ae9726b5-ce45-4d59-9fb3-79d3fe0cdbb2
+:END:
+
+** Nil: lista vazia, false
+:PROPERTIES:
+:ID:       a6368ac3-ff95-4ae1-8f98-4101fe7543d9
+:END:
+
+O uso da palavra reservada "nil" implica em diversas interpretações: 
+
+- Falso. deve-se testar por falsidade por "nil" usando o operador
+  "not" ou usando o predicado "null".
+
+- Lista vazia. Neste caso use "'()", para testar se chegou ao final da
+  lista use "cl-endp" que é um predicado que verifica se chegou ao
+  final da lista.
+
+- Valor não existente ou não especificado. Nestes casos não se deve
+  usar a palavra reservada "nil", uma vez que ela pode ser entendida
+  de uma maneira incorreta. A melhor maneira de contornar este
+  problema é criar um identificador para este tipo de teste, por
+  exemplo "'inexistente".
+
+
+Neste ultimo caso, é possível e aconselhável utilizar diversos
+identificadores. Um para cada caso: valor não específicado, valor inexistente.
+
+** Não abuse de listas
+:PROPERTIES:
+:ID:       7dcd5b30-1920-47e8-9985-83d61d64829e
+:END:
+
+Apesar da linguagem ser chamada elisp "Emacs LISt Processing" o uso de
+listas para todas os tipos de dados não é a meneira mais eficiente de
+se utilizar a linguagem. Ela possui outros tipo de representação, tais
+como: pares, vetores, conjuntos, tabelas de hash, entre outras.
+
+Portanto utilize listas quando necessário. Afinal de contas esta é uma
+linguagem que possui diversas facilidades no uso de tal estrutura de
+dados. Mas saiba quando as utilizar. 
+
+Alguns usos comuns de listas são a iteração sequenciada dos valores
+contidos em uma lista; no uso de macros visto que o código é uma
+grande lista.
+
+*** Listas vs estruturas
+:PROPERTIES:
+:ID:       f3eb11f8-59b6-4d66-9efd-980f3e9072af
+:END:
+
+Não se deve utilizar listas como algo diferente do que um conjunto de
+elementos de um mesmo tipo. Não se deve utilizar listas como um modo
+de passar diversos valores de um lado para o outro dentro de seu
+programa.
+
+O modo correto de fazer tal ação é utilizar a função "defclass" para
+criar uma estrutura apropriada.
