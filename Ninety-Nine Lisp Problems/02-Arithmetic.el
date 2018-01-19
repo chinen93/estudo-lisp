@@ -214,6 +214,32 @@
 ; * (prime-factors 315)
 ; (3 3 5 7)
 
+(defun prime-factors (number)
+  "Determine the prime factors of NUMBER a given positive integer.
+Construct a flat list containing the prime factors in ascending order.
+"
+
+  ;; Conditionals
+  (cond
+
+   ((equal (mod number 2) 0)
+    (append '(2) (prime-factors (/ number 2))))
+    
+   (t
+    (list number))))
+
+;;; Tests
+
+(ert-deftest prime-factors-01 ()
+  (should (equal (prime-factors 315)
+		 '(3 3 5 7))))
+
+(ert-deftest prime-factors-02 ()
+  (should (equal (prime-factors 312)
+		 '(3 3 5 7))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P36 (**) Determine the prime factors of a given positive integer (2).
 ; Construct a list containing the prime factors and their multiplicity.
 ; Example:
