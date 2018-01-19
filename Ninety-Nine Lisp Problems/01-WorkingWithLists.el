@@ -728,11 +728,6 @@
   (should (equal (multiply 0 'a)
 		 '())))
 
-
-
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P13 (**) Run-length encoding of a list (direct solution).
@@ -745,21 +740,288 @@
 ; * (encode-direct '(a a a a b c c a a d e e e e))
 ; ((4 A) B (2 C) (2 A) D (4 E))
 
+;; encode-direct list
+(defun encode-direct (list)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: construct the encode for first elem of list
+    ;;            with the rest of list without elem.
+    (cons (encode-direct-atom (car list) list)
+	  (encode-direct (encode-direct-remove list)))))
+
+;; encode-direct-atom (elem list &optional num)
+(defun encode-direct-atom (elem list &optional num)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; is is: check if exist num.
+      (if (null num)
+
+	  ;; if don't exist: return nil to terminate the list.
+	  'nil
+
+	;; if exist: check if num is 1.
+	(if (equal 1 num)
+
+	    ;; if is: return elem.
+	    elem
+
+	  ;; if is not: return an encode for elem.
+	  (list num elem)))
+
+    ;; if is not: check if elem is equal car of list
+    (if (equal (car list) elem)
+
+	;; if is: check if exist num
+	(if (null num)
+
+	    ;; if don't exist: encode elem with 1
+	    (encode-direct-atom elem (cdr list) 1)
+
+	  ;; if exist: encode elem with num+1
+	  (encode-direct-atom elem (cdr list) (+ 1 num)))
+
+     ;; if exist: check if num is 1.
+      (if (equal 1 num)
+
+	  ;; if is: return elem.
+	  elem
+
+	;; if is not: return an encode for elem.
+	(list num elem)))))
+
+;; encode-direct-remove (list &optional elem)
+(defun encode-direct-remove (list &optional elem)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if exist elem.
+    (if (null elem)
+
+	;; if don't exist: remove from list the car of list.
+	(encode-direct-remove list (car list))
+
+      ;; if exist: check if elem is equal the car of list.
+      (if (equal (car list) elem)
+
+	  ;; if is: remove from rest of list the elem
+	  (encode-direct-remove (cdr list) elem)
+
+	;; if is not: return rest of list.
+	list))))
+
+;;; Tests
+
+(ert-deftest encode-direct-01 ()
+  (should (equal (encode-direct '(a a a a b c c a a d e e e e))
+		 '((4 a) b (2 c) (2 a) d (4 e)))))
+
+(ert-deftest encode-direct-02 ()
+  (should (equal (encode-direct '())
+		 '())))
+
+(ert-deftest encode-direct-atom-01 ()
+  (should (equal (encode-direct-atom 'a '())
+		 '())))
+
+(ert-deftest encode-direct-atom-02 ()
+  (should (equal (encode-direct-atom 'a '(a b b))
+		 'a)))
+
+(ert-deftest encode-direct-atom-03 ()
+  (should (equal (encode-direct-atom 'a '(a a a a))
+		 '(4 a))))
+
+(ert-deftest encode-direct-remove-01 ()
+  (should (equal (encode-direct-remove '(a a a) 'a)
+		 '())))
+
+(ert-deftest encode-direct-remove-02 ()
+  (should (equal (encode-direct-remove '(a a a))
+		 '())))
+
+(ert-deftest encode-direct-remove-03 ()
+  (should (equal (encode-direct-remove '(a a a b b) 'a)
+		 '(b b))))
+
+(ert-deftest encode-direct-remove-04 ()
+  (should (equal (encode-direct-remove '(a a a b b))
+		 '(b b))))
+
+(ert-deftest encode-direct-remove-04 ()
+  (should (equal (encode-direct-remove '() 'a)
+		 '())))
+
+(ert-deftest encode-direct-remove-05 ()
+  (should (equal (encode-direct-remove '())
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P14 (*) Duplicate the elements of a list.
 ; Example:
 ; * (dupli '(a b c c d))
 ; (A A B B C C C C D D)
 
+;; dupli list &optional elem
+(defun dupli (list &optional elem)
+
+  ;; check if list is null.
+  (if (null list)
+
+      ;; if is: return nil.
+      nil
+
+    ;; if is not: check if elem exist.
+    (if (null elem)
+
+	;; if don't exist: call dupli with list and car of list.
+	(dupli list (car list))
+
+      ;; if exist: create a list with elem duplicated
+      ;;           append it with dupli rest of list.
+      (append (list elem elem)
+	      (dupli (cdr list))))))
+
+;;; Tests
+
+(ert-deftest dupli-01 ()
+  (should (equal (dupli '(a b c c d))
+		 '(a a b b c c c c d d))))
+
+(ert-deftest dupli-02 ()
+  (should (equal (dupli '())
+		 '())))
+
+(ert-deftest dupli-03 ()
+  (should (equal (dupli '(a a a a))
+		 '(a a a a a a a a))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P15 (**) Replicate the elements of a list a given number of times.
 ; Example:
 ; * (repli '(a b c) 3)
 ; (A A A B B B C C C)
-;
+
+;; repli list num &optional elem
+(defun repli (list num &optional elem)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return end of list.
+    nil)
+
+   ;; if elem is null.
+   ((null elem)
+
+    ;; call repli with car of list.
+    (repli list num (car list)))
+
+   ;; default:
+   (t
+
+    ;; append sublist of repeated elem
+    ;;        with repli of rest of list.
+    (append (make-list num elem)
+	    (repli (cdr list) num)))))
+
+;;; Tests
+
+(ert-deftest repli-01 ()
+  (should (equal (repli '(a b c) 3)
+		 '(a a a b b b c c c))))
+
+(ert-deftest repli-02 ()
+  (should (equal (repli '(a b c) 1)
+		 '(a b c))))
+
+(ert-deftest repli-03 ()
+  (should (equal (repli '() 1)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P16 (**) Drop every N'th element from a list.
 ; Example:
 ; * (drop '(a b c d e f g h i k) 3)
 ; (A B D E G H K)
+
+;; drop list nth &optional count
+(defun drop (list nth &optional count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if count is null.
+   ((null count)
+
+    ;; call drop with count as nth.
+    (drop list nth nth))
+
+   ;; if nth < 0.
+   ((< nth 1)
+
+    ;; don't drop anyone.
+    list)
+
+   ;; default:
+   (t
+
+    ;; check if count > 1.
+    (if (> count 1)
+
+	;; if is: append first elem of list
+	;;        drop rest of list with count-1.
+	(append (list (car list))
+		(drop (cdr list) nth (- count 1)))
+
+      ;; if is not: drop elem.
+      (drop (cdr list) nth nth)))))
+
+;;; Tests
+
+(ert-deftest drop-01 ()
+  (should (equal (drop '(a b c d e f g h i k) 3)
+		 '(a b d e g h k))))
+
+(ert-deftest drop-02 ()
+  (should (equal (drop '(a b c d e f g h i k) 1)
+		 '())))
+
+(ert-deftest drop-03 ()
+  (should (equal (drop '(a b c d e f g h i k) 0)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest drop-04 ()
+  (should (equal (drop '(a b c d e f g h i k) -3)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest drop-05 ()
+  (should (equal (drop '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P17 (*) Split a list into two parts; the length of the first part is given.
 ; Do not use any predefined predicates.
@@ -767,6 +1029,155 @@
 ; Example:
 ; * (split '(a b c d e f g h i k) 3)
 ; ( (A B C) (D E F G H I K))
+
+
+;; split list nth
+(defun split (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; just return list.
+     list)
+
+   ;; default:
+   (t
+
+    ;; create list with split-list of first part
+    ;; and the as a list rest.
+    (cons (split-list list nth nth)
+	  (list (split-remove list nth nth))))))
+
+;; split-list list nth count
+(defun split-list (list nth count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; return list.
+    list)
+
+   ;; if count < 1.
+   ((< count 1)
+
+    ;; just return list.
+     list)
+
+   ;; if count > 1.
+   ((> count 1)
+
+    ;; append car of list with split of rest of list and count-1.
+    (append (list (car list))
+	    (split-list (cdr list) nth (- count 1))))
+
+   ;; default:
+   (t
+
+    ;; return first elem as a list.
+    (list (car list)))))
+
+
+;; split-remove list nth count
+(defun split-remove (list nth count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; return list.
+    list)
+   
+   ;; if count < 1.
+   ((< count 1)
+
+    ;; just return list.
+     list)
+
+   ;; if count > 0.
+   ((> count 0)
+
+    ;; remove the first elem and try the rest of list.
+    (split-remove (cdr list) nth (- count 1)))
+
+   ;; default:
+   (t
+
+    ;; return list as a list.
+    list)))
+
+;;; Tests
+
+(ert-deftest split-01 ()
+  (should (equal (split '(a b c d e f g h i k) 3)
+		 '((a b c) (d e f g h i k)))))
+
+(ert-deftest split-02 ()
+  (should (equal (split '(a b c d e f g h i k) 1)
+		 '((a) (b c d e f g h i k)))))
+
+(ert-deftest split-03 ()
+  (should (equal (split '(a b c d e f g h i k) 0)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-04 ()
+  (should (equal (split '(a b c d e f g h i k) -1)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-05 ()
+  (should (equal (split '() 3)
+		 '())))
+
+(ert-deftest split-list-01 ()
+  (should (equal (split-list '(a b c d e f g h i k) 3 3)
+		 '(a b c))))
+
+(ert-deftest split-list-02 ()
+  (should (equal (split-list '(a b c d e f g h i k) 3 -2)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-list-03 ()
+  (should (equal (split-list '() 3 3)
+		 '())))
+
+(ert-deftest split-remove-01 ()
+  (should (equal (split-remove '(a b c d e f g h i k) 3 3)
+		 '(d e f g h i k))))
+
+(ert-deftest split-remove-02 ()
+  (should (equal (split-remove '(a b c d e f g h i k) 3 -1)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest split-remove-03 ()
+  (should (equal (split-remove '() 3 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P18 (**) Extract a slice from a list.
 ; Given two indices, I and K, the slice is the list containing the elements
@@ -776,6 +1187,79 @@
 ; Example:
 ; * (slice '(a b c d e f g h i k) 3 7)
 ; (C D E F G)
+
+;; slice-range list beg end &optional count
+(defun slice-range (list beg end &optional count)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil.
+    nil)
+
+   ;; if count is null.
+   ((null count)
+
+    ;; slice-range list beg end 1.
+    (slice-range list beg end 1))
+
+   ;; if beg < 1.
+   ((< beg 1)
+    
+    ;; call function with beg as 1.
+    (slice-range list 1 end 1))
+
+   ;; if end < beg.
+   ((< end beg)
+
+    ;; return nil 'cause there's nothing to do.
+    nil)
+
+   ;; if count < beg.
+   ((< count beg)
+
+    ;; advance list and count.
+    (slice-range (cdr list) beg end (+ count 1)))
+
+   ;; if count > end.
+   ((> count end)
+
+    ;; return nil 'cause there's nothing to do.
+    nil)
+
+   ;; default:
+   (t
+
+    ;; append first elem with slice-range count+1 and rest of list.
+    (append (list (car list))
+	    (slice-range (cdr list) beg end (+ count 1))))))
+
+;;; Tests
+
+(ert-deftest slice-range-01 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 3 7)
+		 '(c d e f g))))
+
+(ert-deftest slice-range-02 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 4 2)
+		 '())))
+
+(ert-deftest slice-range-03 ()
+  (should (equal (slice-range '(a b c d e f g h i k) -1 3)
+		 '(a b c))))
+
+(ert-deftest slice-range-04 ()
+  (should (equal (slice-range '(a b c d e f g h i k) 1 100)
+		 '(a b c d e f g h i k))))
+
+(ert-deftest slice-range-05 ()
+  (should (equal (slice-range '() 4 2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P19 (**) Rotate a list N places to the left.
 ; Examples:
@@ -788,21 +1272,198 @@
 ; Hint: Use the predefined functions length and append, as well as the result
 ; of problem P17.
 
+;; uses P17 (split list nth)
+;; uses P04 (list-length list)
+;; rotate list amount
+(defun rotate (list amount)
+  
+  ;; serial bind of variables.
+  (let* (
+
+	 ;; var split-nth = index of nth element.
+	 (split-nth
+
+	  ;; check if amount > 0.
+	  (if (> amount 0)
+
+	      ;; if is: return amount.
+	      amount
+
+	    ;; if is not: return list length - amount.
+	    (+ (list-length list) amount)))
+
+	 ;; var split-list = split of list on split-nth element.
+	 (split-list (split list split-nth)))
+
+    ;; append second part of split with first part.
+    (append (car (cdr split-list)) (car split-list))))
+
+;;; Tests
+
+(ert-deftest rotate-01 ()
+  (should (equal (rotate '(a b c d e f g h) -2)
+		 '(g h a b c d e f))))
+
+(ert-deftest rotate-02 ()
+  (should (equal (rotate '(a b c d e f g h) 3)
+		 '(d e f g h a b c))))
+
+(ert-deftest rotate-03 ()
+  (should (equal (rotate '(a b c d e f g h) 0)
+		 '(a b c d e f g h))))
+
+(ert-deftest rotate-04 ()
+  (should (equal (rotate '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P20 (*) Remove the K'th element from a list.
 ; Example:
 ; * (remove-at '(a b c d) 2)
 ; (A C D)
+
+;; remove-at list nth
+(defun remove-at (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null.
+   ((null list)
+
+    ;; return nil to terminate list.
+    nil)
+
+   ;; if nth < 1.
+   ((< nth 1)
+
+    ;; don't need to remove anybody return list.
+    list)
+
+   ;; if nth == 1.
+   ((equal nth 1)
+
+    ;; remove car of list returning just cdr of list.
+    (cdr list))
+
+   ;; default
+   (t
+
+    ;; append first elem with rest of list removed nth element.
+    (append (list (car list))
+	    (remove-at (cdr list) (- nth 1))))))
+
+;;; Tests
+
+(ert-deftest remove-at-01 ()
+  (should (equal (remove-at '(a b c d) 2)
+		 '(a c d))))
+
+(ert-deftest remove-at-02 ()
+  (should (equal (remove-at '(a b c d) -2)
+		 '(a b c d))))
+
+(ert-deftest remove-at-03 ()
+  (should (equal (remove-at '(a b c d) 100)
+		 '(a b c d))))
+
+(ert-deftest remove-at-04 ()
+  (should (equal (remove-at '() 2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P21 (*) Insert an element at a given position into a list.
 ; Example:
 ; * (insert-at 'alfa '(a b c d) 2)
 ; (A ALFA B C D)
 
+;; insert-at elem list nth
+(defun insert-at (elem list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if nth < 1
+   ((< nth 1)
+
+    ;; return list 'cause there's nothing to do.
+    list)
+
+   ;; if nth == 1.
+   ((equal nth 1)
+
+    ;; return list with elem as first item and rest of list.
+    (append (list elem) list))
+
+   ;; default:
+   (t
+
+    ;; append first elem with return of insert-at rest of list and nth-1.
+    (append (list (car list))
+	    (insert-at elem (cdr list) (- nth 1))))))
+
+;;; Tests
+
+(ert-deftest insert-at-01 ()
+  (should (equal (insert-at 'alfa '(a b c d) 2)
+		 '(a alfa b c d))))
+
+(ert-deftest insert-at-02 ()
+  (should (equal (insert-at 'alfa '(a b c d) -2)
+		 '(a b c d))))
+
+(ert-deftest insert-at-03 ()
+  (should (equal (insert-at 'alfa '(a b c d) 7)
+		 '(a b c d nil nil alfa))))
+
+(ert-deftest insert-at-04 ()
+  (should (equal (insert-at 'alfa '() 2)
+		 '(nil alfa))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P22 (*) Create a list containing all integers within a given range.
 ; If first argument is smaller than second, produce a list in decreasing order.
 ; Example:
 ; * (range 4 9)
 ; (4 5 6 7 8 9)
+
+;; range beg end
+(defun range (beg end)
+
+  ;; conditionals:
+  (cond
+
+   ;; if end < beg.
+   ((< end beg)
+
+    ;; return nil, don't have anything to do.
+    nil)
+
+   ;; default
+   (t
+
+    ;; append beg with range of beg+1 end.
+    (append (list beg)
+	    (range (+ 1 beg) end)))))
+
+;;; Tests
+
+(ert-deftest range-01 ()
+  (should (equal (range 4 9)
+		 '(4 5 6 7 8 9))))
+
+(ert-deftest range-02 ()
+  (should (equal (range -5 5)
+		 '(-5 -4 -3 -2 -1 0 1 2 3 4 5))))
+
+(ert-deftest range-03 ()
+  (should (equal (range 5 5)
+		 '(5))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P23 (**) Extract a given number of randomly selected elements from a list.
 ; The selected items shall be returned in a list.
@@ -812,6 +1473,95 @@
 ;
 ; Hint: Use the built-in random number generator and the result of problem P20.
 
+;; rnd-select list amount
+(defun rnd-select (list amount)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list is null or amount < 0 or amount > list length.  
+   ((or (null list) (< amount 1) (> amount (list-length list)))
+
+    ;; return nil 'cause there's nothing to select.
+    nil)
+
+
+   ;; get random elem.
+   (t
+    
+    ;; parallel bind
+    (let (
+
+	  ;; position for elem
+	  (pos (+ 1 (random (list-length list)))))
+
+      ;; append selected elem at position with another random elem
+      (append (list (select-at list pos))
+	      (rnd-select (remove-at list pos) (- amount 1)))))))
+
+;; select-at list nth
+(defun select-at (list nth)
+
+  ;; conditionals:
+  (cond
+
+   ;; if list if null or nth > list length or nth < 0.
+   ((or (null list) (> nth (list-length list)) (< nth 0))
+
+    ;; return nil
+    nil)
+
+   ;; if nth > 1.
+   ((> nth 1)
+    
+    ;; continue to search for elem.
+    (select-at (cdr list) (- nth 1)))
+
+   ;; if nth == 1.
+   (t
+    
+    ;; return selected elem
+    (car list))))
+
+;;; Tests
+(ert-deftest rnd-select-01 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 3))
+		 3)))
+
+(ert-deftest rnd-select-02 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 6))
+		 6)))
+
+(ert-deftest rnd-select-03 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) 100))
+		 0)))
+
+(ert-deftest rnd-select-04 ()
+  (should (equal (list-length (rnd-select '(a b c d e f g h) -2))
+		 0)))
+
+(ert-deftest rnd-select-05 ()
+  (should (equal (list-length (rnd-select '() 3))
+		 0)))
+
+(ert-deftest select-at-01 ()
+  (should (equal (select-at '(a b c d e) 2)
+		 'b)))
+
+(ert-deftest select-at-02 ()
+  (should (equal (select-at '(a b c d e) -2)
+		 '())))
+
+(ert-deftest select-at-03 ()
+  (should (equal (select-at '(a b c d e) 100)
+		 '())))
+
+(ert-deftest select-at-04 ()
+  (should (equal (select-at '() 3)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P24 (*) Lotto: Draw N different random numbers from the set 1..M.
 ; The selected numbers shall be returned in a list.
 ; Example:
@@ -820,12 +1570,72 @@
 ;
 ; Hint: Combine the solutions of problems P22 and P23.
 
+;; Uses P22 (range beg end)
+;; Uses P23 (rnd-select list amount)
+;; lotto-select amount maxrange
+(defun lotto-select (amount maxrange)
+
+  ;; conditionals:
+  (cond
+
+   ;; if amount > maxrange or maxrange < 1 or amount < 1.
+   ((or (> amount maxrange) (< maxrange 1) (< amount 1))
+
+    ;; return nil 'cause elements can't be select.
+    nil)
+
+   ;; select elements.
+   (t
+
+    ;; parallel bind.
+    (let (
+	  
+	  ;; create a list with range of elements.
+	  (range (range 1 maxrange)))
+
+      ;; select amount of elements randomly from range.
+      (rnd-select range amount)))))
+
+;;; Tests
+
+(ert-deftest lotto-select-01 ()
+  (should (equal (list-length (lotto-select 6 49))
+		 '6)))
+
+(ert-deftest lotto-select-02 ()
+  (should (equal (lotto-select 100 49)
+		 '())))
+
+(ert-deftest lotto-select-03 ()
+  (should (equal (lotto-select 6 -2)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P25 (*) Generate a random permutation of the elements of a list.
 ; Example:
 ; * (rnd-permu '(a b c d e f))
 ; (B A D C E F)
 ;
 ; Hint: Use the solution of problem P23.
+
+;; rnd-permu list
+(defun rnd-permu (list)
+  ;; parallel bind
+  (let (
+
+	;; length of list
+	(length (list-length list)))
+
+    ;; call select randomly list length elements
+    (rnd-select list length)))
+
+;;; Tests
+(ert-deftest rnd-permu-01 ()
+  (should (equal (list-length (rnd-permu '(a b c d e f g h i j)))
+		 '10)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P26 (**) Generate the combinations of K distinct objects chosen from the N
 ; elements of a list
@@ -838,6 +1648,102 @@
 ; * (combination 3 '(a b c d e f))
 ; ((A B C) (A B D) (A B E) ... )
 
+;;; https://groups.google.com/forum/#!topic/comp.lang.lisp/85MTsSUqjO4
+;;; comb1
+(defun combination (elem-list size)
+
+  ;; conditionals:
+  (cond
+
+   ;; if size < 1
+   ((< size 1)
+
+    ;; return nil.
+    (list nil))
+
+   ;; if elem-list is empty.
+   ((null elem-list)
+
+    ;; return nil.
+    nil)
+
+   ;; default:
+   (t
+
+    ;; concatenate lists
+    (nconc
+
+     ;; For each element of (combination (cdr elem-list) (1- size)) call the
+     ;; lambda function. Which get an element and construct a list with
+     ;; the (car elem-list).
+     (mapcar #'(lambda (c)
+		 (cons (car elem-list) c))
+	     (combination (cdr elem-list) (1- size)))
+
+     ;; call combination recursively with (cdr elem-list)
+     (combination (cdr elem-list) size)))))
+
+;; (combination '(a b c d) 2) -> [(combination '(b c d) 1)]  ((a b) (a c) (a d))
+;;                               (combination '(b c d) 2)    ((b c) (b d) (c d))
+;; ((a b) (a c) (a d) (b c) (b d) (c d))
+
+;; (combination '(b c d) 1) -> [(combination '(c d) 0)]  (b)
+;;                             (combination '(c d) 1)    ((c) (d))
+;; ((b) (c) (d))
+
+;; (combination '(c d) 1) -> [(combination '(d) 0)]  (c)
+;;                           (combination '(d) 1)    (d)
+;; ((c) (d))
+
+;; (combination '(d) 1) -> [(combination '() 0)]  (d)
+;;                         (combination '() 1)    ()
+;; ((d))
+
+;; (combination '(b c d) 2) -> [(combination '(c d) 1)]  ((b c) (b d))
+;;                             (combination '(c d) 2)    ((c d))
+;; ((b c) (b d) (c d))
+
+;; (combination '(c d) 2) -> [(combination '(d) 1)]  (c d) 
+;;                           (combination '(d) 2)    ()
+;; ((c d))
+
+;; (combination '(d) 2) -> [(combination '() 1)]  (d) 
+;;                         (combination '() 2)    ()
+;; ((d))
+
+;;; Tests
+
+(ert-deftest combination-01()
+  (should (equal (combination '(a b c d e) 3)
+		 '((a b c)
+		   (a b d)
+		   (a b e)
+		   (a c d)
+		   (a c e)
+		   (a d e)
+		   (b c d)
+		   (b c e)
+		   (b d e)
+		   (c d e)))))
+
+(ert-deftest combination-02 ()
+  (should (equal (combination '() 3)
+		 '())))
+
+(ert-deftest combination-03 ()
+  (should (equal (combination '(a b c d) 0)
+		 '(()))))
+
+(ert-deftest combination-04 ()
+  (should (equal (combination '(a b c d) -2)
+		 '(()))))
+
+(ert-deftest combination-05 ()
+  (should (equal (combination '(a b c d) 100)
+		 '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  
 ; P27 (**) Group the elements of a set into disjoint subsets.
 ; a) In how many ways can a group of 9 people work in 3 disjoint subgroups of
 ; 2, 3 and 4 persons? Write a function that generates all the possibilities

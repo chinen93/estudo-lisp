@@ -1,9 +1,63 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arithmetic
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;
 ; P31 (**) Determine whether a given integer number is prime.
 ; Example:
 ; * (is-prime 7)
 ; T
+
+(defun is-prime (num)
+
+  (cond
+
+   ((or (= num 2)
+	(= num 3)
+	(= num 5)
+	(= num 7)
+	(= num 11)
+	(= num 19)
+	(= num 23)
+	(= num 29)
+	(= num 31))
+    t)
+   
+   ((or (< num 1)
+	(= 1 num)
+	(= (mod num 2) 0)
+	(= (mod num 3) 0)
+	(= (mod num 5) 0)
+	(= (mod num 7) 0)
+	(= (mod num 11) 0)
+	(= (mod num 19) 0)
+	(= (mod num 23) 0)
+	(= (mod num 29) 0)
+	(= (mod num 31) 0))
+    nil)
+   
+   (t
+    'dont-know)))
+
+;;; Tests
+
+(ert-deftest is-prime-01 ()
+  (should (equal (is-prime 7)
+		 t)))
+
+(ert-deftest is-prime-02 ()
+  (should (equal (is-prime 8)
+		 nil)))
+
+(ert-deftest is-prime-03 ()
+  (should (equal (is-prime 1)
+		 nil)))
+
+(ert-deftest is-prime-04 ()
+  (should (equal (is-prime 103)
+		 'don-know)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P32 (**) Determine the greatest common divisor of two positive integer
 ; numbers.
@@ -12,11 +66,71 @@
 ; * (gcd 36 63)
 ; 9
 
+;; gcd numA numB
+(defun gcd (numA numB)
+
+  (cond
+
+   ;; If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
+   ((zerop numA)
+    numB)
+
+   ;; If B = 0 then GCD(A,B)=A, since the GCD(A,0)=A, and we can stop.  
+   ((zerop numB)
+    numA)
+   
+   ;; Write A in quotient remainder form (A = B⋅Q + R)
+   ;; Find GCD(B,R) using the Euclidean Algorithm since GCD(A,B) = GCD(B,R)
+   (t
+    (gcd numB (% numA numB)))))
+
+;;; Tests
+
+(ert-deftest gcd-01 ()
+  (should (equal (gcd 36 63)
+		 9)))
+
+(ert-deftest gcd-02 ()
+  (should (equal (gcd 2 6)
+		 2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P33 (*) Determine whether two positive integer numbers are coprime.
 ; Two numbers are coprime if their greatest common divisor equals 1.
 ; Example:
 ; * (coprime 35 64)
 ; T
+
+;; coprime numA numB
+(defun coprime (numA numB)
+
+  ;; conditional:
+  (cond
+
+   ;; check if the greatest common divisor of A and B is equal 1.
+   ((= (gcd numA numB) 1)
+
+    ;; if is: return true.
+    t)
+
+   ;; default:
+   (t
+
+    ;; return nil.
+    nil)))
+
+;;; Tests
+
+(ert-deftest coprime-01 ()
+  (should (equal (coprime 35 64)
+		 t)))
+
+(ert-deftest coprime-02 ()
+  (should (equal (coprime 5 25)
+		 nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P34 (**) Calculate Euler's totient function phi(m).
 ; Euler's so-called totient function phi(m) is defined as the number of
@@ -33,6 +147,66 @@
 ; most primitive method to calculate this function (there are smarter ways
 ; that we shall discuss later).
 ;
+
+;; totient-phi num
+(defun totient-phi (num)
+
+  ;; conditional
+  (cond
+
+   ;; if num = 1.
+   ((= num 1)
+
+    ;; return 1
+    1)
+
+   ;; if num neg.
+   ((< num 1)
+
+    ;; return that I don't know
+    'dont-know)
+
+   ;; default. 
+   (t
+
+    ;; call a recusive function.
+    (totient-phi-rec num (1- num)))))
+
+;; totient-phi-rec num num-rec
+(defun totient-phi-rec (num num-rec)
+
+  ;; conditional.
+  (cond
+
+   ;; if num-rec = 1.
+   ((= num-rec 1)
+
+    ;; return 1.
+    1)
+
+   ;; check if num e the num-rec are coprime
+   ((coprime num num-rec)
+
+    ;; if they are add 1 and call recursive again.
+    (1+ (totient-phi-rec num (1- num-rec))))
+
+   ;; they are not coprime.
+   (t
+
+    ;; just call the recursive again.
+    (totient-phi-rec num (1- num-rec)))))
+
+;;; Tests
+
+(ert-deftest totient-phi-01 ()
+  (should (equal (totient-phi 10)
+		 4)))
+
+(ert-deftest totient-phi-02 ()
+  (should (equal (totient-phi -10)
+		 'dont-know)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P35 (**) Determine the prime factors of a given positive integer.
 ; Construct a flat list containing the prime factors in ascending order.
