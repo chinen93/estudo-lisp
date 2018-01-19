@@ -2,11 +2,11 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-18 Thu]
+#+DATE-UPDATED: [2018-01-19 Fri]
 
 * References
 https://google.github.io/styleguide/lispguide.xml [Ainda tem coisa avançadas]
-https://github.com/bbatsov/emacs-lisp-style-guide [Terminar]
+https://github.com/bbatsov/emacs-lisp-style-guide [Terminado]
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html#Tips
 
 * Meta-Guide
@@ -35,7 +35,6 @@ haja muitos problemas na hora de juntar as alterações. Preferivelmente
 peça para que a outra pessoa mude o estilo do código.
 
 * Formatação
-
 ** Gramática e Abreviações
 :PROPERTIES:
 :ID:       2c2b4fb7-76c9-4bdb-bf14-11b84220691d
@@ -131,7 +130,7 @@ identada com 2 <espaços>.
 
 #+end_src
 
-** File Header
+** Informações do Arquivo
 :PROPERTIES:
 :ID:       21d0532a-1849-4918-9b2c-bd8b25244656
 :END:
@@ -207,7 +206,7 @@ Não se deve deixar espaços em branco depois do final da linha.
 :ID:       025cb4ca-bfde-4690-acb1-32f40ff583c4
 :END:
 
-** Documente TUDO
+** Documente TUDO (DOCSTRINGS)
 :PROPERTIES:
 :ID:       eaf7873e-2bea-4bc2-8e1c-b449b786c20f
 :END:
@@ -250,6 +249,12 @@ código alterado.
 :ID:       93d86c9c-a45f-4471-9b55-7d94458cbe3f
 :END:
 
+Verifique se existe a necessidade de colocar comentários, alguns
+códigos são simples e diretos.
+
+Sempre deixe comentários atualizados. Um comentário desatualizado
+atrapalha deixando partes ambíguas no código.
+
 Use o número correto de ; para comentar 
 
 *** ;;;; (4) Comentários Importantes
@@ -257,8 +262,10 @@ Use o número correto de ; para comentar
 :ID:       1c3b720b-80b4-4086-bb61-8f7e691d9697
 :END:
 
-File Headers e comentários importantes que funcionam para grande parte
-do código.
+Informações do Arquivo e comentários importantes que funcionam para
+grande parte do código.
+
+Sempre deixe linhas em branco depois deste tipo de comentário.
 
 *** ;;; (3) Comentários Locais
 :PROPERTIES:
@@ -267,6 +274,8 @@ do código.
 
 Comentário que é aplicado a apenas um top-level form ou um grupo
 pequeno de top-level.
+
+Sempre deixe linhas em branco depois deste tipo de comentário.
 
 *** ;; (2) Comentários Dentro Top-Level
 :PROPERTIES:
@@ -360,21 +369,45 @@ identificação.
 :PROPERTIES:
 :ID:       8f2cb7d8-8510-4f1d-8bfc-807ac24076cb
 :END:
-
 ** Expressões Condicionais
 :PROPERTIES:
 :ID:       c835d92e-515f-4ce8-9726-93a0c19086b7
 :END:
+
+Utilize formas apropriadas quando precisa fazer algum tipo de fluxo condicional.
+
+Por exemplo: 
+
+- Utilize "when" e "unless" quando apenas uma das
+alternativas for conveniente para o programa ao invés de utilizar um
+"if" com algum dos argumentos faltando.
+
+- Use "if" se tiver duas alternativas.
+
+- Use "cond" caso existam mais de duas alternativas.
 
 ** Identidade, Comparações
 :PROPERTIES:
 :ID:       12c9bb78-1c50-4c23-8abc-76c810be2d83
 :END:
 
+Use a forma apropriada quando for comparar símbolos.
+
+Deve-se usar "eql" para comparar objetos e símbolos por IDENTIDADE.
+
+Deve-se usar "eq" parea comparar números ou letras. 
+
+Escolhendo entre "eq" e "eql", deve-se escolher "eql" a menos que
+esteja executando alguma função que seja crítica em performace.
+
 ** Iterações, Loops
 :PROPERTIES:
 :ID:       c8f0a8ec-2440-4a71-a6dc-1aa4fc203e50
 :END:
+
+Deve-se usar formas mais simples quando possível. "dolist" ou
+"dotimes" ao invés de "loop" nos casos onde não se esta utilizando
+algumas das facilidades de "loop".
 
 * Representação de Estruturas de dados
 :PROPERTIES:
@@ -435,3 +468,13 @@ programa.
 
 O modo correto de fazer tal ação é utilizar a função "defclass" para
 criar uma estrutura apropriada.
+* Bibliotecas
+:PROPERTIES:
+:ID:       d96f450e-cf39-49f1-8ed0-d374c849fe5d
+:END:
+
+Deve-se colocar a função "provide" e um comentário apropriado ao final
+de arquivos que desejam ser importado por outros usando "require". 
+
+Sempre utilize "require" ao inves de "load" ou "load-library" ao
+importar outros arquivos.
