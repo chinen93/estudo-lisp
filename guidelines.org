@@ -2,7 +2,479 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-13 Sat]
-#+DATE-UPDATED: [2018-01-13 Sat]
+#+DATE-UPDATED: [2018-01-19 Fri]
 
 * References
-https://google.github.io/styleguide/lispguide.xml
+https://google.github.io/styleguide/lispguide.xml [Ainda tem coisa avançadas]
+https://github.com/bbatsov/emacs-lisp-style-guide [Terminado]
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html#Tips
+
+* Meta-Guide
+:PROPERTIES:
+:ID:       649c41ac-40d1-46ff-8d91-74d43bccbb75
+:END:
+
+Coisas para serem feitas que não estão diretamente ligadas ao código
+em si, mas com relação ao uso deste guia.
+
+** Cógido Legado / Código Antigo
+:PROPERTIES:
+:ID:       3700fb21-ac05-4a76-86a7-3a90d3b204bb
+:END:
+
+Muito código foi feito antes da criação deste guia, dessa forma tente
+manter todos os código utilizando tal guia. Tornando a leitura dos
+códigos mais intuitiva e fácil para os seus programas.
+
+As alterações nos códigos legados não devem alterar a lógica que
+estava criada, apenas o seu estilo e apresentação.
+
+Caso haja outras pessoas alterando os códigos que devem ser
+atualizados para seguir este guia informe tais pessoas, para que não
+haja muitos problemas na hora de juntar as alterações. Preferivelmente
+peça para que a outra pessoa mude o estilo do código.
+
+* Formatação
+** Gramática e Abreviações
+:PROPERTIES:
+:ID:       2c2b4fb7-76c9-4bdb-bf14-11b84220691d
+:END:
+
+Deve-se escrever comentários utilizando a gramática
+correta. Utilizando pontuações quando necessário.
+
+Ao utilizar abreviações seja consistente.
+
+** Tamanho da linha
+:PROPERTIES:
+:ID:       7beb3f56-c6fc-43d6-a68f-abd2237b0485
+:END:
+
+Sua linha de código não deve ter mais do que 80 caracteres.
+
+** Identação
+:PROPERTIES:
+:ID:       2b923221-59d0-4a8d-8ff3-50c98c9eb597
+:END:
+
+Use <espaços> ao invés de <tabs> para identar
+
+Mantenha a identação consistente pelo projeto.
+
+Idente de forma a facilitar o entendimento do código.
+
+Idealmente utilize a identação padrão utilizada no Emacs. Caso a
+identação do projeto seja diferente da padrão será preciso configurar
+para manter a consistência.
+
+Use identação fazendo funções complexas com muitos argumentos mais
+fáceis de ler. Caso os argumentos da função não caibam numa linha de
+código separe os argumentos em várias linhas de forma a melhorar a
+leitura.
+
+#+begin_src emacs-lisp
+  ;; Bad
+  (do-something first-argument second-argument (lambda (x)
+    (frob x)) fourth-argument last-argument)
+
+  ;; Better
+  (do-something first-argument
+                second-argument
+                #'(lambda (x) (frob x))
+                fourth-argument
+                last-argument)
+#+end_src
+
+Se o primeiro argumento de uma função esta numa nova linha, idente-a
+de forma a ficar na mesma posição horizontal do nome da função.
+
+#+begin_src emacs-lisp
+  ;; Ruim
+  (format
+          "%s %d"
+          'something
+          'something-else)
+
+  ;; Bom
+  (format
+   "%s %d"
+   'something
+   'something-else)
+#+end_src
+
+Algumas formas são especiais, e possuem alguns argumentos e depois um
+corpo da forma. Por exemplo "if", "let", "with-current-buffer", etc
+são algumas dessas formas especias. Os argumentos dessas formas
+especiais devem ser colocas na mesma linha que o nome da forma. Se não
+for possível identar com 4 <espaços> o corpo da forma deve ser
+identada com 2 <espaços>.
+
+#+begin_src emacs-lisp
+  ;; Bom
+  (when 'something
+    'something-else)
+
+  (when
+      'something
+    'something-else)
+
+  ;; Ruim
+
+  (when 'something
+        'something-else)
+
+  ;; Parecendo uma função comum.
+  (when
+   'something
+   'something-else)
+
+#+end_src
+
+** Informações do Arquivo
+:PROPERTIES:
+:ID:       21d0532a-1849-4918-9b2c-bd8b25244656
+:END:
+
+Deve-se incluir uma pequena descrição no topo de cada arquivo de código. 
+
+** Espaço Verticals
+:PROPERTIES:
+:ID:       0a8e0812-2440-4a0b-9e21-553af26c502d
+:END:
+
+Um espaço em branco entre cada "top-level form"
+
+#+begin_src emacs-lisp
+
+;;; CORRECT
+(defun function1 () 'body) 
+
+(defun function2 ()) 'body)
+
+(defvar var 'value)
+
+;;; WRONG
+(defun function1 () 'body) 
+(defun function2 ()) 'body)
+(defvar var 'value)
+#+end_src
+
+** Espaço Horizontal
+:PROPERTIES:
+:ID:       5fd5ca2c-f700-4f3b-a83c-cc68b87acf6d
+:END:
+
+Sem espaços entre parenteses.
+
+Se algum texto precede uma abertura, "(" "[" "{", ou é sucedido por
+uma fechadura, ")" "]" "}", devem ser separadas por um espaço. Caso
+isso não aconteça não se deve colocar espaços antes nem depois de
+parenteses ou símbolos.
+
+Linhas sem código não devem ter espaços em branco, nem tabs.
+
+Fecha Parenteses não devem ser colocados por si só na linha. 
+
+#+begin_src emacs-lisp
+  ;; Ruim
+  ( defun factorial ( limit )
+    ( let (( product 1 ))
+      ( loop for i from 1 upto limit
+            do (setf product ( * product i ) ) )
+      product
+    )
+  )
+
+  (defun factorial(limit)
+    (let((product 1))
+      (loop for i from 1 upto limit
+            do(setf product(* product i)))
+      product))
+
+  ;; Bom
+  (defun factorial (limit)
+    (let ((product 1))
+      (loop for i from 1 upto limit
+            do (setf product (* product i)))
+      product))
+#+end_src
+
+Não se deve deixar espaços em branco depois do final da linha.
+
+* Documentação
+:PROPERTIES:
+:ID:       025cb4ca-bfde-4690-acb1-32f40ff583c4
+:END:
+
+** Documente TUDO (DOCSTRINGS)
+:PROPERTIES:
+:ID:       eaf7873e-2bea-4bc2-8e1c-b449b786c20f
+:END:
+
+Deve-se documentar tudo que for possível.
+
+Utilizar DOCSTRINGS para explicar o máximo possível.
+
+Para funções a documentação deve mostrar:
+- O que ela faz.
+- Seus argumentos e o que eles fazem.
+- Qual o valor retornado.
+- Quais condições a função pode sinalizar.
+
+Em DOCSTRINGS deixe argumentos em maiuscula.
+
+#+begin_src emacs-lisp
+  (defun small-prime-number-p (n)
+    "Return T if N, an integer, is a prime number. Otherwise, return NIL."
+    (cond ((or (< n 2))
+           nil)
+          ((= n 2)
+           t)
+          ((divisorp 2 n)
+           nil)
+          (t
+           (loop for i from 3 upto (sqrt n) by 2
+                 never (divisorp i n)))))
+  (defgeneric table-clear (table)
+    (:documentation
+      "Like clrhash, empties the TABLE of all
+      associations, and returns the table itself."))
+#+end_src
+
+Quando arrumar um código, veja se a documentação esta de acordo com o
+código alterado.
+
+** Comentários
+:PROPERTIES:
+:ID:       93d86c9c-a45f-4471-9b55-7d94458cbe3f
+:END:
+
+Verifique se existe a necessidade de colocar comentários, alguns
+códigos são simples e diretos.
+
+Sempre deixe comentários atualizados. Um comentário desatualizado
+atrapalha deixando partes ambíguas no código.
+
+Use o número correto de ; para comentar 
+
+*** ;;;; (4) Comentários Importantes
+:PROPERTIES:
+:ID:       1c3b720b-80b4-4086-bb61-8f7e691d9697
+:END:
+
+Informações do Arquivo e comentários importantes que funcionam para
+grande parte do código.
+
+Sempre deixe linhas em branco depois deste tipo de comentário.
+
+*** ;;; (3) Comentários Locais
+:PROPERTIES:
+:ID:       069cf4dd-6388-4f66-9c1b-6ac402e4cdf5
+:END:
+
+Comentário que é aplicado a apenas um top-level form ou um grupo
+pequeno de top-level.
+
+Sempre deixe linhas em branco depois deste tipo de comentário.
+
+*** ;; (2) Comentários Dentro Top-Level
+:PROPERTIES:
+:ID:       69b83011-21c1-43d0-814b-3992059432a3
+:END:
+
+Comentários internos de um top-level. Comentário que aparece entre linhas.
+
+*** ; (1) Comentário Linha
+:PROPERTIES:
+:ID:       97422790-7a3b-4d5a-87c3-0d2c62cbc8ec
+:END:
+
+Comentário para explicar o que a expressão na linha significa. Ela
+deve ser colocada na mesma linha que o código.
+
+** Gramática e Pontuação
+:PROPERTIES:
+:ID:       177dc8c3-504d-4f68-940f-4d7d6c1af352
+:END:
+
+Deve-se usar pontuações corretamente ao documentar.
+
+Começar com letra maiúscula, terminar com pontuações, etc.
+
+* Nomeação
+:PROPERTIES:
+:ID:       a456d6d2-a2cc-43e1-b63d-a1be45c7ef6a
+:END:
+
+** Símbolos
+:PROPERTIES:
+:ID:       fd61d440-af90-419c-9016-10a631a6a832
+:END:
+
+Use caixa-baixa para todos os símbolos. Tornando-os mais legíveis e
+fáceis de serem encontrados.
+
+Coloque hífen entrre palavras de um símbolo. Tornando a nomeação de
+símbolos padronizada.
+
+#+begin_src emacs-lisp
+  ;; Ruim
+  (defvar maxWidgetCnt 200 "DOCSTRING")
+
+  ;; Bom
+  (defvar max-widget-count 200 "DOCSTRING")
+#+end_src
+
+** Demonstre Intenção e não Conteúdo
+:PROPERTIES:
+:ID:       7bd71be9-33f4-4fa2-bd6e-ccc9898dce60
+:END:
+
+Deve-se escolher um nome que seja de acordo com a ideia mais abstrata
+do que a variável deve conter. Não como ela deve ser implementada.
+
+Seja consistente. Casa uma variável seja passada de uma função para
+outra preserve o nome da variável na segunda função.
+
+** Variáveis Globais e Constantes
+:PROPERTIES:
+:ID:       04e584da-8e3d-4475-93d7-00afa876312c
+:END:
+
+Variáveis Globais devem ser precedidas e sucedidas do caracter "*".
+
+Constantes devem ser precedidae e sucedidade do caracter "+".
+
+Como não há distinção entre variáveis locais, globais e constantes na
+maneira como elas manipuladas dentro de um programa. Esse tipo de
+convenção facilita a identificação rápida de tais símbolos.
+
+#+begin_src emacs-lisp
+  (defconst +const+ 'value "DOCSTRING")
+
+  (defvar *global* 'value "DOCSTRING")
+#+end_src
+
+** Predicados (True/False)
+:PROPERTIES:
+:ID:       f9f1edc5-3ad3-4a16-98a2-cff3586e7560
+:END:
+
+Funções que retornam apenas (True/False) são chamadas de
+predicados. Por convenção os nomes das funções terminam com
+"-p". Indicando que elas são predicados, tornando mais fácil sua
+identificação.
+
+* Formas Apropriadas
+:PROPERTIES:
+:ID:       8f2cb7d8-8510-4f1d-8bfc-807ac24076cb
+:END:
+** Expressões Condicionais
+:PROPERTIES:
+:ID:       c835d92e-515f-4ce8-9726-93a0c19086b7
+:END:
+
+Utilize formas apropriadas quando precisa fazer algum tipo de fluxo condicional.
+
+Por exemplo: 
+
+- Utilize "when" e "unless" quando apenas uma das
+alternativas for conveniente para o programa ao invés de utilizar um
+"if" com algum dos argumentos faltando.
+
+- Use "if" se tiver duas alternativas.
+
+- Use "cond" caso existam mais de duas alternativas.
+
+** Identidade, Comparações
+:PROPERTIES:
+:ID:       12c9bb78-1c50-4c23-8abc-76c810be2d83
+:END:
+
+Use a forma apropriada quando for comparar símbolos.
+
+Deve-se usar "eql" para comparar objetos e símbolos por IDENTIDADE.
+
+Deve-se usar "eq" parea comparar números ou letras. 
+
+Escolhendo entre "eq" e "eql", deve-se escolher "eql" a menos que
+esteja executando alguma função que seja crítica em performace.
+
+** Iterações, Loops
+:PROPERTIES:
+:ID:       c8f0a8ec-2440-4a71-a6dc-1aa4fc203e50
+:END:
+
+Deve-se usar formas mais simples quando possível. "dolist" ou
+"dotimes" ao invés de "loop" nos casos onde não se esta utilizando
+algumas das facilidades de "loop".
+
+* Representação de Estruturas de dados
+:PROPERTIES:
+:ID:       ae9726b5-ce45-4d59-9fb3-79d3fe0cdbb2
+:END:
+
+** Nil: lista vazia, false
+:PROPERTIES:
+:ID:       a6368ac3-ff95-4ae1-8f98-4101fe7543d9
+:END:
+
+O uso da palavra reservada "nil" implica em diversas interpretações: 
+
+- Falso. deve-se testar por falsidade por "nil" usando o operador
+  "not" ou usando o predicado "null".
+
+- Lista vazia. Neste caso use "'()", para testar se chegou ao final da
+  lista use "cl-endp" que é um predicado que verifica se chegou ao
+  final da lista.
+
+- Valor não existente ou não especificado. Nestes casos não se deve
+  usar a palavra reservada "nil", uma vez que ela pode ser entendida
+  de uma maneira incorreta. A melhor maneira de contornar este
+  problema é criar um identificador para este tipo de teste, por
+  exemplo "'inexistente".
+
+
+Neste ultimo caso, é possível e aconselhável utilizar diversos
+identificadores. Um para cada caso: valor não específicado, valor inexistente.
+
+** Não abuse de listas
+:PROPERTIES:
+:ID:       7dcd5b30-1920-47e8-9985-83d61d64829e
+:END:
+
+Apesar da linguagem ser chamada elisp "Emacs LISt Processing" o uso de
+listas para todas os tipos de dados não é a meneira mais eficiente de
+se utilizar a linguagem. Ela possui outros tipo de representação, tais
+como: pares, vetores, conjuntos, tabelas de hash, entre outras.
+
+Portanto utilize listas quando necessário. Afinal de contas esta é uma
+linguagem que possui diversas facilidades no uso de tal estrutura de
+dados. Mas saiba quando as utilizar. 
+
+Alguns usos comuns de listas são a iteração sequenciada dos valores
+contidos em uma lista; no uso de macros visto que o código é uma
+grande lista.
+
+*** Listas vs estruturas
+:PROPERTIES:
+:ID:       f3eb11f8-59b6-4d66-9efd-980f3e9072af
+:END:
+
+Não se deve utilizar listas como algo diferente do que um conjunto de
+elementos de um mesmo tipo. Não se deve utilizar listas como um modo
+de passar diversos valores de um lado para o outro dentro de seu
+programa.
+
+O modo correto de fazer tal ação é utilizar a função "defclass" para
+criar uma estrutura apropriada.
+* Bibliotecas
+:PROPERTIES:
+:ID:       d96f450e-cf39-49f1-8ed0-d374c849fe5d
+:END:
+
+Deve-se colocar a função "provide" e um comentário apropriado ao final
+de arquivos que desejam ser importado por outros usando "require". 
+
+Sempre utilize "require" ao inves de "load" ou "load-library" ao
+importar outros arquivos.
