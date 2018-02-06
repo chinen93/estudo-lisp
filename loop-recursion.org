@@ -244,6 +244,46 @@ feita implicitamente.
 No exemplo acima, é criado uma lista numérica e a construção DOLIST
 esta percorrendo essa lista escrevendo o quadrado de cada número.
 
+* DOTIMES
+https://www.gnu.org/software/emacs/manual/html_node/eintr/dotimes.html#dotimes
+
+Essa construção tem como objetivo executar o código um número
+específico de vezes.
+
+#+begin_src emacs-lisp
+  (dotimes ('VAR 'COUNT '[RESULT]) 'BODY)
+#+end_src
+
+Executa BODY com VAR tendo valor de 0 até COUNT-1. Então executa
+RESULT para ter o valor para retornar (NIL, caso RESULT seja omitido).
+
+#+begin_src emacs-lisp
+  ;; 0+1+2+3+4=10
+  (let ((total 0))
+    (dotimes (num 5 total)
+      (setq total (+ total num ))))
+#+end_src
+
+#+RESULTS:
+: 10
+
+#+begin_src emacs-lisp
+  (defun triangle-using-dotimes (number-of-rows)
+    "Using `dotimes', add up the number of pebbles in a triangle."
+    (let ((total 0))  ; otherwise a total is a void variable
+      (dotimes (number number-of-rows total)
+        (setq total (+ total (1+ number))))))
+
+  (triangle-using-dotimes 4)
+#+end_src
+
+#+RESULTS:
+: 10
+
+No exemplo acima, NUMBER é o número do loop atual, NUMBER-OF-ROWS é a
+quantidade máxima de loops que devem ser feitos. e TOTAL é o valor a
+ser retornado.
+
 * Loop
 https://www.gnu.org/software/emacs/manual/html_node/cl/Loop-Facility.html#Loop-Facility
 
