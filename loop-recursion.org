@@ -224,6 +224,26 @@ estrutura WHILE.
 * DOLIST
 https://www.gnu.org/software/emacs/manual/html_node/eintr/dolist.html#dolist
 
+#+begin_src emacs-lisp
+  (dolist ('var 'list '[result]) 'body)
+#+end_src
+
+Executa BODY com VAR sendo o primeiro elemento de LIST, coloca o
+resultado de BODY em RESULT, com padrão NIL.
+
+A macro DOLIST é parecida com a contrução WHILE. No entanto ela
+encurta a lista automaticamente. A parte (setq list (cdr list)) é
+feita implicitamente.
+
+#+begin_src emacs-lisp
+  (setq dolist-list '(1 2 3 4))
+  (dolist (elem dolist-list)
+    (print (* elem elem)))
+#+end_src
+
+No exemplo acima, é criado uma lista numérica e a construção DOLIST
+esta percorrendo essa lista escrevendo o quadrado de cada número.
+
 * Loop
 https://www.gnu.org/software/emacs/manual/html_node/cl/Loop-Facility.html#Loop-Facility
 
