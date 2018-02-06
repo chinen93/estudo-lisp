@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-01-21 Sun]
-#+DATE-UPDATED: [2018-01-23 Tue]
+#+DATE-UPDATED: [2018-02-06 Tue]
 
 
 * References
@@ -161,13 +161,65 @@ Construção:
 * WHILE
 https://www.gnu.org/software/emacs/manual/html_node/eintr/while.html#while
 
-(while 'test 'body)
-Testa se TEST returna um valor não nulo. Executando BODY e repetindo.
-A ordem da execução é TEST, BODY, TEST, BODY e assim por diante.]
-Até que TEST retorne nulo.
+#+begin_src emacs-lisp
+  (while 'test 'body)
+#+end_src
 
-* DOTIMES
-https://www.gnu.org/software/emacs/manual/html_node/eintr/dotimes.html#dotimes
+Testa se TEST returna um valor não nulo. Executando BODY e repetindo.
+
+A ordem da execução é TEST, BODY, TEST, BODY e assim por diante. Até
+que TEST retorne nulo.
+
+#+begin_src emacs-lisp
+  (setq animals '(gazelle giraffe lion tiger))
+
+  (defun print-elements-of-list (list)
+    "Print each element of LIST on a line of its own."
+    (while list
+      (print (car list))
+      (setq list (cdr list))))
+
+  (print-elements-of-list animals)
+#+end_src
+
+No exemplo acima, é definido um conjunto de elementos em uma lista. E
+criado a função print-elements-of-list. No corpo da função é utilizado
+a estrutura WHILE. 
+
+Como a variavel LIST é sempre alterada chega uma hora em que ela é
+nil. Quando isso acontece a estrutura WHILE termina.
+
+** Teste
+:PROPERTIES:
+:ID:       ae8278e6-a71f-44bf-ba4f-cea19ef85c36
+:END:
+
+O teste pode ser qualquer expressão de teste (<, >, =, equal, null,
+etc). É preciso verificar qual tipo de expressão deverá ser utilizada
+e como fazer com que essa condição seja satisfeita.
+
+#+begin_src emacs-lisp
+  (defun triangle (number-of-rows)    ; Version with
+                                      ; incrementing counter.
+    "Add up the number of pebbles in a triangle.
+  The first row has one pebble, the second row two pebbles,
+  the third row three pebbles, and so on.
+  The argument is NUMBER-OF-ROWS."
+    (let ((total 0)
+          (row-number 1))
+      (while (<= row-number number-of-rows)
+        (setq total (+ total row-number))
+        (setq row-number (1+ row-number)))
+      total))
+
+  (triangle 7)
+#+end_src
+
+#+RESULTS:
+: 28
+
+Neste exemplo, usamos uma comparação entre números para terminar a
+estrutura WHILE.
 
 * DOLIST
 https://www.gnu.org/software/emacs/manual/html_node/eintr/dolist.html#dolist
