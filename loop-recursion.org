@@ -1,0 +1,641 @@
+#+TITLE:        Loop and Recursion
+#+AUTHOR:       Pedro Chinen
+#+EMAIL:        ph.u.chinen@gmail.com
+#+DATE-CREATED: [2018-01-21 Sun]
+#+DATE-UPDATED: [2018-02-07 Wed]
+
+* References
+https://www.gnu.org/software/emacs/manual/html_node/eintr/Loops-_0026-Recursion.html
+
+* RECURSION
+https://www.gnu.org/software/emacs/manual/html_node/eintr/Recursion.html#Recursion
+
+Recursão é um estilo de programação no qual uma função chama ela
+mesma com outros parametros para com o intuito de fazer um
+loop. É muito importante que os parametros das chamdas da função
+sejam diferentes umas das outras de forma a levar o programa a
+parar. Caso contrário ele ficará executando as mesmas intruções
+sem fim.
+
+Toda recursão tem uma mesma estrutura:
+- Uma condição base, na qual quando ela é satisfeita a recursão para.
+- Um passo, que é um argumento diferente do atual indo em direção a condição base.
+
+
+O exemplo abaixo usa recursão para imprimir todos os elementos de uma
+lista. A condição base é: "caso o argumento seja uma lista"; e o passo
+é: "Chame a função recursivamente passando o resto da lista como
+parâmetro".
+
+#+begin_src emacs-lisp
+  (setq animals '(gazelle giraffe lion tiger))
+       
+  (defun print-elements-recursively (list)
+    "Print each element of LIST on a line of its own.
+       Uses recursion."
+    (when list                            ; do-again-test
+      (print (car list))                  ; body
+      (print-elements-recursively         ; recursive call
+       (cdr list))))                      ; next-step-expression
+
+  (print-elements-recursively animals)
+#+end_src
+
+Outro exemplo de função recursiva no qual o caso base é: "Se o
+argumento for o número 1, retorno 1"; e o passo: "Chame a função
+recursivamente usando como parâmetro o argumento - 1".
+
+#+begin_src emacs-lisp
+  (defun triangle-recursively (number)
+    "Return the sum of the numbers 1 through NUMBER inclusive.
+       Uses recursion."
+    (if (= number 1)                    ; do-again-test
+        1                               ; then-part
+      (+ number                         ; else-part
+         (triangle-recursively          ; recursive call
+          (1- number)))))               ; next-step-expression
+
+  (triangle-recursively 7)
+#+end_src
+
+#+RESULTS:
+: 28
+
+** Padrões de Recursão
+:PROPERTIES:
+:ID:       1c19f61f-82b0-4407-ae48-9b00ebeca745
+:END:
+
+Estes padrões de programação será utilizados em cima de listas. Elas
+não precisam ser necessáriamente feitas em cima de listas, mas LISP é
+projetado para trabalhar com listas, tornando essas recursões mais
+simples.
+
+*** Todo Elemento
+:PROPERTIES:
+:ID:       135028fc-bcc0-4a26-b809-477bbfca56ef
+:END:
+
+Neste padrão, a ação da recursão é realizada em todos os elementos. 
+
+Segue uma construção básica:
+- Veja se a lista esta vazia, retorne nil
+- Aja sobre o primeiro elemento da lista, e faça a recursão para o
+  resto da lista.
+
+#+begin_src emacs-lisp
+  (defun square-each (numbers-list)
+    "Square each of a NUMBERS LIST, recursively."
+    (if (not numbers-list)                ; do-again-test
+        nil
+      (cons
+       (* (car numbers-list) (car numbers-list))
+       (square-each (cdr numbers-list))))) ; next-step-expression
+
+  (square-each '(1 2 3))
+#+end_src
+
+*** Acumulação de Chamadas Recursivas
+:PROPERTIES:
+:ID:       8c07bb52-6daa-46ae-81ed-fbe6ade897e3
+:END:
+
+A ação é realizado em todos os elementos da lista. Porem neste caso o
+resultado da ação é acumulado com a chamada recursiva.
+
+A construção é:
+- Verifique se a lista esta vazia, retorne zero ou uma constante.
+- Aja sobre o primeiro elemento, combine com o retorno da chamada
+  recursiva para o resto da lista.
+
+#+begin_src emacs-lisp
+  (defun add-elements (numbers-list)
+    "Add the elements of NUMBERS-LIST together."
+    (if (not numbers-list)
+        0
+      (+ (car numbers-list) (add-elements (cdr numbers-list)))))
+
+  (add-elements '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+: 10
+
+*** Guarde Elementos Pertinentes
+:PROPERTIES:
+:ID:       988b0af7-47bf-465a-acfc-4fefd763be4c
+:END:
+
+Neste padrão, todos os elementos são testados e apenas aqueles que
+passarem neste teste serão usados como parte do resultado.
+
+Construção:
+- Verifique se a lista esta vazia, retorne nil
+- Se o primeiro elemento passa no teste, aja sobre o elemento e
+  combine o resultado com a chamada recursiva para o resto da lista.
+- Se o primeiro elemento não passa no teste, não faça nada com este
+  elemento e simplesmente retorne a chamada recursvida para o resto da
+  lista.
+
+#+begin_src emacs-lisp
+  (defun keep-three-letter-words (word-list)
+    "Keep three letter words in WORD-LIST."
+    (cond
+     ;; First do-again-test: stop-condition
+     ((not word-list) nil)
+     
+     ;; Second do-again-test: when to act
+     ((eq 3 (length (symbol-name (car word-list))))
+      ;; combine acted-on element with recursive call on shorter list
+      (cons (car word-list) (keep-three-letter-words (cdr word-list))))
+     
+     ;; Third do-again-test: when to skip element;
+     ;;   recursively call shorter list with next-step expression
+     (t (keep-three-letter-words (cdr word-list)))))
+
+  (keep-three-letter-words '(one two three four five six))
+#+end_src
+
+* WHILE
+https://www.gnu.org/software/emacs/manual/html_node/eintr/while.html#while
+
+#+begin_src emacs-lisp
+  (while 'test 'body)
+#+end_src
+
+Testa se TEST returna um valor não nulo. Executando BODY e repetindo.
+
+A ordem da execução é TEST, BODY, TEST, BODY e assim por diante. Até
+que TEST retorne nulo.
+
+#+begin_src emacs-lisp
+  (setq animals '(gazelle giraffe lion tiger))
+
+  (defun print-elements-of-list (list)
+    "Print each element of LIST on a line of its own."
+    (while list
+      (print (car list))
+      (setq list (cdr list))))
+
+  (print-elements-of-list animals)
+#+end_src
+
+No exemplo acima, é definido um conjunto de elementos em uma lista. E
+criado a função print-elements-of-list. No corpo da função é utilizado
+a estrutura WHILE. 
+
+Como a variavel LIST é sempre alterada chega uma hora em que ela é
+nil. Quando isso acontece a estrutura WHILE termina.
+
+** Teste
+:PROPERTIES:
+:ID:       ae8278e6-a71f-44bf-ba4f-cea19ef85c36
+:END:
+
+O teste pode ser qualquer expressão de teste (<, >, =, equal, null,
+etc). É preciso verificar qual tipo de expressão deverá ser utilizada
+e como fazer com que essa condição seja satisfeita.
+
+#+begin_src emacs-lisp
+  (defun triangle (number-of-rows)    ; Version with
+                                      ; incrementing counter.
+    "Add up the number of pebbles in a triangle.
+  The first row has one pebble, the second row two pebbles,
+  the third row three pebbles, and so on.
+  The argument is NUMBER-OF-ROWS."
+    (let ((total 0)
+          (row-number 1))
+      (while (<= row-number number-of-rows)
+        (setq total (+ total row-number))
+        (setq row-number (1+ row-number)))
+      total))
+
+  (triangle 7)
+#+end_src
+
+#+RESULTS:
+: 28
+
+Neste exemplo, usamos uma comparação entre números para terminar a
+estrutura WHILE.
+
+* DOLIST
+https://www.gnu.org/software/emacs/manual/html_node/eintr/dolist.html#dolist
+
+#+begin_src emacs-lisp
+  (dolist ('var 'list '[result]) 'body)
+#+end_src
+
+Executa BODY com VAR sendo o primeiro elemento de LIST, coloca o
+resultado de BODY em RESULT, com padrão NIL.
+
+A macro DOLIST é parecida com a contrução WHILE. No entanto ela
+encurta a lista automaticamente. A parte (setq list (cdr list)) é
+feita implicitamente.
+
+#+begin_src emacs-lisp
+  (setq dolist-list '(1 2 3 4))
+  (dolist (elem dolist-list)
+    (print (* elem elem)))
+#+end_src
+
+No exemplo acima, é criado uma lista numérica e a construção DOLIST
+esta percorrendo essa lista escrevendo o quadrado de cada número.
+
+* DOTIMES
+https://www.gnu.org/software/emacs/manual/html_node/eintr/dotimes.html#dotimes
+
+https://www.gnu.org/software/emacs/manual/html_node/cl/Other-Clauses.html#Other-Clauses
+
+Essa construção tem como objetivo executar o código um número
+específico de vezes.
+
+#+begin_src emacs-lisp
+  (dotimes ('VAR 'COUNT '[RESULT]) 'BODY)
+#+end_src
+
+Executa BODY com VAR tendo valor de 0 até COUNT-1. Então executa
+RESULT para ter o valor para retornar (NIL, caso RESULT seja omitido).
+
+#+begin_src emacs-lisp
+  ;; 0+1+2+3+4=10
+  (let ((total 0))
+    (dotimes (num 5 total)
+      (setq total (+ total num ))))
+#+end_src
+
+#+RESULTS:
+: 10
+
+#+begin_src emacs-lisp
+  (defun triangle-using-dotimes (number-of-rows)
+    "Using `dotimes', add up the number of pebbles in a triangle."
+    (let ((total 0))  ; otherwise a total is a void variable
+      (dotimes (number number-of-rows total)
+        (setq total (+ total (1+ number))))))
+
+  (triangle-using-dotimes 4)
+#+end_src
+
+#+RESULTS:
+: 10
+
+No exemplo acima, NUMBER é o número do loop atual, NUMBER-OF-ROWS é a
+quantidade máxima de loops que devem ser feitos. e TOTAL é o valor a
+ser retornado.
+
+* Loop
+https://www.gnu.org/software/emacs/manual/html_node/cl/Loop-Facility.html#Loop-Facility
+
+A estrutura da macro LOOP consiste de várias partes. Essas partes são
+agrupadas como os argumentos da macro, com um número mínimo de
+parenteses. No início não tem muito cara de uma estrutura de LISP.
+
+Essas várias partes especifícam inicializações, variáveis temporárias
+que serão utilizadas, ações que devem ser realizdas a cada loop, como
+dar o próximo passo do loop e finalmente o que fazer quando o loop
+acabar.
+
+Uma ordem básica do loop é:
+#+begin_src emacs-lisp
+  (cl-loop 'var-clause
+           'action-clause)
+#+end_src
+
+A parte definida como VAR-CLAUSE diz quais são as variáveis que serão
+utilizadas pelo loop e como elas devem ser alteradas para chegar ao
+final do loop.
+
+A parte ACTION-CLAUSE são as ações que serão feitas durante o loop,
+tais como calcular, acumular e retornar.
+
+** Exemplos de Uso
+:PROPERTIES:
+:ID:       e3f66f44-f456-4fb8-b6ab-b850e8609f5b
+:END:
+
+#+begin_src emacs-lisp
+  (cl-loop for buf in (buffer-list)
+           collect (buffer-file-name buf))
+#+end_src
+
+No exemplo acima é feito uma iteração sobre todos os Buffers do Emacs
+usando a lista retornada por (buffer-list). Para cada buffer colocado
+na variável BUF é criado uma lista para retorno com o nome do buffer.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 100
+           for y = (* x x)
+           until (>= y 729)
+           finally return (list x (= y 729)))
+#+end_src
+
+O loop acima percorre todos os numeros de 1 a 100 a procura de um cujo
+quadrado seja 729.
+
+O primeiro loop varia x de 1 até 100. O segundo define y como sendo o
+quadrado de x. A palavra UNTIL é a condição para que o loop
+termine. FINALLY diz o que deve ser feito quando o loop terminar.
+
+Apesar de ter vários FOR isso ainda é apenas um loop, caso queira um
+loop identado é preciso explicitar tal construção.
+
+** Parte: FOR
+:PROPERTIES:
+:ID:       76d3fae2-0c20-4018-b7ec-f044a9c26a88
+:END:
+
+A maioria dos loops são governados por um ou mais FOR. Ela
+simultaneamente descreve quais serão as variáveis que serão
+utilizadas, como elas serão incrementadas, e uma condição de parada.
+
+ 
+*** for VAR from EXPR1 to EXPR2 by EXPR3
+:PROPERTIES:
+:ID:       2ca3e6c2-e685-4240-be9d-224585c7f742
+:END:
+
+EXPR1 é o valor inicial de VAR, caso seja omitida ela começará em 0.
+
+EXPR2 é o valor final de VAR, caso omitida o loop continuará
+indefindamente, até ser terminada por outra parte do loop.
+
+EXPR3 é como será feita o incremente de VAR, deve sempre ser um número
+positivo. Se omitido será contado como 1.
+
+A palavra "to" pode ser trocada por "upto" ou "downto" indicando a
+direção que VAR irá seguir.
+
+#+begin_src emacs-lisp
+  (cl-loop for x to 10 collect x)
+#+end_src
+
+#+RESULTS:
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 
+
+#+begin_src emacs-lisp
+  (cl-loop for x upto 10 collect x)
+#+end_src
+
+#+RESULTS:
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 10 downto 1 collect x)
+#+end_src
+
+#+RESULTS:
+| 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+
+*** for VAR in LIST by FUNCTION
+:PROPERTIES:
+:ID:       5e4d1a6a-ff7f-44a7-9788-2f14799a2e4d
+:END:
+
+FUNTION é uma função que recebe um argumento. E será utilizado para
+andar na LIST ao invés da função (cdr list).
+
+#+begin_src emacs-lisp
+  (cl-loop for x in '(1 2 3 4 5 6)
+           collect (* x x))
+#+end_src
+
+#+RESULTS:
+| 1 | 4 | 9 | 16 | 25 | 36 |
+
+#+begin_src emacs-lisp
+  (cl-loop for x in '(1 2 3 4 5)
+           by #'cddr
+           collect (* x x))
+#+end_src
+
+#+RESULTS:
+| 1 | 9 | 25 |
+
+*** for VAR on LIST by FUNCTION
+:PROPERTIES:
+:ID:       b2a3d3d7-f25a-4a97-a5a9-98e546ffeb6d
+:END:
+
+Mudando apenas de "in" para "on" essa forma irá iterar por todos as
+cons cells de LIST.
+
+#+begin_src emacs-lisp
+  (cl-loop for x on '(1 2 3 4 5)
+           collect x)
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+| 2 | 3 | 4 | 5 |   |
+| 3 | 4 | 5 |   |   |
+| 4 | 5 |   |   |   |
+| 5 |   |   |   |   |
+
+*** for VAR across ARRAY
+
+Essa forma itera sobre os elementos de um vetor ou string.
+
+#+begin_src emacs-lisp
+  (cl-loop for x across "aeiou"
+           collect x)
+#+end_src
+
+#+RESULTS:
+| 97 | 101 | 105 | 111 | 117 |
+
+#+begin_src emacs-lisp
+  (cl-loop for x across [1 2 3 4 5]
+           collect x)
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+
+** Parte: ACUMULATIVA
+:PROPERTIES:
+:ID:       b7a0199d-531b-4ff6-9c4d-f25b6c1cd674
+:END:
+
+Essas formas acumulam informação a cada iteração e são retornadas ao
+final do loop. Elas podem ser sobreescritas por uma forma RETURN.
+
+*** collect FORM
+:PROPERTIES:
+:ID:       b3308be0-aaf7-41f3-8b63-aad82aac9c7f
+:END:
+
+Essa forma coleta o valor de FORM numa lista. 
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           collect x)
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+
+*** append FORM
+:PROPERTIES:
+:ID:       1d18ccc9-a988-4935-8134-f1cafa3cf3a0
+:END:
+
+Essa forma coleta o valor de FORM utilizando a função (APPEND LIST)
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           append (list x))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 |
+
+*** concat FORM
+:PROPERTIES:
+:ID:       f6ed8a49-340e-4356-aa90-5393440f677d
+:END:
+
+Essa forma concatena os valores de FORM numa string.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           concat (string x))
+#+end_src
+
+#+RESULTS:
+: 
+
+*** vconcat FORM
+:PROPERTIES:
+:ID:       b35aad25-aa60-4997-a462-26591fc26d89
+:END:
+
+Essa forma concatena os valores de FORM num vetor.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           vconcat (list x))
+#+end_src
+
+#+RESULTS:
+: [1 2 3 4 5]
+
+*** count FORM
+:PROPERTIES:
+:ID:       5fcdc706-8adc-4e7e-ad66-02e24244eaba
+:END:
+
+Essa forma conta quantas vezes FORM é verdadeiro.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           count (>= 3 x))
+#+end_src
+
+#+RESULTS:
+: 3
+
+*** sum FORM
+:PROPERTIES:
+:ID:       72f5f10a-64a5-458f-9f27-769b85a81e56
+:END:
+
+Essa forma acumula a soma dos valores de FORM, deve ser um valor
+numérico.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           sum x)
+#+end_src
+
+#+RESULTS:
+: 15
+
+*** maximize FORM
+:PROPERTIES:
+:ID:       2dffd812-c958-4d87-ae84-132466a07e40
+:END:
+
+Essa forma retorna o maior valor de FORM, deve ser um valor numérico.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 19
+           maximize x)
+#+end_src
+
+#+RESULTS:
+: 19
+
+*** minimize FORM
+:PROPERTIES:
+:ID:       98d09892-bdf7-46e3-ab6d-39ff508f8324
+:END:
+
+Essa forma retorna o menor valor de FORM, deve ser uma valor numérico.
+
+** Parte: Outras Funções Uteis
+:PROPERTIES:
+:ID:       582905a7-a3f9-4741-bb80-90ea63fa6017
+:END:
+
+*** if / else CONDITION
+:PROPERTIES:
+:ID:       9f48df6d-1a05-4dda-a6b9-744a546099ae
+:END:
+
+Essa forma faz apenas se CONDITION for verdadeira. Caso contrário o
+que estiver depois de "else" será realizado.
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 10
+           if (cl-oddp x)
+           collect x into odds
+           else
+           collect x into evens
+           finally return (vector odds evens))
+           
+#+end_src
+
+#+RESULTS:
+: [(1 3 5 7 9) (2 4 6 8 10)]
+
+*** when CONDITION
+:PROPERTIES:
+:ID:       b2ac0e39-dc17-432a-820b-80bb596bff77
+:END:
+
+Sinônimo da condição "if".
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           when (cl-oddp x)
+           collect x)
+
+#+end_src
+
+#+RESULTS:
+| 1 | 3 | 5 |
+
+*** unless CONDITION
+:PROPERTIES:
+:ID:       7f7a4e5b-1e8c-4d72-9fdc-6e4f078c6bce
+:END:
+
+Pega apenas a  parte do "else" de uma condição "if".
+
+#+begin_src emacs-lisp
+  (cl-loop for x from 1 to 5
+           unless (cl-oddp x)
+           collect x)
+#+end_src
+
+#+RESULTS:
+| 2 | 4 | 
+
+*** finally return FORM
+:PROPERTIES:
+:ID:       023c3676-faa2-49ab-819c-eced242b4fa7
+:END:
+
+FORM será executado depois do termino do loop a fim de obter o
+resultado final a ser retornado.
