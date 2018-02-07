@@ -23,7 +23,9 @@ All insert from writeToBuffer will be placed into this buffer."
   "Write MESSAGE into +WTB-BUFFER-NAME+."
   (with-current-buffer (WTB-create-buffer)
     (goto-char (point-max))
-    (insert (format "%S" message))
+    (if (stringp message)
+	(insert message)
+      (insert (format "%S" message)))
     (when *WTB-fill-paragraph*
       (fill-paragraph))))
 
