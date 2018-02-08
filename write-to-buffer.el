@@ -11,8 +11,14 @@
   "Create and display +WTB-BUFFER-NAME+
 All insert from writeToBuffer will be placed into this buffer."
   (let ((buf (get-buffer-create +WTB-buffer-name+)))
+    (WTB-clear)
     (display-buffer buf)
     buf))
+
+(defun WTB-clear ()
+  "Clear all messages in +WTB-BUFFER-NAME+."
+  (with-current-buffer +WTB-buffer-name+
+    (erase-buffer)))
 
 (defun WTB-new-line ()
   "Go to next line in +WTB-BUFFER-NAME+."
@@ -34,11 +40,6 @@ All insert from writeToBuffer will be placed into this buffer."
   (WTB-write message)
   (WTB-new-line)
   (WTB-new-line))
-
-(defun WTB-clear ()
-  "Clear all messages in +WTB-BUFFER-NAME+."
-  (with-current-buffer +WTB-buffer-name+
-    (erase-buffer)))
 
 ;; Exemple of usage:
 ;; (setq *WTB-fill-paragraph* t)
