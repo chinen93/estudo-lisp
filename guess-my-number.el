@@ -28,7 +28,9 @@
 ;;
 ;;===
 ;; To play with the computer guessing the numbers do
-;; (play 45) 
+;; (play 45)
+
+(require 'write-to-buffer)
 
 ;; Boundaries for the game
 (defvar *small* 1)
@@ -64,18 +66,20 @@
   (setf *small* 1)
   (setf *big* 100)
   (setf guess (guess-my-number))
+  (WTB-create-buffer)
+  (WTB-clear)
   (play-rec n guess))
 
 ;; Auxiliary recursion function to guess the right number
 (defun play-rec (n guess)
   (if (eq n guess)
       (progn 
-	(message (number-to-string guess))
-	(message "ganhei"))
+	(WTB-write-line guess)
+	(WTB-write-line "Ganhei!!!"))
     (progn
-      (message (number-to-string guess))
+      (WTB-write-line guess)
       (if (< n guess)
 	  (play-rec n (smaller))
 	(play-rec n (bigger))))))
 
-;; (play 55)
+;; (play 28)
