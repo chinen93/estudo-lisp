@@ -1,0 +1,8 @@
+#+TITLE:        Data Struct Study
+#+AUTHOR:       Pedro Chinen
+#+EMAIL:        ph.u.chinen@gmail.com
+#+DATE-CREATED: [2018-02-09 Fri]
+#+DATE-UPDATED: [2018-02-09 Fri]
+
+
+
