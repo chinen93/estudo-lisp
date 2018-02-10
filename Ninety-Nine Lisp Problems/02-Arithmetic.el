@@ -10,6 +10,8 @@
 
 (defun is-prime (num)
 
+  "Determine whether NUM is prime."
+
   (cond
 
    ((or (= num 2)
@@ -69,6 +71,9 @@
 ;; gcd numA numB
 (defun gcd (numA numB)
 
+  "Determine the greatest common divisor of positive integer NUMA
+and positive integer NUMB, Use Euclid's algorithm."
+
   (cond
 
    ;; If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
@@ -104,6 +109,12 @@
 
 ;; coprime numA numB
 (defun coprime (numA numB)
+
+  "Determine whether positive integer NUMA and positive integer
+  NUMB are coprime.
+
+Two number are coprime if their greatest common divisor equals
+1."
 
   ;; conditional:
   (cond
@@ -150,6 +161,12 @@
 
 ;; totient-phi num
 (defun totient-phi (num)
+
+  "Calculate Euler's totient function phi(NUM).
+
+Euler's so-called totient function phi(NUM) is defined as the number of
+positive integers r (1 <= r < NUM) that are coprime to NUM.
+Example: NUM = 10: r = 1,3,7,9; thus phi(NUM) = 4."
 
   ;; conditional
   (cond
