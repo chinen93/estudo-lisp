@@ -6,3 +6,30 @@
 
 
 
+* Orientação a Objetos
+:PROPERTIES:
+:ID:       34c8e45a-972a-4348-abe8-c0cd75fff43a
+:END:
+
+https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
+
+* Listas
+:PROPERTIES:
+:ID:       38a6ba3e-669c-47ec-b294-3eb5c12c7e39
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/cl/Lists.html#Lists
+
+* Estruturas
+:PROPERTIES:
+:ID:       31f7cd19-1442-4360-8e24-172393737b50
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/cl/Structures.html#Structures
+
+* Hash Table
+:PROPERTIES:
+:ID:       c064d4a0-4a0d-4dfa-9bd5-bcb4d04cf990
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Hash-Tables.html
