@@ -26,6 +26,33 @@
 ; * (istree (a (b nil nil)))
 ; NIL
 
+;; tree-like-p list 
+;; if list length equals 3 
+;;;; let root (car list) 
+;;;; let esq (car (cdr list)) 
+;;;; let dir (car (cdr (cdr list))) 
+;;;; if (atomp root) and (listp esq) and (listp dir) 
+;;;;;; return t 
+;;;; else 
+;;;;;; return nil 
+;; else 
+;;;; return nil 
+ 
+;; tree-p tree 
+;; if tree equal nil 
+;;;; return t 
+;; if tree-like-p tree 
+;;;; let esq (car (cdr tree)) 
+;;;; let dir (car (cdr (cdr tree))) 
+;;;; if (tree-like-p esq) and not nil esq 
+;;;;;; return (tree-p esq) 
+;;;; else 
+;;;;;; return nil 
+;;;; if (tree-like-p dir) and not nil dir 
+;;;;;; return (tree-p dir)  
+;;;; else 
+;;;;;; return nil 
+
 ; P55 (**) Construct completely balanced binary trees
 ; In a completely balanced binary tree, the following property holds for
 ; every node: The number of nodes in its left subtree and the number of nodes
