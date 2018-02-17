@@ -69,6 +69,23 @@
 ; T = t(x, t(x, nil, nil), t(x, t(x, nil, nil), nil)) ;
 ; etc......No
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX
+
+;; cbal-tree-aux num level ret
+;; if num > 2^level
+;;;; append ret '(x (cbal-tree-aux (- num 2^level) (1+ level) 
+;;;;	            (cbal-tree-aux (- num 2^level) (1+ level))
+;; else
+;;;; if num < 0
+;;;;;; return nil
+;;;; else
+;;;;;;; return '(x nil nil)
+
+
+;; cbal-tree num
+;; return (cbal-tree-aux num 0 nil)
+
+
 ; P56 (**) Symmetric binary trees
 ; Let us call a binary tree symmetric if you can draw a vertical line through
 ; the root node and then the right subtree is the mirror image of the left
