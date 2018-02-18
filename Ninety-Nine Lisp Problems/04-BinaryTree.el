@@ -97,12 +97,14 @@
 ;; mirror treeA treeB
 ;; if treeA and treeB are one elements only
 ;;;; return t
-;; if treeA esq is nil and tree B dir is nil or
-;;    treeA esq is a node and treeB dir is a node 
+;; if treeA esq is nil and tree B dir is nil
 ;;;; return t
+;; if treeA esq is a node and treeB dir is a node 
+;;;; return mirror treeA-esq treeB-dir
 ;; if treeA dir is nil and tree B esq is nil
-;;    treeA dir is a node and treeB esq is a node 
 ;;;; return t
+;; if treeA dir is a node and treeB esq is a node 
+;;;; return mirror treeA-dir treeB-esq
 ;; else of any of these conditions
 ;;;; return nil
 
