@@ -94,6 +94,26 @@
 ; tree is the mirror image of another. We are only interested in the
 ; structure, not in the contents of the nodes.
 
+;; mirror treeA treeB
+;; if treeA and treeB are one elements only
+;;;; return t
+;; if treeA esq is nil and tree B dir is nil or
+;;    treeA esq is a node and treeB dir is a node 
+;;;; return t
+;; if treeA dir is nil and tree B esq is nil
+;;    treeA dir is a node and treeB esq is a node 
+;;;; return t
+;; else of any of these conditions
+;;;; return nil
+
+;; symmetric tree
+;; if tree is only one element
+;;;; return t
+;; treeA = tree esq 
+;; treeB = tree dir
+;; return mirror treeA treeB
+
+
 ; P57 (**) Binary search trees (dictionaries)
 ; Use the predicate add/3, developed in chapter 4 of the course, to write
 ; a predicate to construct a binary search tree from a list of integer numbers.
