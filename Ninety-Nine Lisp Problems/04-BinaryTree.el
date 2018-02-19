@@ -130,6 +130,18 @@
 ; * test-symmetric([3,2,5,7,1]).
 ; No
 
+;; add tree value
+;; if tree is null
+;;;; return (value nil nil)
+;; if node < tree
+;;;; add tree-esq value
+;; if node > tree
+;;;; add tree-dir value
+;; return tree
+
+;; construct list tree
+;; apply #add list tree
+
 ; P58 (**) Generate-and-test paradigm
 ; Apply the generate-and-test paradigm to construct all symmetric, completely
 ; balanced binary trees with a given number of nodes. Example:
