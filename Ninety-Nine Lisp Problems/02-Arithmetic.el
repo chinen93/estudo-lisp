@@ -265,6 +265,12 @@ Construct a flat list containing the prime factors in ascending order.
 ; Hint: The problem is similar to problem P13.
 ;
 
+;; prime-factors-mult num
+;; let primes (prime-factors num)
+;; encode-direct primes
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P37 (**) Calculate Euler's totient function phi(m) (improved).
 ; See problem P34 for the definition of Euler's totient function. If the list
 ; of the prime factors of a number m is known in the form of problem P36 then
