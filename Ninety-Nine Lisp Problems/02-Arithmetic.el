@@ -283,6 +283,15 @@ Construct a flat list containing the prime factors in ascending order.
 ; Note that a ** b stands for the b'th power of a.
 ;
 
+;; phi-improved num
+;; let primes (prime-factors-mult num)
+;; for each elem of list
+;;;; let prime (car elem)
+;;;; let mult (car (cdr elem))
+;;;; collect sum of (* (1- prime) (power prime (1- mult)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P38 (*) Compare the two methods of calculating Euler's totient function.
 ; Use the solutions of problems P34 and P37 to compare the algorithms. Take
 ; the number of logical inferences as a measure for efficiency. Try to
