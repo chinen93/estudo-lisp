@@ -317,6 +317,21 @@ Construct a flat list containing the prime factors in ascending order.
 ; (5 23)
 ;
 
+;; goldbach num
+;; if num is odd
+;;;; return nil
+;; let primes (primes-range 2 num)
+;; for lower (first primes)
+;;     upper (last primes)
+;; until lower > upper
+;; do
+;;;; if lower + upper < num
+;;;;;; lower = next prime
+;;;; if lower + upper > num
+;;;;;; upper = previus prime
+;;;; if lower + upper == num
+;;;;;; return (list lower upper) 
+
 ; P41 (**) A list of Goldbach compositions.
 ; Given a range of integers by its lower and upper limit, print a list of all
 ; even numbers and their Goldbach composition.
