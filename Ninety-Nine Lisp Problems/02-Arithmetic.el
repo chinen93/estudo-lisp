@@ -301,6 +301,10 @@ Construct a flat list containing the prime factors in ascending order.
 ; Given a range of integers by its lower and upper limit, construct a list of
 ; all prime numbers in that range.
 
+;; prime-range lower upper
+;; for lower to upper
+;;;; collect lower if it is prime
+
 ; P40 (**) Goldbach's conjecture.
 ; Goldbach's conjecture says that every positive even number greater than
 ; 2 is the sum of two prime numbers. Example: 28 = 5 + 23. It is one of the
