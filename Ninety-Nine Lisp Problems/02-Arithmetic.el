@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arithmetic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -355,3 +355,14 @@ Construct a flat list containing the prime factors in ascending order.
 ; 1382 = 61 + 1321
 ; 1856 = 67 + 1789
 ; 1928 = 61 + 1867
+
+;; goldbash-list lower upper 
+;; let primes (primes-range lower upper)
+;; for high-prime (first primes) to (last primes)
+;;;; for low-prime (first primes) to (last primes)
+;;;;;; if high-prime + low-prime < lower or > upper
+;;;;;;;; break for low-prime
+;;;;;; collect (list low-prime high-prime (+ low-prime high-prime))
+
+
+
