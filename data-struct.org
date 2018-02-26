@@ -135,3 +135,125 @@ O valor padrão é "nil". Com este argumento todas as chaves e valores são pres
 #+RESULTS:
 : #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
 
+** Manipulando Dados
+:PROPERTIES:
+:ID:       c787cce8-6d79-4446-908f-3b8efceb9013
+:END:
+
+Qualquer objeto LISP pode ser usado como *chave*, no entanto é preciso que o argumento "test" da criação da tabela seja apropriado.
+
+Qualquer objeto LISP pode ser usado como *valor*.
+
+*** Colocar valores (puthash)
+:PROPERTIES:
+:ID:       e8c21956-9d0e-4e2f-815d-424777dfefc2
+:END:
+
+*puthash key value table*, coloca na TABLE o valor VALUE associada com a chave KEY.
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table)))
+    (puthash '3 2 table)
+    (puthash "string" 2 table)
+    (puthash '(a 2) 2 table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data (3 2 "string" 2 (a 2) 2))
+
+*** Acessar valores (gethash)
+:PROPERTIES:
+:ID:       8ac3422d-b81f-4f27-b574-f021cabc48bb
+:END:
+
+*gethash key table &optional default*, procura por KEY em TABLE e retorna o valor encontrado. Se nenhum valor for encontrado DEFAULT será retornado. Por padrão DEFAULT é "nil".
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (gethash "string" table))
+#+end_src
+
+#+RESULTS:
+: 6
+
+*** Remover valores (remhash)
+:PROPERTIES:
+:ID:       6f4c0770-906a-42b1-b358-d29b6b4254f3
+:END:
+
+*remhash key table*, remove KEY de TABLE
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (remhash "string" table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (3 2 (a 2) 9))
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (remhash 'chave-inexistente table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (3 2 "string" 6 (a 2) 9))
+
+*** Limpar tabela (clrhash)
+:PROPERTIES:
+:ID:       bb72550c-6fc1-4b44-9b78-a6c4ef48628a
+:END:
+
+*clrhash table*, limpa TABLE de todos os valores presenters nela.
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (clrhash table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+
+*** Mapear função (maphash)
+:PROPERTIES:
+:ID:       d01ac337-b060-4da3-aa5c-0a9e9bbe2e09
+:END:
+
+*maphash function table*, executa FUNCTION em todos os valores de TABLE. Function deve ser uma função que aceita dois argumentos a *chave* e o *valor*
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal))
+        (res '()))
+    (puthash 1 2 table)
+    (puthash 3 4 table)
+    (puthash 5 6 table)
+
+    (maphash #'(lambda (key value) 
+                 (setq res (cons (cons key value) res))) 
+             table)
+    res)
+#+end_src
+
+#+RESULTS:
+: ((5 . 6) (3 . 4) (1 . 2))
+
