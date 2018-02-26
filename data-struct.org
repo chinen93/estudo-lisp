@@ -2,9 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-02-09 Fri]
-
-
+#+DATE-UPDATED: [2018-02-26 Mon]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -33,3 +31,107 @@ https://www.gnu.org/software/emacs/manual/html_node/cl/Structures.html#Structure
 :END:
 
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Hash-Tables.html
+
+Hash table é um tipo de tabela de rápido acesso. Cada chave correspode a um valor. Algumas das suas caracteristicas são: Rapidade de acesso a valores guardados independente da quantidade de dados armazenados; Seus valores e chaves não estão em uma ordem específica;
+
+Elisp provê um tipo para "hash table" junto com uma série de funções pra operar com este tipo de dado. Eles apresentam uma forma especial de representação gráfica
+
+#+begin_src emacs-lisp
+  (make-hash-table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
+** Criando Hash tables
+:PROPERTIES:
+:ID:       9c99981a-1e5b-4615-9fcf-82b44a3213bc
+:END:
+
+A principal função parar criar "hash tables" é (make-hash-table), ela apresenta alguns parametros que podem ser alterados tornando as tabelas mais expecíficas para cada oportunidade.
+
+*** Argumento :test
+:PROPERTIES:
+:ID:       3f80d21a-a45b-4cc7-9cf9-f48a28172d2e
+:END:
+
+Este tipo especifica o método utilizado para comparar chaves a fim de verificar se encontrou o valor procurado.
+
+O valor padrão é "eql". Outros valores que podem ser colocados são: "eq" e "equal".
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'eql)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'eq)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eq rehash-size 1.5 rehash-threshold 0.8 data ())
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'equal)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+
+
+*** Argumento :weakness
+:PROPERTIES:
+:ID:       89416869-2328-4bb1-9cff-d9f8ebe1ae4b
+:END:
+
+Esse argumento verifica se as chaves e os valores na tabela são preservados do coletor de lixo do sistema. 
+
+O valor deve ser: "nil", "key", "value", "key-or-value", "key-and-value". 
+
+Se o valor for "key" então a tabela não previne suas chaves de serem coletadas; Se uma chave for coletada a associação correspondente é removida da tabela.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "value" então a tabela não previne seus valores de serem coletados; Se um valor é coletado a associação correspondente é removida.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "key-and-value" então tanto a chave quanto o valor devem estar carregados para preservar a associação, portanto nem a chave nem o valor é preservado de serem coletados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key-and-value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key-and-value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "key-or-value" então tanto a chave quando o valor podem preservar a associação, portanto a associação só é removida caso a chave e o valor sejam coletados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key-or-value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key-or-value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+O valor padrão é "nil". Com este argumento todas as chaves e valores são preservados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'nil)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
