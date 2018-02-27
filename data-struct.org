@@ -17,6 +17,13 @@ https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
 :END:
 
 https://www.gnu.org/software/emacs/manual/html_node/cl/Lists.html#Lists
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Lists.html#Lists
+
+Muitas funções criam listas, uma vez que listas é a principal estrutura de dados em elisp. No entanto existe um função em particular que pe a principal na criação de listas. A função "cons"
+
+*cons object1 object2*, funciona criando uma lista na qual o primeiro elemento é object1 e seu segundo object2. Esta função é normalmente utilizada para colocar um elemento na frente de uma lista.
+
+*list $rest objects* é uma outra forma de criar listas. Dessa forma todos os elementos em objects serão os elementos da lista, não limitado apenas por 2 objetos como em "cons".
 
 * Estruturas
 :PROPERTIES:
