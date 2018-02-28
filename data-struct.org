@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-02-26 Mon]
+#+DATE-UPDATED: [2018-02-28 Wed]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -19,11 +19,124 @@ https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
 https://www.gnu.org/software/emacs/manual/html_node/cl/Lists.html#Lists
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Lists.html#Lists
 
+Uma lista é uma sequência de zero ou mais elementos (estes elementos podem ser qualquer objeto LISP).
+
+Uma lista nada mais é do que uma "cons cell", que é uma representação de um par ordenado. Uma lista é um conjunto de "cons cells" no qual o primeiro elemento do par é o elemento da lista e o segundo elemento é a proxima "cons cell".
+
+A ultima "cons cell" da lista tem como segundo elemento o valor "nil" indicando que a lista terminou.
+
+** Construção
+:PROPERTIES:
+:ID:       e59c9a25-d93d-4804-b497-a319f0def929
+:END:
+
 Muitas funções criam listas, uma vez que listas é a principal estrutura de dados em elisp. No entanto existe um função em particular que pe a principal na criação de listas. A função "cons"
 
 *cons object1 object2*, funciona criando uma lista na qual o primeiro elemento é object1 e seu segundo object2. Esta função é normalmente utilizada para colocar um elemento na frente de uma lista.
 
 *list $rest objects* é uma outra forma de criar listas. Dessa forma todos os elementos em objects serão os elementos da lista, não limitado apenas por 2 objetos como em "cons".
+
+** Acessar elementos
+:PROPERTIES:
+:ID:       c58b5ea1-a9b2-495a-8064-2397223c6a78
+:END:
+
+*** Primeiro (CAR CONS-CELL)
+:PROPERTIES:
+:ID:       a22f46ed-5a0e-467f-9bec-526d175cf58d
+:END:
+
+Retorna o elemento que esta no primeiro par de CONS-CELL.
+
+Como uma lista é um conjunto de cons cells se uma lista for passada como parametro o primeiro elemento da lista será retornado.
+
+#+begin_src emacs-lisp
+  (car '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+: 1
+
+#+begin_src emacs-lisp
+  (car (cons 1 2))
+#+end_src
+
+#+RESULTS:
+: 1
+
+*** Resto (CDR CONS-CELL)
+:PROPERTIES:
+:ID:       d9e4321f-1f01-40a2-9920-cbde291e1156
+:END:
+
+Retorna o elemento que esta no segundo par de CONS-CELL.
+
+Como uma lista é um conjunto de cons cells se uma lista é passada como parametro o segundo elemento em diante será retornado.
+
+#+begin_src emacs-lisp
+  (cdr '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+| 2 | 3 | 4 |
+
+#+begin_src emacs-lisp
+  (cdr (cons 1 2))
+#+end_src
+
+#+RESULTS:
+: 2
+
+*** N-ésimo elemento (NTH N LIST)
+:PROPERTIES:
+:ID:       3ef93ba7-f9c1-452f-b539-de9556455bdb
+:END:
+
+Retorna o N-ésimo elemento de LIST.
+
+Os indices dos elementos começam com 0. Caso N seja maior que o tamanho de LIST "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (nth 2 '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+: 3
+
+#+begin_src emacs-lisp
+  (nth 100 '(1 2))
+#+end_src
+
+#+RESULTS:
+
+*** Elementos depois do N-ésimo elemento (NTHCDR N LIST)
+:PROPERTIES:
+:ID:       03fd5be6-4923-4ee9-a003-e4afc25efa8d
+:END:
+
+Retorna os elementos depoi do N-ésimo elemento de LIST.
+
+Os indices dos elementos começam com 0. Se N for 0 então retorna todos os elementos da lista, Se N for maior que o tamanho de LIST "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (nthcdr 3 '(0 1 2 3 4 5 6 7))
+#+end_src
+
+#+RESULTS:
+| 3 | 4 | 5 | 6 | 7 |
+
+#+begin_src emacs-lisp
+  (nthcdr 0 '(1 2 3))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 |
+
+#+begin_src emacs-lisp
+  (nthcdr 100 '(1 2))
+#+end_src
+
+#+RESULTS:
 
 * Estruturas
 :PROPERTIES:
