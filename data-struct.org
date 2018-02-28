@@ -138,6 +138,94 @@ Os indices dos elementos começam com 0. Se N for 0 então retorna todos os elem
 
 #+RESULTS:
 
+** Adicionar elementos
+:PROPERTIES:
+:ID:       b7529299-f5fe-4720-8638-505754740358
+:END:
+
+*** add-to-list
+:PROPERTIES:
+:ID:       cefd0948-6ffa-4493-8cd5-fd9463745284
+:END:
+
+Função *add-to-list symbol element &optional append compare-fn*.
+
+Coloca ELEMENT na lista SYMBOL se o elemento não esta presente. Retorna a lista atualizada ou não.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 3))
+#+end_src
+
+#+RESULTS:
+| 3 | 1 | 2 |
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 1))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 |
+
+Por padrão os elementos são colocados no inicio da lista. Caso o argumento "append" seja não nulo, eles são adicionados ao final.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 3 t))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 |
+
+Utiliza o argumento "compare-fn" para encontrar os elementos existentes na lista. Por padrão esta função é o "equal"
+
+"compare-fn" recebe dois argumentos, o elemento da lista e o a entrar.
+
+#+begin_src emacs-lisp
+  (let ((list '((1 2) (2 3))))
+    (add-to-list 'list '(3 4) t #'(lambda (x y)
+                                    (equal (car x) (car y)))))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 |
+| 2 | 3 |
+| 3 | 4 |
+
+*** TODO add-to-ordered-list
+:PROPERTIES:
+:ID:       af2160b8-4c3b-4b53-8975-681fcd5848d0
+:END:
+
+Função: *add-to-ordered-list symbol element &optional order*
+
+Coloca um elemento na lista. Os elementos são procurados utilizando a função "eq". Caso o elemento ja esteja na lista ele não será inserido. Retorna a lista atualizada ou não.
+
+Os elementos são ordenados em ordem crescente do argumento ORDER.
+
+#+begin_src emacs-lisp
+  (let ((list '()))
+      (add-to-ordered-list 'list 1 0)
+      (add-to-ordered-list 'list 2 2)
+      (add-to-ordered-list 'list 3)
+      (add-to-ordered-list 'list 4))
+#+end_src
+
+#+RESULTS:
+| 1 | 4 | 3 | 2 |
+
+#+begin_src emacs-lisp
+  (let ((list '(9 8)))
+      (add-to-ordered-list 'list 1 0)
+      (add-to-ordered-list 'list 2 3)
+      (add-to-ordered-list 'list 3 2)
+      (add-to-ordered-list 'list 4 1))
+#+end_src
+
+#+RESULTS:
+| 1 | 4 | 3 | 2 | 9 | 8 |
+
 * Estruturas
 :PROPERTIES:
 :ID:       31f7cd19-1442-4360-8e24-172393737b50
