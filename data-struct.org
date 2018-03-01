@@ -249,6 +249,85 @@ Os elementos são ordenados em ordem crescente do argumento ORDER.
 #+RESULTS:
 | 1 | 4 | 3 | 2 | 9 | 8 |
 
+** Modificando elementos
+:PROPERTIES:
+:ID:       c754e3ed-9cec-4cac-b1e9-4462c1445475
+:END:
+
+É possível modificar elementos da lista. No entanto essas operações são destrutivas, pois elas podem alterar a estrutura da lista.
+
+*** Alterar o CAR de uma lista
+:PROPERTIES:
+:ID:       50a0aed8-4172-4e6a-a563-0351294ccaf3
+:END:
+
+Função: *setcar cons object*
+
+Essa função altera o elemento presente no CAR de uma "cons cell".
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3)))
+    (setcar list 10)
+    list)
+#+end_src
+
+#+RESULTS:
+| 10 | 2 | 3 |
+
+Caso elementos sejam compartilhados entre várias listas, como *setcar* é uma função destrutiva, as alterações serão compartilhadas com todos.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3))
+         (list2 (cons '10 list1)))
+    (setcar (cdr list1) 100)
+    list2)
+#+end_src
+
+#+RESULTS:
+| 10 | 1 | 100 | 3 |
+
+*** Alterar o CDR de uma lista
+:PROPERTIES:
+:ID:       35b84dad-1913-4366-aa2a-77519870c568
+:END:
+
+Função: *setcdr cons object*
+
+Essa função altera o cdr de uma "cons cell"
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list '(10))
+    list)
+#+end_src
+
+#+RESULTS:
+
+É possível remover um elemento no meio de uma lista. Passando alterando o cdr de um elemento para o cdr do cdr deste elemento.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list (cdr (cdr list)))
+    list)
+#+end_src
+
+E analogamente inserir um elemento no meio de uma lista.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list (cons 100 (cdr list)))
+    list)
+#+end_src
+
+Assim como setcar como é uma função destrutiva, alterar uma lista dessa forma alterará todas as listas que são compartilhadas.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3))
+         (list2 (cons '10 list1)))
+    (setcdr list1 nil)
+    list2)
+#+end_src
+
 * Estruturas
 :PROPERTIES:
 :ID:       31f7cd19-1442-4360-8e24-172393737b50
