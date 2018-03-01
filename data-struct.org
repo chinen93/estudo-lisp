@@ -328,6 +328,27 @@ Assim como setcar como é uma função destrutiva, alterar uma lista dessa forma
     list2)
 #+end_src
 
+* Conjuntos (Listas)
+:PROPERTIES:
+:ID:       e043d6ec-1d4b-4cf4-aa1e-20dc13391d65
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Sets-And-Lists.html#Sets-And-Lists
+
+* Listas de Associação
+:PROPERTIES:
+:ID:       c168ce96-e866-45ad-a08f-fb92c759559a
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Association-Lists.html#Association-Lists
+
+* Lista de Propriedades
+:PROPERTIES:
+:ID:       e3c3cbe0-ed32-49ef-a675-3ccd89da54ce
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Property-Lists.html#Property-Lists
+
 * Estruturas
 :PROPERTIES:
 :ID:       31f7cd19-1442-4360-8e24-172393737b50
