@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-02-28 Wed]
+#+DATE-UPDATED: [2018-03-01 Thu]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -23,7 +23,30 @@ Uma lista é uma sequência de zero ou mais elementos (estes elementos podem ser
 
 Uma lista nada mais é do que uma "cons cell", que é uma representação de um par ordenado. Uma lista é um conjunto de "cons cells" no qual o primeiro elemento do par é o elemento da lista e o segundo elemento é a proxima "cons cell".
 
+Uma "cons cell" na variavel x1, pode ser representada como:
+
+#+begin_src text
+          --- --- 
+  x1---> |   |   | ---> 2
+          --- --- 
+           |      
+           |      
+            --> 1 
+#+end_src
+
+
 A ultima "cons cell" da lista tem como segundo elemento o valor "nil" indicando que a lista terminou.
+
+A lista (1 2 3) na variavel x1,  pode ser representada como:
+
+#+begin_src text
+          --- ---        --- ---      --- ---
+  x1---> |   |   |----> |   |   |--> |   |   |--> nil
+          --- ---        --- ---      --- ---
+           |              |            |
+           |              |            |
+            --> 1          --> 2        --> 3
+#+end_src
 
 ** Construção
 :PROPERTIES:
@@ -213,7 +236,7 @@ Os elementos são ordenados em ordem crescente do argumento ORDER.
 #+end_src
 
 #+RESULTS:
-| 1 | 4 | 3 | 2 |
+| 1 | 2 | 4 | 3 |
 
 #+begin_src emacs-lisp
   (let ((list '(9 8)))
