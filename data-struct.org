@@ -335,6 +335,171 @@ Assim como setcar como é uma função destrutiva, alterar uma lista dessa forma
 
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Sets-And-Lists.html#Sets-And-Lists
 
+Um conjunto é uma representação não ordenada de uma lista, na qual não existem elementos repetidos.
+
+** Verificar se elemento esta no conjunto
+:PROPERTIES:
+:ID:       faf654a4-d9c5-4c7c-9fab-3f8ac0f863e2
+:END:
+
+*** memq utilizando "eq"
+:PROPERTIES:
+:ID:       28f15bdd-0819-4aa0-bda8-ebcf0ed0b63c
+:END:
+
+Função *memq object list*
+
+Verifica se OBJECT pertence a LIST, se existir retorna a listacomeçando naquele elemento. Se não existir retorna "nil".
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (memq 3 list))
+#+end_src
+
+#+RESULTS:
+| 3 | 4 |
+
+#+begin_src emacs-lisp
+  (let ((list '((1) (2) (3) (4))))
+    (memq '(1) list))
+#+end_src
+
+*** memql utilizando "eql"
+:PROPERTIES:
+:ID:       fba97f20-3c8a-446b-b146-613041404dff
+:END:
+
+A mesma coisa que memq, porem utilizando "eql".
+
+#+begin_src emacs-lisp
+  (memql 1.2 '(1.1 1.2 1.3))
+#+end_src
+
+#+RESULTS:
+| 1.2 | 1.3 |
+
+#+begin_src emacs-lisp
+  (memq 1.2 '(1.1 1.2 1.3))
+#+end_src
+
+#+RESULTS:
+
+*** member utilizando "equal"
+:PROPERTIES:
+:ID:       42b75b35-77c9-47b5-bfd9-c444dda1e26f
+:END:
+
+A mesma coisa que memq, porem utilizando "equal".
+
+#+begin_src emacs-lisp
+  (member '(2) '((1) (2) (3)))
+#+end_src
+
+#+RESULTS:
+| 2 |
+| 3 |
+
+#+begin_src emacs-lisp
+  (memq '(2) '((1) (2) (3)))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+  (member "bar" '("foo" "bar" "baz"))
+#+end_src
+
+#+RESULTS:
+| bar | baz |
+
+** Deletar elemento (destrutivamente)
+:PROPERTIES:
+:ID:       93a437d5-b4f1-423f-a0a2-872c21b232dd
+:END:
+
+*** delq utilizando "eq"
+:PROPERTIES:
+:ID:       c58c273f-60e4-49dd-a2a9-43b333bb15e5
+:END:
+
+Função: *delq object list*
+
+Remove todos os elementos OBJECT de LIST utilizando "eq" como verificação. Retornando a lista resultante.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3 2 4))
+         (list2 (cons 10 list1)))
+    (delq 2 list1)
+    list2)
+#+end_src
+
+#+RESULTS:
+| 10 | 1 | 3 | 4 |
+
+*** delete utilizando "equal"
+:PROPERTIES:
+:ID:       257da233-47fa-4337-9a8b-e604fe8a2832
+:END:
+
+Função: *delete object sequence*
+
+Faz a mesma coisa que delq, porém utilizando "equal" como função de comparação.
+
+#+begin_src emacs-lisp
+  (delete '(2) '((2) (1) (2)))
+#+end_src
+
+#+RESULTS:
+| 1 |
+
+*** delete-dups
+:PROPERTIES:
+:ID:       f7e41758-c4d2-4650-85d3-7d0f3027ea99
+:END:
+
+Função: *delete-dups list*
+
+Deleta todos os elemento duplicados de LIST.
+
+#+begin_src emacs-lisp
+  (delete-dups '(1 1 1 1 1 1 1 1 1 1 2))
+#+end_src
+
+** Retornar lista sem elemento
+:PROPERTIES:
+:ID:       7180a2d0-c372-412d-96e4-f14eedc24afd
+:END:
+
+*** remq utilizando "eq"
+:PROPERTIES:
+:ID:       d9747704-ce0c-45d1-b0de-caef759814ed
+:END:
+
+Função: *remq object list*
+
+Retorna uma cópia de LIST sem os elementos iguais a OBJECT. Utilizando "eq" para verificar os elementos. 
+
+#+begin_src emacs-lisp
+  (remq 1 '(1 1 1 1 1 2))
+#+end_src
+
+#+RESULTS:
+| 2 |
+
+*** remove utilizando "equal"
+:PROPERTIES:
+:ID:       e31d6111-3a97-49cd-aff1-73d4e8be950f
+:END:
+
+Igual remq, porem utilizando "equal" para verificar os elementos.
+
+#+begin_src emacs-lisp
+  (remove '(1) '((1) (1) (1) (1) (2)))
+#+end_src
+
+#+RESULTS:
+| 2 |
+
 * Listas de Associação
 :PROPERTIES:
 :ID:       c168ce96-e866-45ad-a08f-fb92c759559a
