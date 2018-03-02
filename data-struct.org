@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-03-01 Thu]
+#+DATE-UPDATED: [2018-03-02 Fri]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -513,6 +513,119 @@ https://www.gnu.org/software/emacs/manual/html_node/elisp/Association-Lists.html
 :END:
 
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Property-Lists.html#Property-Lists
+
+A uma lista de propriedades não difere muito de lista normal, pois estruturalmente não há nada de diferente de uma lista. É uma lista de pares ordenados no qual os elementos de indice par são chaves e os de indice impar são valores. Os indices começam em 0.
+
+Essa é uma lista de propriedade na qual a chave "arvore" tem como valor "feliz". 
+
+#+begin_src emacs-lisp
+  '(arvore feliz lisp elisp)
+#+end_src
+
+#+RESULTS:
+| arvore | feliz | lisp | elisp |
+
+** Existe propriedade (plist-member)? 
+:PROPERTIES:
+:ID:       f4b05431-0614-475b-9ae7-2546b4e295fd
+:END:
+
+Função: *plist-member plist property*
+
+Retorna o resto da lista caso encontre PROPERTY em PLIST.
+
+#+begin_src emacs-lisp
+  (plist-member '(1 2 3 4) 3)
+#+end_src
+
+#+RESULTS:
+| 3 | 4 | 
+
+#+begin_src emacs-lisp
+  (plist-member '(1 2 3 4) 10)
+#+end_src  
+
+#+RESULTS:
+
+** Adicionar propriedades
+:PROPERTIES:
+:ID:       b8c4cc21-1106-46d8-b8cd-f72bdb89e3d3
+:END:
+
+*** plist-get usando "eq"
+:PROPERTIES:
+:ID:       e8dfb9cb-a435-4680-8745-5a3aa9671b51
+:END:
+
+Função: *plist-get plist property*
+
+Retorna o valor de PROPERTY guardado em PLIST, se não for encontrado "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4) 'foo)
+#+end_src
+
+#+RESULTS:
+: 4
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4 bad) 'foo)
+#+end_src
+
+#+RESULTS:
+: 4
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4 bad) 'bad)
+#+end_src
+
+#+RESULTS:
+
+*** lax-plist-get usando "equal"
+:PROPERTIES:
+:ID:       225043ef-2cfa-41f1-92a9-cf3a74c53f19
+:END:
+
+Função: *lax-plist-get plist property*
+
+Iqual a plist-get mas utiliza "equal" ao inves de "eq".
+
+** Recuperar propriedades
+:PROPERTIES:
+:ID:       7b8cd5eb-26e5-4f46-9837-e8d3d475bf4c
+:END:
+
+*** plist-put usando "eq"
+:PROPERTIES:
+:ID:       5bcb1dee-0362-41ef-adbe-521b70c9fa6a
+:END:
+
+Função: *plist-put plist property value*
+
+Guarda VALUE com a chave PROPERTY em PLIST. Caso PROPERTY já exita ele será atualizado. Se não existir um novo valor será inserido.
+
+#+begin_src emacs-lisp
+  (plist-put '(1 2 3 4) 1 10)
+#+end_src
+
+#+RESULTS:
+| 1 | 10 | 3 | 4 |
+
+#+begin_src emacs-lisp
+  (plist-put '(1 2 3 4) 5 10)
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 | 10 |
+
+*** lax-plist-put usando "equal"
+:PROPERTIES:
+:ID:       bd073278-3160-46e5-8748-2a43f9de383f
+:END:
+
+Função: *lax-plist-put plist property value*
+
+Faz a mesma coisa que plist-put, porem utiliza "equal" para verificações.
 
 * Estruturas
 :PROPERTIES:
