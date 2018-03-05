@@ -10,6 +10,186 @@
 :END:
 
 https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
+https://www.gnu.org/software/emacs/manual/html_node/eieio/Building-Classes.html
+
+EIEIO prove uma camada de Orientação a Objetos para Emacs Lisp. Possibilitando a criação declasses, métodos e instâncias das classes.
+
+EIEIO suporta as seguintes funcionalidades e muitas outras:
+
+- Framework para criação de classes com herança simples, além da definição de métodos e atributos.
+- Verificação de tipos
+
+** Criando Classes
+:PROPERTIES:
+:ID:       9ad88b34-95b8-4cd1-927c-c1431ae3a2cf
+:END:
+
+Macro: *defclass class-name superclass-list slot-list &rest options-and-doc*
+
+Cria uma classe de nome CLASS-NAME, representada por um simbolo nomeado CLASS-NAME. 
+
+Herança é feita através do parâmetro SUPERCLASS-LIST, no qual cada elemento da lista deve ser uma classe. Essas são as classes pais de CLASS-NAME.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-pessoa ()
+    ((nome)
+     (idade) 
+     (sexo)))
+
+  (class-pessoa)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-pessoa unbound unbound unbound]
+
+Ao criar uma class utilizando "defclass" um predicado de nome "CLASS-NAME-p" é criado para identificar se o objeto é da classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-pessoa ()
+    ((nome)
+     (idade) 
+     (sexo)))
+
+  (class-pessoa-p (class-pessoa))
+#+end_src
+
+#+RESULTS:
+: t
+
+*** Herança
+:PROPERTIES:
+:ID:       7a7d8063-b10b-4237-b507-7c941dcacd33
+:END:
+
+Cada associação chave-valor que aparece na classe pai é replicada na classe filha. 
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ())
+
+  (class-subclass :chaveA 1 :chaveB 2)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-subclass 1 2]
+
+Caso a classe filha tenha uma associação chave-valor de mesmo nome a da filha sobreescreve a da pai.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ((chaveB :initarg :chaveB)))
+
+  (class-subclass :chaveA 1 :chaveB 2)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-subclass 1 2]
+
+*** Opções de Chave-Valor
+:PROPERTIES:
+:ID:       366d99c1-b86d-4532-b362-026b0c41a189
+:END:
+
+O argumento SLOT-LIST de "defclass" é uma lista de elementos que cada um define uma associação chave-valor.
+
+Cada uma dessas associações tem a forma
+#+begin_src emacs-lisp
+  '(nome-chave :tag-1 1
+               :tag-N N)
+#+end_src
+
+**** Acessar no Construtor (:initarg)
+:PROPERTIES:
+:ID:       4a768f16-6def-4fca-b158-29bc49859c78
+:END:
+
+Ao utilizar essa tag um simbolo pode ser utilizado no construtor da classe para colocar um associar um valor a chave. Os simbolos devem começar com ":".
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB)))
+
+  (class-base :chaveA 100)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 unbound]
+
+**** Associar valor padrão (:initform)
+:PROPERTIES:
+:ID:       726dc974-f52e-4432-a466-0139bdbc572b
+:END:
+
+Uma expressão para ser usada como valor padrão para a associação chave-valor.
+
+Caso seja omitida o valor a ser inserido será "unbound". É recomendado sempre associar um valor padrão para todos as chaves-valores.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (class-base :chaveA 100)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+**** Documentação (:documentation)
+:PROPERTIES:
+:ID:       865a0615-979a-44c0-8709-ebc6e9901346
+:END:
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initform 1 
+             :documentation "Documentação para chaveA")
+     (chaveB :initform '(1 2 3 4))))
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+Create a new object of class type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+  Documentação para chaveA
+
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
 
 * Listas
 :PROPERTIES:
