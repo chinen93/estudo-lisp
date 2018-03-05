@@ -191,6 +191,95 @@ Slot: chaveA    default = 1
 Slot: chaveB    default = (quote (1 2 3 4))
 #+end_example
 
+*** Opcoes da Classe
+:PROPERTIES:
+:ID:       980bfa5e-3d61-45ee-9185-ba49ed430bbf
+:END:
+
+**** Documentação (:documentation)
+:PROPERTIES:
+:ID:       35ac71e3-8028-41d6-b6ee-65652c22ad8b
+:END:
+
+Apresenta uma documentação para a classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4)))
+
+    :documentation "Documentação para a classe '''''''''''''''''''''''''''''''''")
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+Create a new object of class type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+
+Documentação para a classe '''''''''''''''''''''''''''''''''
+
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
+
+**** Abstrata (:abstratct)
+:PROPERTIES:
+:ID:       7858a3c9-3c01-428b-8157-86f7a3fa1016
+:END:
+
+Informa que a classe é abstrata e, portanto, não deve ser instanciada.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4)))
+
+    :documentation "Documentação para a classe '''''''''''''''''''''''''''''''''"
+    :abstract t)
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+You cannot create a new object of type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+
+Documentação para a classe '''''''''''''''''''''''''''''''''
+
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
+
+** Criando Novos Objetos da Classe
+:PROPERTIES:
+:ID:       091cd619-b3ab-42e2-a397-cf919a8364c5
+:END:
+
 * Listas
 :PROPERTIES:
 :ID:       38a6ba3e-669c-47ec-b294-3eb5c12c7e39
