@@ -740,6 +740,54 @@ Faz a mesma coisa que plist-put, porem utiliza "equal" para verificações.
 
 https://www.gnu.org/software/emacs/manual/html_node/cl/Structures.html#Structures
 
+Uma estrutura é um objeto lisp que contem um conjunto de chaves-valores. Cada um destes pode conter um qualquer objeto lisp. Funções são fornecidas para acessar tais valores, criar, copiar e reconhecer essa estrutura.
+
+** Criar
+:PROPERTIES:
+:ID:       d21ab911-7b6e-484f-8237-de9736dc7c33
+:END:
+
+Macro: *cl-defstruct name slots...*
+
+Cria uma nova estrutura chamada NAME, e um conjunto de chaves. Na real é criado um vetor (ou lista) identificado e funções para acessar esse novo vetor.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+#+end_src
+
+#+RESULTS:
+: pessoa
+
+O código acima, define uma estrutura "pessoa" com três chaves. 
+
+Um objeto dessa estrutura pode ser criado utilizando a função "make-(nome estrutura)". Essa função utiliza argumentos nomeados ":nome", ":idade" e ":sexo" para especificar valores iniciais para essas chaves. Omitindo algum desses argumentos nomeados o valor padrão será "nil".
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)
+#+end_src
+
+#+RESULTS:
+: [cl-struct-pessoa "Zé" 23 homem]
+
+** Acessar valores
+:PROPERTIES:
+:ID:       7baaf15b-087b-4674-98e1-7d8431a89690
+:END:
+
+Dado um objeto "pessoa" P, é possível acessar os valores guardados utilizando o código abaixo.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-nome p)
+    (pessoa-idade p)
+    (pessoa-sexo p))
+#+end_src
+
+#+RESULTS:
+: homem
+
 * Hash Table
 :PROPERTIES:
 :ID:       c064d4a0-4a0d-4dfa-9bd5-bcb4d04cf990
