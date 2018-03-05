@@ -770,12 +770,63 @@ Um objeto dessa estrutura pode ser criado utilizando a função "make-(nome estr
 #+RESULTS:
 : [cl-struct-pessoa "Zé" 23 homem]
 
+*** Argumentos para cada chave-valor
+:PROPERTIES:
+:ID:       a4483713-caac-4356-9290-2683b5f9e165
+:END:
+
+Ao criar uma estrutura nova é possível identificar as chaves como uma lista, de forma a ter algumas propriedades específicas para a chave-valor.
+
+Essa lista é definida como
+
+#+begin_src emacs-lisp
+  '(nome-chave valor-padrao propriedade)
+#+end_src
+
+Essa propriedade é ":read-only" fazendo com que o valor colocado inicialmente naquela chave não pode ser alterado.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa 
+    (nome nil :read-only t)
+    idade 
+    sexo)
+#+end_src
+
+#+RESULTS:
+: pessoa
+
+** Reconhecer Estrutura
+:PROPERTIES:
+:ID:       7ea4e96a-e649-458c-8dd8-b55537aa73a0
+:END:
+
+Dado um objeto X, a função "((nome estrutura)-p X) diz se X é da estrutura. Se sim retorna t, nil caso contrário.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-p p))
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-p ()))
+#+end_src
+
+#+RESULTS:
+
 ** Acessar valores
 :PROPERTIES:
 :ID:       7baaf15b-087b-4674-98e1-7d8431a89690
 :END:
 
-Dado um objeto "pessoa" P, é possível acessar os valores guardados utilizando o código abaixo.
+Para cada chave idenficada na hora da declaração da estrutura é criada uma função para acessar tal o valor associado. Essas funções são da forma ((nome-estrutura)-(chave) (objeto-estrutura)). 
+
+Dado um objeto "pessoa" P, é possível acessar os valores guardados utilizando o código abaixo. É feito uma checagem para ver se P é realmente uma pessoa.
 
 #+begin_src emacs-lisp
   (cl-defstruct pessoa nome idade sexo)
@@ -787,6 +838,24 @@ Dado um objeto "pessoa" P, é possível acessar os valores guardados utilizando 
 
 #+RESULTS:
 : homem
+
+** Copiar
+:PROPERTIES:
+:ID:       f7f7087e-b647-4131-9240-e794da2fe8ae
+:END:
+
+Dado um objeto da estrura "pessoa" P. (copy-pessoa p) cria um novo objeto com os mesmos valores de chave-valor utilizando "eq"
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let* ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem))
+         (copia (copy-pessoa p)))
+    (setf (pessoa-idade p) 10)
+    copia)
+#+end_src
+
+#+RESULTS:
+: [cl-struct-pessoa "Zé" 23 homem]
 
 * Hash Table
 :PROPERTIES:
