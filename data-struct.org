@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-03-02 Fri]
+#+DATE-UPDATED: [2018-03-05 Mon]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -506,6 +506,112 @@ Igual remq, porem utilizando "equal" para verificar os elementos.
 :END:
 
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Association-Lists.html#Association-Lists
+
+Uma lista de associação ou alist grava um mapa de chave valores. É uma lista de "cons cells" na qual o primeiro valor é a chave e o segundo o valor associado. 
+
+É recomendado utilizar a notação de pares ordenados por ponto. Aonde o primeiro elemento é a chave e o segundo o seu valor associado.
+
+#+begin_src text
+  (chave . valor)
+
+   --- ---
+  |   |   |--> valor
+   --- ---
+    |
+    |
+     --> chave
+#+end_src
+
+Essa é um exemplo de lista de associação na qual a chave "arvore" esta relacionada ao valor "alta". 
+
+#+begin_src emacs-lisp
+  '((arvore . alta)
+    (arbusto . pequeno)
+    (grama . minusculo))
+#+end_src
+
+#+RESULTS:
+: ((arvore . alta) (arbusto . pequeno) (grama . minusculo))
+
+Tanto a chave quanto o valor guardados em uma alist podem ser quaisquer objetos lisp.
+
+#+begin_src emacs-lisp
+  '((a . 1)
+    ("b" 2 3))
+#+end_src
+
+#+RESULTS:
+: ((a . 1) (b 2 3))
+
+Alist são normalmente utilizados para guardar informações que poderiam ser guardadas em uma pilha, visto que novas associações podem ser adicionadas facilmente na frent da lista. Ao procurar por uma associação a primeira encontrada é retornada.
+
+** Acessar Elemento
+:PROPERTIES:
+:ID:       2a8273c1-8cdd-4441-8310-a3bbbbda2fe7
+:END:
+
+*** Via chave (assoc)
+:PROPERTIES:
+:ID:       587c70b2-a213-41a4-94d5-2228fd8f55b1
+:END:
+Função: *assoc key alist*
+
+Retorna a primeira ocorrencia de KEY em ALIST. A função de comparação é "equal". Retorna "nil" caso não encontre.
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi tchau) (verao inverno)))
+#+end_src
+
+#+RESULTS:
+| oi | tchau |
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi . tchau) (verao . inverno)))
+#+end_src
+
+#+RESULTS:
+: (oi . tchau)
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi tchau) (verao inverno) (oi algo)))
+#+end_src
+
+#+RESULTS:
+| oi | tchau |
+
+*** Via valor (rassoc) usando equal
+:PROPERTIES:
+:ID:       64e4044d-a718-4366-8db9-1cb27f1700cf
+:END:
+
+Função: *rassoc value alist*
+
+A mesma coisa que "assoc" no entanto utiliza os valores de "cdr" como objetos de comparação ao inves das chaves. Como o "cdr" de uma associação é uma lista, é necessário colocar o valor sendo uma lista.
+
+#+begin_src emacs-lisp
+  (rassoc '(inverno) '((oi tchau) (verao inverno)))
+#+end_src
+
+#+RESULTS:
+| verao | inverno |
+
+#+begin_src emacs-lisp
+  (rassoc 'inverno '((oi . tchau) (verao . inverno)))
+#+end_src
+
+#+RESULTS:
+: (verao . inverno)
+
+*** Via valor (rassq) usando eq
+:PROPERTIES:
+:ID:       44b0c6be-1071-46df-b77b-a2207099c6f9
+:END:
+
+A mesma coisa que "rassoc", no entanto é utilizado a função "eq" como comparador.
+
+#+begin_src emacs-lisp
+  (rassq 2 '((oi . 1) (verao . 2)))
+#+end_src
 
 * Lista de Propriedades
 :PROPERTIES:
