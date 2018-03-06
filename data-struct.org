@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-03-05 Mon]
+#+DATE-UPDATED: [2018-03-06 Tue]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -43,22 +43,6 @@ Herança é feita através do parâmetro SUPERCLASS-LIST, no qual cada elemento 
 
 #+RESULTS:
 : [eieio-class-tag--class-pessoa unbound unbound unbound]
-
-Ao criar uma class utilizando "defclass" um predicado de nome "CLASS-NAME-p" é criado para identificar se o objeto é da classe.
-
-#+begin_src emacs-lisp
-  (require 'eieio)
-
-  (defclass class-pessoa ()
-    ((nome)
-     (idade) 
-     (sexo)))
-
-  (class-pessoa-p (class-pessoa))
-#+end_src
-
-#+RESULTS:
-: t
 
 *** Herança
 :PROPERTIES:
@@ -280,6 +264,156 @@ Slot: chaveB    default = (quote (1 2 3 4))
 :ID:       091cd619-b3ab-42e2-a397-cf919a8364c5
 :END:
 
+Ao criar uma classe são criados duas funções. Uma para instanciar a classe e outra para verificar se um determinado objeto pertence a classe.
+
+*** Intanciando Classe
+:PROPERTIES:
+:ID:       629dab26-676d-441e-878b-d013fc3babab
+:END:
+A função de instanciação tem o mesmo nome da classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (class-base)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 1 (1 2 3 4)]
+
+Outra forma de instanciar é utilizando a função *make-instance class &rest initargs* que recebe o simbolo da classe a ser instanciada e suas chaves-valores.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (make-instance 'class-base :chaveA 10)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 10 (1 2 3 4)]
+
+*** Verificar Se Objeto Pertence a Classe 
+:PROPERTIES:
+:ID:       4d404889-b3cc-45d0-8184-35d208846bcb
+:END:
+
+Ao criar uma class utilizando "defclass" um predicado de nome "CLASS-NAME-p" é criado para identificar se o objeto é da classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-pessoa ()
+    ((nome)
+     (idade) 
+     (sexo)))
+
+  (class-pessoa-p (class-pessoa))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Acessando Valores Guardados
+:PROPERTIES:
+:ID:       cd5c756b-7691-46e8-a681-f4267a699d86
+:END:
+
+*** Recuperando Valores
+:PROPERTIES:
+:ID:       1772115d-d502-4be8-983d-34bc12a18c80
+:END:
+
+Macro: *oref obj slot*
+
+Retorna o valor guardado em SLOT em OBJ.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base :chaveA 1000)))
+    (oref object chaveA))
+#+end_src
+
+#+RESULTS:
+: 1000
+
+Função: *slot-value object slot*
+
+A diferença é que a chave SLOT precisa ter ' antes do simbolo.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base :chaveA 1000)))
+    (slot-value object 'chaveA))
+#+end_src
+
+#+RESULTS:
+: 1000
+
+*** Guardando Valores
+:PROPERTIES:
+:ID:       d073ac30-5a38-4e06-b3fa-92c1e92fb91c
+:END:
+
+Macro: *oset object slot value*
+
+Coloca o VALUE na chave SLOT de OBJECT
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base)))
+    (oset object chaveA 100)
+    object)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+Função: *set-slot-value object slot value*
+
+A diferença é que a chave SLOT precisa ter ' antes do simbolo.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base)))
+    (set-slot-value object 'chaveA 100)
+    object)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+** Escrevendo Métodos
+:PROPERTIES:
+:ID:       b4321a04-ab64-425f-a42f-9a0b5dd61173
+:END:
 * Listas
 :PROPERTIES:
 :ID:       38a6ba3e-669c-47ec-b294-3eb5c12c7e39
