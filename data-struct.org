@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-02-09 Fri]
-#+DATE-UPDATED: [2018-03-06 Tue]
+#+DATE-UPDATED: [2018-03-07 Wed]
 
 * Orientação a Objetos
 :PROPERTIES:
@@ -11,6 +11,7 @@
 
 https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
 https://www.gnu.org/software/emacs/manual/html_node/eieio/Building-Classes.html
+https://www.gnu.org/software/emacs/manual/html_node/eieio/index.html#Top
 
 EIEIO prove uma camada de Orientação a Objetos para Emacs Lisp. Possibilitando a criação declasses, métodos e instâncias das classes.
 
@@ -414,6 +415,117 @@ A diferença é que a chave SLOT precisa ter ' antes do simbolo.
 :PROPERTIES:
 :ID:       b4321a04-ab64-425f-a42f-9a0b5dd61173
 :END:
+
+Escrever métodos é simular a escrever funções. A diferença está na inclusão de algumas opções e a possibilidade de criar multiplas definições para um mesmo símbolo.
+
+Métodos definem uma implementação particular para um determinado tipo. 
+
+Métodos Genéricos aceitam qualquer argumento porém não possuem nenhum código. São usados para definir o nome da função e a documentação.
+
+*** Métodos Genéricos (defgeneric)
+:PROPERTIES:
+:ID:       720151e5-f9b3-4623-818c-1f24ff3101a5
+:END:
+
+Macro: *defgeneric method arglist [doc-string]*
+
+Um Método Genérico serve apenas para definir o simbolo da função com seus argumentos e documentação. Não há a necessidade de chamar este método pois "defmethod" o chama, caso necessário.
+
+*** Método (defmethod)
+:PROPERTIES:
+:ID:       7bed5e8a-614b-4cd5-ae2f-0a3dae2235e1
+:END:
+
+Macro: *defmethod method [:before | :primary | :after | :static ] arglist [doc-string] forms*
+
+Um método é uma função que é executada se o primeiro argumento passado combinar com a classe que tem o método.
+
+METHOD: o nome do método que esta sendo criado.
+
+[:before | :primary | :after | :static ]: diz quando o método será executado, o valor padrão é antes de :after e depois de :before.
+
+ARGLIST: uma lista de argumentos para o método. Apenas o primeiro argumento pode ter seu tipo especificado (classe que o método pertence). Se não tiver o tipo, então o método pode ser usado com qualquer objeto.
+
+[doc-string]: documentação referente ao método.
+
+FORMS: o corpo do método.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (defmethod base-method ((obj class-base) num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-base :chaveA 1000)))
+    (base-method object 10))
+#+end_src
+
+#+RESULTS:
+: 10
+
+**** Método Default
+:PROPERTIES:
+:ID:       c1de35b5-be1e-4d72-9f27-478809703605
+:END:
+
+Um método que não possue um tipo especifidado é chamado de Método Default. Pois se uma classe não tem a implementação do método o Método Default será executada.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (defmethod default-method (obj num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-base :chaveA 10)))
+    (base-method object 100))
+#+end_src
+
+#+RESULTS:
+: 100
+
+**** Método da Herança
+:PROPERTIES:
+:ID:       098c12fe-73a3-4768-8313-9da628fbb45e
+:END:
+
+Ao chamar um método de uma classe que não tem a implementação, antes de chamar o Método Default é tentado chamar o método de uma classe pai.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ())
+
+  (defmethod base-method (obj num) 
+    "Documentação para esse método"
+    (+ 10000 num))
+
+  (defmethod base-method ((obj class-base) num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-subclass :chaveA 1 :chaveB 2)))
+    (base-method object 100))
+
+#+end_src
+
+#+RESULTS:
+: 100
+
 * Listas
 :PROPERTIES:
 :ID:       38a6ba3e-669c-47ec-b294-3eb5c12c7e39
