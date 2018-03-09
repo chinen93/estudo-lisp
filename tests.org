@@ -36,3 +36,50 @@ No exemplo abaixo criamos um teste de nome "test" que não testa nada, pois seu 
 :ID:       014b1292-eb57-4172-a251-4f1c5a6ac1f6
 :END:
 
+Macro: *should form*
+
+Ao criar um teste é preciso que este faça algum tipo de verificação de forma a ser um teste mais completo. Para isso é usado a macro "should".
+
+Essa macro analiza FORM e caso não retorne um valor "t" ela aborta os próximos testes e escreve um conjunto de informações sobre o teste que falhou.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-adicao ()
+    (should (= (+ 1 2) 4)))
+#+end_src
+
+"Should" tem outras variações que podem ser úteis.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-nao-adicao ()
+    (should-not (= (+ 1 2) 4)))
+#+end_src
+
+E ainda pode ser esperado um tipo de excessão ser lançada. No exemplo abaixo é esperado uma sinalização de erro do tipo "arith-error". O valor de ":type" pode ser omitido, no entando ao fazer isso qualquer excessão vai ser aceita.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-dividir-zero ()
+    (should-error (/ 1 0)
+                  :type 'arith-error))
+#+end_src
+
+
+*** Falhas Esperadas
+:PROPERTIES:
+:ID:       bba20fc6-9af0-495d-8c06-3364f2d28e04
+:END:
+
+Algumas falhas no código são conhecidas. Elas podem ser muito complicadas para serem arrumadas no momento ou não muito importantes para o momento, então elas são deixadas como "falhas conhecidas" do sistema.
+
+Para que essas falhas conhecidas não sejam descritas como falhas normais, atrapalhando o relatório de falhas é possível indicar quais são os testes que testam essas falhas.
+
+Utilizando a keyword ":expectedresult :failed"
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-nao-adicao ()
+    :expected-result :failed
+    (should-not (= (+ 1 2) 4)))
+#+end_src
+
+Esses testes são importantes, pois caso alguem queria arrumar essa falha, existem testes automatizados que reproduzem o erro. 
+
+
