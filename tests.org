@@ -2,7 +2,7 @@
 #+AUTHOR:       Pedro Chinen
 #+EMAIL:        ph.u.chinen@gmail.com
 #+DATE-CREATED: [2018-03-08 Thu]
-#+DATE-UPDATED: [2018-03-08 Thu]
+#+DATE-UPDATED: [2018-03-09 Fri]
 
 https://www.jamesporter.me/2014/05/15/testing-elisp.html
 http://www.lihaoyi.com/post/PrinciplesofAutomatedTesting.html
@@ -12,6 +12,7 @@ http://www.lihaoyi.com/post/PrinciplesofAutomatedTesting.html
 :ID:       dae5cea9-456a-4576-9410-ccd1803dcd35
 :END:
 https://www.gnu.org/software/emacs/manual/html_mono/ert.html
+https://www.gnu.org/software/emacs/manual/html_node/ert/index.html
 
 ERT é uma ferramenta para teste automático de Emacs Lisp. Suas principais funcionalidades são a definição de testes, a execução dos testes e a mostra dos resultados.
 
@@ -24,7 +25,7 @@ Função : *(ert-deftest NAME () [DOCSTRING]  BODY...)*
 
 Definir um teste é similar a definir uma função. Tendo um NAME para identificar o teste, um DOCSTRING para ajudar na compreenção do teste, e um BODY que é o teste em si.
 
-No exemplo abaixo criamos um teste de note "test" que não testa nada, pois seu body não está fazendo nenhuma verificação.
+No exemplo abaixo criamos um teste de nome "test" que não testa nada, pois seu BODY não está fazendo nenhuma verificação.
 
 #+begin_src emacs-lisp
   (ert-deftest test () "Não testa nada" t)
@@ -34,3 +35,4 @@ No exemplo abaixo criamos um teste de note "test" que não testa nada, pois seu 
 :PROPERTIES:
 :ID:       014b1292-eb57-4172-a251-4f1c5a6ac1f6
 :END:
+
