@@ -62,7 +62,6 @@ E ainda pode ser esperado um tipo de excessão ser lançada. No exemplo abaixo �
                   :type 'arith-error))
 #+end_src
 
-
 *** Falhas Esperadas
 :PROPERTIES:
 :ID:       bba20fc6-9af0-495d-8c06-3364f2d28e04
@@ -81,5 +80,75 @@ Utilizando a keyword ":expectedresult :failed"
 #+end_src
 
 Esses testes são importantes, pois caso alguem queria arrumar essa falha, existem testes automatizados que reproduzem o erro. 
+
+** Executando Testes
+:PROPERTIES:
+:ID:       ba32b12e-9d68-47b6-b6a0-20e643ec7619
+:END:
+
+É possível executar os testes:
+- No Emacs, utilizando o REPL.
+- Ou em outra instância do Emacs sem interface de usuário.
+
+O primeiro é ideal durante o processo de desenvolvimento, pois indica que as alterações no código estão fazendo o código passar nos testes. O segundo é recomendado para garantir que os testes estejam passando em uma instância Emacs sem nenhuma configuração.
+
+*** Executando Interativamente os Testes
+:PROPERTIES:
+:ID:       dde03d01-6171-46b1-9962-659e66a25f89
+:END:
+
+Função: *ert*
+
+Ao executar essa função de forma interativa uma lista de testes definidos para o Emacs será mostrada. Se selecionar um em específico apenas ele será testado. Se selecionar "t" todos os testes serão executados.
+
+Independente de qual teste for realizado o seguinte template de relatório será criado
+#+begin_src text
+       Selector: t
+       Passed:  31
+       Skipped: 0
+       Failed:  2 (2 unexpected)
+       Total:   33/33
+     
+       Started at:   2008-09-11 08:39:25-0700
+       Finished.
+       Finished at:  2008-09-11 08:39:27-0700
+     
+       FF...............................
+     
+       F addition-test
+           (ert-test-failed
+            ((should
+              (=
+               (+ 1 2)
+               4))
+             :form
+             (= 3 4)
+             :value nil))
+     
+       F list-test
+           (ert-test-failed
+            ((should
+              (equal
+               (list 'a 'b 'c)
+               '(a b d)))
+             :form
+             (equal
+              (a b c)
+              (a b d))
+             :value nil :explanation
+             (list-elt 2
+                       (different-atoms c d))))
+#+end_src
+
+
+No topo existe um resumo dos resultados. Quais testes foram selecionados, quantos passaram e quantos falharam. O tempo de início e fim.
+
+A linha de pontos "." e f representa os testes executados. Cada caracter representa um teste. O ponto "." significa que o teste passou e "f" que o teste falhou. 
+
+Abaixo dessa linha existem mais informações dos testes que falharam.
+*** Executando Outra Instância (BATCH MODE)
+:PROPERTIES:
+:ID:       19d740ef-a244-4ab1-b427-867a8de13136
+:END:
 
 
