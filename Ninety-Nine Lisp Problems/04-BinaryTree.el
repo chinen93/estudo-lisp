@@ -26,6 +26,33 @@
 ; * (istree (a (b nil nil)))
 ; NIL
 
+;; tree-like-p list 
+;; if list length equals 3 
+;;;; let root (car list) 
+;;;; let esq (car (cdr list)) 
+;;;; let dir (car (cdr (cdr list))) 
+;;;; if (atomp root) and (listp esq) and (listp dir) 
+;;;;;; return t 
+;;;; else 
+;;;;;; return nil 
+;; else 
+;;;; return nil 
+ 
+;; tree-p tree 
+;; if tree equal nil 
+;;;; return t 
+;; if tree-like-p tree 
+;;;; let esq (car (cdr tree)) 
+;;;; let dir (car (cdr (cdr tree))) 
+;;;; if (tree-like-p esq) and not nil esq 
+;;;;;; return (tree-p esq) 
+;;;; else 
+;;;;;; return nil 
+;;;; if (tree-like-p dir) and not nil dir 
+;;;;;; return (tree-p dir)  
+;;;; else 
+;;;;;; return nil 
+
 ; P55 (**) Construct completely balanced binary trees
 ; In a completely balanced binary tree, the following property holds for
 ; every node: The number of nodes in its left subtree and the number of nodes
@@ -42,6 +69,23 @@
 ; T = t(x, t(x, nil, nil), t(x, t(x, nil, nil), nil)) ;
 ; etc......No
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIX
+
+;; cbal-tree-aux num level ret
+;; if num > 2^level
+;;;; append ret '(x (cbal-tree-aux (- num 2^level) (1+ level) 
+;;;;	            (cbal-tree-aux (- num 2^level) (1+ level))
+;; else
+;;;; if num < 0
+;;;;;; return nil
+;;;; else
+;;;;;;; return '(x nil nil)
+
+
+;; cbal-tree num
+;; return (cbal-tree-aux num 0 nil)
+
+
 ; P56 (**) Symmetric binary trees
 ; Let us call a binary tree symmetric if you can draw a vertical line through
 ; the root node and then the right subtree is the mirror image of the left
@@ -49,6 +93,28 @@
 ; is symmetric. Hint: Write a predicate mirror/2 first to check whether one
 ; tree is the mirror image of another. We are only interested in the
 ; structure, not in the contents of the nodes.
+
+;; mirror treeA treeB
+;; if treeA and treeB are one elements only
+;;;; return t
+;; if treeA esq is nil and tree B dir is nil
+;;;; return t
+;; if treeA esq is a node and treeB dir is a node 
+;;;; return mirror treeA-esq treeB-dir
+;; if treeA dir is nil and tree B esq is nil
+;;;; return t
+;; if treeA dir is a node and treeB esq is a node 
+;;;; return mirror treeA-dir treeB-esq
+;; else of any of these conditions
+;;;; return nil
+
+;; symmetric tree
+;; if tree is only one element
+;;;; return t
+;; treeA = tree esq 
+;; treeB = tree dir
+;; return mirror treeA treeB
+
 
 ; P57 (**) Binary search trees (dictionaries)
 ; Use the predicate add/3, developed in chapter 4 of the course, to write
@@ -63,6 +129,18 @@
 ; Yes
 ; * test-symmetric([3,2,5,7,1]).
 ; No
+
+;; add tree value
+;; if tree is null
+;;;; return (value nil nil)
+;; if node < tree
+;;;; add tree-esq value
+;; if node > tree
+;;;; add tree-dir value
+;; return tree
+
+;; construct list tree
+;; apply #add list tree
 
 ; P58 (**) Generate-and-test paradigm
 ; Apply the generate-and-test paradigm to construct all symmetric, completely

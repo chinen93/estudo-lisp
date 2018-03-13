@@ -9,6 +9,8 @@
 
 ;; my-last list
 (defun my-list (list)
+
+  "Find the last element of a LIST."
   
   ;; check if the parameter list is null.
   (if (null list)
@@ -46,6 +48,8 @@
 
 ;; my-but-last list
 (defun my-but-last (list)
+
+  "Find the last but one from LIST."
 
   ;; check if the paraeter list is null.
   (if (null list)
@@ -89,6 +93,10 @@
 
 ;; element-at list pos
 (defun element-at (list pos)
+
+  "Find the POS th element of LIST.
+
+The first element in the list is number 1."
 
   ;; check if list is null.
   (if (null list)
@@ -139,6 +147,8 @@
 
 ;; list-length-rec list
 (defun list-length-rec (list)
+
+  "Find the length of LIST using recursion."
   
   ;; check if list is null.
   (if (null list)
@@ -153,6 +163,9 @@
 
 ;; list-length list
 (defun list-length (list)
+  
+  "Find the length of LIST."
+
   ;; check if list is null.
   (if (null list)
       
@@ -164,6 +177,9 @@
 
 ;; list-length-aux list length
 (defun list-length-aux (list length)
+
+  "Helper of list-length which count forward LENGTH while LIST is
+not empty."
   
   ;; check if list is null.
   (if (null list)
@@ -194,11 +210,15 @@
 ;; reverse list
 (defun list-reverse (list)
 
+  "Reverse the elements of LIST."
+
   ;; return revert-aux list ().
   (reverse-aux list ()))
 
 ;; reverse-aux list ret
 (defun reverse-aux (list ret)
+
+  "Helper of list-reverse."
   
   ;; check if list is null.
   (if (null list)
@@ -232,6 +252,10 @@
 ;; palindrome list
 (defun palindrome (list)
 
+  "Check if LIST is a palindrome.
+
+A palindrome can be read forward or backward; e.g. (x a m a x)."
+
   ;; return if the list is equal its reverse.
   (equal list (list-reverse list)))
 
@@ -256,6 +280,11 @@
 
 ;; my-flatten elem
 (defun my-flatten (elem)
+
+  "Flatten a nested list structure.
+
+Transform a list, possibly holding lists as elements into a `flat' list by
+replacing each list with its elements (recursively)."
   
   ;; check if elem is null.
   (if (null elem)
@@ -294,6 +323,12 @@
 
 ;; compress list
 (defun compress (list)
+
+  "Eliminate consecutive duplicates of LIST elements.
+
+If LIST contains repeated elements they should be replaced with a
+single copy of the element. The order of the elements should not
+be changed."
   
   ;; check if list is null.
   (if (null list)
@@ -346,6 +381,11 @@
 
 ;; pack-duplicates list
 (defun pack-duplicates (list)
+
+  "Pack consecutive duplicates of LIST elements into sublists.
+
+If a LIST contains repeated elements they should be placed in
+separate sublists."
 
   ;; check if list is null.
   (if (null list)
@@ -452,6 +492,12 @@
 
 ;; list-encode list
 (defun list-encode (list)
+
+  "Run-length encoding of a LIST.
+
+encoding data compression method. Consecutive duplicates of
+elements are encoded as lists (N E) where N is the number of
+duplicates of the element E."
 
   ;; check if list is null.
   (if (null list)
@@ -564,6 +610,12 @@
 
 ;; list-min-encode list
 (defun list-min-encode (list)
+
+  "Modified run-length encoding.
+
+in such a way that if an element has no duplicates it is simply
+copied into the result list. Only elements with duplicates are
+transferred as (N E) lists."
 
   ;; check if list is null.
   (if (null list)
@@ -1651,6 +1703,9 @@
 ;;; https://groups.google.com/forum/#!topic/comp.lang.lisp/85MTsSUqjO4
 ;;; comb1
 (defun combination (elem-list size)
+
+  "Generate all the combinations of K distinct objects chosen from
+the SIZE elements of a ELEM-LIST."
 
   ;; conditionals:
   (cond

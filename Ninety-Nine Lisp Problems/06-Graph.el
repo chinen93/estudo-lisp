@@ -84,12 +84,89 @@
 ; multi-graphs, where more than one edge (or arc) are allowed between
 ; two given nodes.
 
+;; edge-form-p graph
+;; for each element of graph
+;;;; if is like (vertice vertice)
+;;;;;; return t
+;; isn't a graph return nil
+
+;; graph-term-form-p graph
+;; let vertices (first graph)
+;; let edges (second graph)
+;; for each edge from edges
+;;;; let v1 (first edge)
+;;;; let v2 (second edge)
+;;;; if v1 and v2 is member of vertices
+;;;;;; if (v2 v1) is member of edges
+;;;;;;;; return nil
+;;;; else
+;;;;;; return nil
+;; it is a graph return t
+
+;; adjacency-list-form-p graph
+;; for each node of graph
+;;;; let vertice (first node)
+;;;; let edges (second node)
+;;;; unless (vectorp edges)
+;;;;;; return nil
+;; it is a graph return t
+
+
 ; P80 (***) Conversions
 ; Write predicates to convert between the different graph representations.
 ; With these predicates, all representations are equivalent; i.e. for the
 ; following problems you can always pick freely the most convenient form.
 ; The reason this problem is rated (***) is not because it's particularly
 ; difficult, but because it's a lot of work to deal with all the special cases.
+
+;; convert-edge-to-graph-term graph
+;; let vertices ()
+;; let edges ()
+;; for each element of graph
+;;;; let v1 (first element)
+;;;; let v2 (second element)
+;;;; if v1 is not member of vertices
+;;;;;; append v1 to vertices
+;;;; if v2 is not member of vertices
+;;;;;; append v2 to vertices
+;;;; if (third element) exist
+;;;;;; let dist (third element) 
+;;;;;; append (list v1 v2 dist) to edges
+;;;; else
+;;;;;; append (list v1 v2) to edges
+
+;; convert-edge-to-adjacency graph
+;; let result ()
+;; for each element of graph
+;;;; let v1 (first element)
+;;;; let v2 (second element)
+;;;; let found nil
+;;;; for each element of result
+;;;;;; if (first element) is v1
+;;;;;;;; append v2 to (second element)
+;;;;;;;; found t
+;;;; if (null found)
+;;;;;; append (list v1 [v2]) to result
+
+;; convert-graph-term-to-edge graph
+;; let edges (second graph)
+;; return edges
+
+;; convert-graph-term-to-adjacency graph
+;; let vertices (first graph)
+;; let edges (second graph) 
+;; let nodes () 
+;; for each vertice of vertices
+;;;; append (vertice []) to nodes
+;; for each edge of edges
+;;;; let v1 (first edge)
+;;;; let v2 (second edge)
+;;;; search for v1 on nodes list
+;;;;;; append v2 to the vector of the correspondent node
+
+
+
+
 
 ; P81 (**) Path from one node to another one
 ; Write a predicate path(G,A,B,P) to find an acyclic path P from node A to

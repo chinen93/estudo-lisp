@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arithmetic
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -9,6 +9,8 @@
 ; T
 
 (defun is-prime (num)
+
+  "Determine whether NUM is prime."
 
   (cond
 
@@ -69,6 +71,9 @@
 ;; gcd numA numB
 (defun gcd (numA numB)
 
+  "Determine the greatest common divisor of positive integer NUMA
+and positive integer NUMB, Use Euclid's algorithm."
+
   (cond
 
    ;; If A = 0 then GCD(A,B)=B, since the GCD(0,B)=B, and we can stop.
@@ -104,6 +109,12 @@
 
 ;; coprime numA numB
 (defun coprime (numA numB)
+
+  "Determine whether positive integer NUMA and positive integer
+  NUMB are coprime.
+
+Two number are coprime if their greatest common divisor equals
+1."
 
   ;; conditional:
   (cond
@@ -150,6 +161,12 @@
 
 ;; totient-phi num
 (defun totient-phi (num)
+
+  "Calculate Euler's totient function phi(NUM).
+
+Euler's so-called totient function phi(NUM) is defined as the number of
+positive integers r (1 <= r < NUM) that are coprime to NUM.
+Example: NUM = 10: r = 1,3,7,9; thus phi(NUM) = 4."
 
   ;; conditional
   (cond
@@ -214,6 +231,32 @@
 ; * (prime-factors 315)
 ; (3 3 5 7)
 
+(defun prime-factors (number)
+  "Determine the prime factors of NUMBER a given positive integer.
+Construct a flat list containing the prime factors in ascending order.
+"
+
+  ;; Conditionals
+  (cond
+
+   ((equal (mod number 2) 0)
+    (append '(2) (prime-factors (/ number 2))))
+    
+   (t
+    (list number))))
+
+;;; Tests
+
+(ert-deftest prime-factors-01 ()
+  (should (equal (prime-factors 315)
+		 '(3 3 5 7))))
+
+(ert-deftest prime-factors-02 ()
+  (should (equal (prime-factors 312)
+		 '(3 3 5 7))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P36 (**) Determine the prime factors of a given positive integer (2).
 ; Construct a list containing the prime factors and their multiplicity.
 ; Example:
@@ -221,6 +264,12 @@
 ; ((3 2) (5 1) (7 1))
 ; Hint: The problem is similar to problem P13.
 ;
+
+;; prime-factors-mult num
+;; let primes (prime-factors num)
+;; encode-direct primes
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; P37 (**) Calculate Euler's totient function phi(m) (improved).
 ; See problem P34 for the definition of Euler's totient function. If the list
@@ -234,6 +283,15 @@
 ; Note that a ** b stands for the b'th power of a.
 ;
 
+;; phi-improved num
+;; let primes (prime-factors-mult num)
+;; for each elem of list
+;;;; let prime (car elem)
+;;;; let mult (car (cdr elem))
+;;;; collect sum of (* (1- prime) (power prime (1- mult)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; P38 (*) Compare the two methods of calculating Euler's totient function.
 ; Use the solutions of problems P34 and P37 to compare the algorithms. Take
 ; the number of logical inferences as a measure for efficiency. Try to
@@ -242,6 +300,10 @@
 ; P39 (*) A list of prime numbers.
 ; Given a range of integers by its lower and upper limit, construct a list of
 ; all prime numbers in that range.
+
+;; prime-range lower upper
+;; for lower to upper
+;;;; collect lower if it is prime
 
 ; P40 (**) Goldbach's conjecture.
 ; Goldbach's conjecture says that every positive even number greater than
@@ -254,6 +316,21 @@
 ; * (goldbach 28)
 ; (5 23)
 ;
+
+;; goldbach num
+;; if num is odd
+;;;; return nil
+;; let primes (primes-range 2 num)
+;; for lower (first primes)
+;;     upper (last primes)
+;; until lower > upper
+;; do
+;;;; if lower + upper < num
+;;;;;; lower = next prime
+;;;; if lower + upper > num
+;;;;;; upper = previus prime
+;;;; if lower + upper == num
+;;;;;; return (list lower upper) 
 
 ; P41 (**) A list of Goldbach compositions.
 ; Given a range of integers by its lower and upper limit, print a list of all
@@ -278,3 +355,14 @@
 ; 1382 = 61 + 1321
 ; 1856 = 67 + 1789
 ; 1928 = 61 + 1867
+
+;; goldbash-list lower upper 
+;; let primes (primes-range lower upper)
+;; for high-prime (first primes) to (last primes)
+;;;; for low-prime (first primes) to (last primes)
+;;;;;; if high-prime + low-prime < lower or > upper
+;;;;;;;; break for low-prime
+;;;;;; collect (list low-prime high-prime (+ low-prime high-prime))
+
+
+
