@@ -1,0 +1,177 @@
+#+TITLE:        Tests Notes
+#+AUTHOR:       Pedro Chinen
+#+EMAIL:        ph.u.chinen@gmail.com
+#+DATE-CREATED: [2018-03-08 Thu]
+#+DATE-UPDATED: [2018-03-14 Wed]
+
+https://www.jamesporter.me/2014/05/15/testing-elisp.html
+http://www.lihaoyi.com/post/PrinciplesofAutomatedTesting.html
+
+* Básico com ERT (Emacs Lisp Regression Testing)
+:PROPERTIES:
+:ID:       dae5cea9-456a-4576-9410-ccd1803dcd35
+:END:
+https://www.gnu.org/software/emacs/manual/html_mono/ert.html
+https://www.gnu.org/software/emacs/manual/html_node/ert/index.html
+
+ERT é uma ferramenta para teste automático de Emacs Lisp. Suas principais funcionalidades são a definição de testes, a execução dos testes e a mostra dos resultados.
+
+** Definindo Testes
+:PROPERTIES:
+:ID:       c3338c63-04b7-4376-b970-490672f5335b
+:END:
+
+Função : *(ert-deftest NAME () [DOCSTRING]  BODY...)*
+
+Definir um teste é similar a definir uma função. Tendo um NAME para identificar o teste, um DOCSTRING para ajudar na compreenção do teste, e um BODY que é o teste em si.
+
+No exemplo abaixo criamos um teste de nome "test" que não testa nada, pois seu BODY não está fazendo nenhuma verificação.
+
+#+begin_src emacs-lisp
+  (ert-deftest test () "Não testa nada" t)
+#+end_src
+
+*** Verificações no Teste (Macro: Should)
+:PROPERTIES:
+:ID:       014b1292-eb57-4172-a251-4f1c5a6ac1f6
+:END:
+
+Macro: *should form*
+
+Ao criar um teste é preciso que este faça algum tipo de verificação de forma a ser um teste mais completo. Para isso é usado a macro "should".
+
+Essa macro analiza FORM e caso não retorne um valor "t" ela aborta os próximos testes e escreve um conjunto de informações sobre o teste que falhou.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-adicao ()
+    (should (= (+ 1 2) 4)))
+#+end_src
+
+"Should" tem outras variações que podem ser úteis.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-nao-adicao ()
+    (should-not (= (+ 1 2) 4)))
+#+end_src
+
+E ainda pode ser esperado um tipo de excessão ser lançada. No exemplo abaixo é esperado uma sinalização de erro do tipo "arith-error". O valor de ":type" pode ser omitido, no entando ao fazer isso qualquer excessão vai ser aceita.
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-dividir-zero ()
+    (should-error (/ 1 0)
+                  :type 'arith-error))
+#+end_src
+
+*** Falhas Esperadas
+:PROPERTIES:
+:ID:       bba20fc6-9af0-495d-8c06-3364f2d28e04
+:END:
+
+Algumas falhas no código são conhecidas. Elas podem ser muito complicadas para serem arrumadas no momento ou não muito importantes para o momento, então elas são deixadas como "falhas conhecidas" do sistema.
+
+Para que essas falhas conhecidas não sejam descritas como falhas normais, atrapalhando o relatório de falhas é possível indicar quais são os testes que testam essas falhas.
+
+Utilizando a keyword ":expectedresult :failed"
+
+#+begin_src emacs-lisp
+  (ert-deftest teste-nao-adicao ()
+    :expected-result :failed
+    (should-not (= (+ 1 2) 4)))
+#+end_src
+
+Esses testes são importantes, pois caso alguem queria arrumar essa falha, existem testes automatizados que reproduzem o erro. 
+
+** Executando Testes
+:PROPERTIES:
+:ID:       ba32b12e-9d68-47b6-b6a0-20e643ec7619
+:END:
+
+É possível executar os testes:
+- No Emacs, utilizando o REPL.
+- Ou em outra instância do Emacs sem interface de usuário.
+
+O primeiro é ideal durante o processo de desenvolvimento, pois indica que as alterações no código estão fazendo o código passar nos testes. O segundo é recomendado para garantir que os testes estejam passando em uma instância Emacs sem nenhuma configuração.
+
+*** Executando Interativamente os Testes
+:PROPERTIES:
+:ID:       dde03d01-6171-46b1-9962-659e66a25f89
+:END:
+
+Função: *ert*
+
+Ao executar essa função de forma interativa uma lista de testes definidos para o Emacs será mostrada. Se selecionar um em específico apenas ele será testado. Se selecionar "t" todos os testes serão executados.
+
+Independente de qual teste for realizado o seguinte template de relatório será criado
+#+begin_src text
+       Selector: t
+       Passed:  31
+       Skipped: 0
+       Failed:  2 (2 unexpected)
+       Total:   33/33
+     
+       Started at:   2008-09-11 08:39:25-0700
+       Finished.
+       Finished at:  2008-09-11 08:39:27-0700
+     
+       FF...............................
+     
+       F addition-test
+           (ert-test-failed
+            ((should
+              (=
+               (+ 1 2)
+               4))
+             :form
+             (= 3 4)
+             :value nil))
+     
+       F list-test
+           (ert-test-failed
+            ((should
+              (equal
+               (list 'a 'b 'c)
+               '(a b d)))
+             :form
+             (equal
+              (a b c)
+              (a b d))
+             :value nil :explanation
+             (list-elt 2
+                       (different-atoms c d))))
+#+end_src
+
+
+No topo existe um resumo dos resultados. Quais testes foram selecionados, quantos passaram e quantos falharam. O tempo de início e fim.
+
+A linha de pontos "." e f representa os testes executados. Cada caracter representa um teste. O ponto "." significa que o teste passou e "f" que o teste falhou. 
+
+Abaixo dessa linha existem mais informações dos testes que falharam.
+*** Executando Outra Instância (BATCH MODE)
+:PROPERTIES:
+:ID:       19d740ef-a244-4ab1-b427-867a8de13136
+:END:
+
+
+É possível invocar ERT de forma automática através de scripts ou por linha de comando.
+
+"ert-run-tests-batch" e "ert-run-tests-batch-and-exit" são as funções que fazem esse tipo de execução.
+
+#+begin_src text
+  emacs -batch -l ert -l my-tests.el -f ert-run-tests-batch-and-exit
+#+end_src
+
+Esse comando vai inicializar o Emacs em batch mode, carregar ERT, carregar "my-tests.el" e executar a função "ert-run-tests-batch-and-exit". Se tudo ocorrer como previsto este código irá retornar 0, ou outro número caso algum teste falhe. Irá imprimir as mensagens de erro para a saida padrão, a tela normalmente.
+
+É possível redirecionar a saída para um arquivo específico. Usando a função "ert-summarize-tests-batch-and-exit"
+
+#+begin_src text
+  emacs -batch -l ert -f ert-summarize-tests-batch-and-exit output.log
+#+end_src
+
+ERT não faz parte da distribuição Emacs, portanto pode ser necessário usar -L para dizer em qual diretório os arquivos estão.
+
+Esses argumentos "-batch -l -f -L" são argumentos do comando emacs e representam:
+1. -batch: não mostre a tela e não carregue nenhum arquivo de configuração.
+2. -l / --load FILE: carregue o arquivo FILE.
+3. -f / --funcall FUNC: execute a função lisp FUNC.
+4. -L / --directory DIR: coloque DIR no inicio do caminho para os arquivos.
