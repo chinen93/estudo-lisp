@@ -1,0 +1,1606 @@
+#+TITLE:        Data Struct Study
+#+AUTHOR:       Pedro Chinen
+#+EMAIL:        ph.u.chinen@gmail.com
+#+DATE-CREATED: [2018-02-09 Fri]
+#+DATE-UPDATED: [2018-03-07 Wed]
+
+* Orientação a Objetos
+:PROPERTIES:
+:ID:       34c8e45a-972a-4348-abe8-c0cd75fff43a
+:END:
+
+https://ericabrahamsen.net/tech/2016/feb/bbdb-eieio-object-oriented-elisp.html
+https://www.gnu.org/software/emacs/manual/html_node/eieio/Building-Classes.html
+https://www.gnu.org/software/emacs/manual/html_node/eieio/index.html#Top
+
+EIEIO prove uma camada de Orientação a Objetos para Emacs Lisp. Possibilitando a criação declasses, métodos e instâncias das classes.
+
+EIEIO suporta as seguintes funcionalidades e muitas outras:
+
+- Framework para criação de classes com herança simples, além da definição de métodos e atributos.
+- Verificação de tipos
+
+** Criando Classes
+:PROPERTIES:
+:ID:       9ad88b34-95b8-4cd1-927c-c1431ae3a2cf
+:END:
+
+Macro: *defclass class-name superclass-list slot-list &rest options-and-doc*
+
+Cria uma classe de nome CLASS-NAME, representada por um simbolo nomeado CLASS-NAME. 
+
+Herança é feita através do parâmetro SUPERCLASS-LIST, no qual cada elemento da lista deve ser uma classe. Essas são as classes pais de CLASS-NAME.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-pessoa ()
+    ((nome)
+     (idade) 
+     (sexo)))
+
+  (class-pessoa)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-pessoa unbound unbound unbound]
+
+*** Herança
+:PROPERTIES:
+:ID:       7a7d8063-b10b-4237-b507-7c941dcacd33
+:END:
+
+Cada associação chave-valor que aparece na classe pai é replicada na classe filha. 
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ())
+
+  (class-subclass :chaveA 1 :chaveB 2)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-subclass 1 2]
+
+Caso a classe filha tenha uma associação chave-valor de mesmo nome a da filha sobreescreve a da pai.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ((chaveB :initarg :chaveB)))
+
+  (class-subclass :chaveA 1 :chaveB 2)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-subclass 1 2]
+
+*** Opções de Chave-Valor
+:PROPERTIES:
+:ID:       366d99c1-b86d-4532-b362-026b0c41a189
+:END:
+
+O argumento SLOT-LIST de "defclass" é uma lista de elementos que cada um define uma associação chave-valor.
+
+Cada uma dessas associações tem a forma
+#+begin_src emacs-lisp
+  '(nome-chave :tag-1 1
+               :tag-N N)
+#+end_src
+
+**** Acessar no Construtor (:initarg)
+:PROPERTIES:
+:ID:       4a768f16-6def-4fca-b158-29bc49859c78
+:END:
+
+Ao utilizar essa tag um simbolo pode ser utilizado no construtor da classe para colocar um associar um valor a chave. Os simbolos devem começar com ":".
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB)))
+
+  (class-base :chaveA 100)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 unbound]
+
+**** Associar valor padrão (:initform)
+:PROPERTIES:
+:ID:       726dc974-f52e-4432-a466-0139bdbc572b
+:END:
+
+Uma expressão para ser usada como valor padrão para a associação chave-valor.
+
+Caso seja omitida o valor a ser inserido será "unbound". É recomendado sempre associar um valor padrão para todos as chaves-valores.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (class-base :chaveA 100)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+**** Documentação (:documentation)
+:PROPERTIES:
+:ID:       865a0615-979a-44c0-8709-ebc6e9901346
+:END:
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initform 1 
+             :documentation "Documentação para chaveA")
+     (chaveB :initform '(1 2 3 4))))
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+Create a new object of class type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+  Documentação para chaveA
+
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
+
+*** Opcoes da Classe
+:PROPERTIES:
+:ID:       980bfa5e-3d61-45ee-9185-ba49ed430bbf
+:END:
+
+**** Documentação (:documentation)
+:PROPERTIES:
+:ID:       35ac71e3-8028-41d6-b6ee-65652c22ad8b
+:END:
+
+Apresenta uma documentação para a classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4)))
+
+    :documentation "Documentação para a classe '''''''''''''''''''''''''''''''''")
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+Create a new object of class type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+
+Documentação para a classe '''''''''''''''''''''''''''''''''
+
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
+
+**** Abstrata (:abstratct)
+:PROPERTIES:
+:ID:       7858a3c9-3c01-428b-8157-86f7a3fa1016
+:END:
+
+Informa que a classe é abstrata e, portanto, não deve ser instanciada.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4)))
+
+    :documentation "Documentação para a classe '''''''''''''''''''''''''''''''''"
+    :abstract t)
+
+  (describe-function 'class-base)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+class-base is an  object constructor function.
+Creates an object of class class-base.
+This function has a compiler macro ‘class-base--anon-cmacro’.
+
+You cannot create a new object of type ‘class-base’.
+
+Class description:
+class-base is a type (of kind ‘eieio--class’).
+ Children ‘class-subclass’.
+
+Documentação para a classe '''''''''''''''''''''''''''''''''
+
+Instance Allocated Slots:
+
+Slot: chaveA    default = 1
+Slot: chaveB    default = (quote (1 2 3 4))
+#+end_example
+
+** Criando Novos Objetos da Classe
+:PROPERTIES:
+:ID:       091cd619-b3ab-42e2-a397-cf919a8364c5
+:END:
+
+Ao criar uma classe são criados duas funções. Uma para instanciar a classe e outra para verificar se um determinado objeto pertence a classe.
+
+*** Intanciando Classe
+:PROPERTIES:
+:ID:       629dab26-676d-441e-878b-d013fc3babab
+:END:
+A função de instanciação tem o mesmo nome da classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (class-base)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 1 (1 2 3 4)]
+
+Outra forma de instanciar é utilizando a função *make-instance class &rest initargs* que recebe o simbolo da classe a ser instanciada e suas chaves-valores.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (make-instance 'class-base :chaveA 10)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 10 (1 2 3 4)]
+
+*** Verificar Se Objeto Pertence a Classe 
+:PROPERTIES:
+:ID:       4d404889-b3cc-45d0-8184-35d208846bcb
+:END:
+
+Ao criar uma class utilizando "defclass" um predicado de nome "CLASS-NAME-p" é criado para identificar se o objeto é da classe.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-pessoa ()
+    ((nome)
+     (idade) 
+     (sexo)))
+
+  (class-pessoa-p (class-pessoa))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Acessando Valores Guardados
+:PROPERTIES:
+:ID:       cd5c756b-7691-46e8-a681-f4267a699d86
+:END:
+
+*** Recuperando Valores
+:PROPERTIES:
+:ID:       1772115d-d502-4be8-983d-34bc12a18c80
+:END:
+
+Macro: *oref obj slot*
+
+Retorna o valor guardado em SLOT em OBJ.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base :chaveA 1000)))
+    (oref object chaveA))
+#+end_src
+
+#+RESULTS:
+: 1000
+
+Função: *slot-value object slot*
+
+A diferença é que a chave SLOT precisa ter ' antes do simbolo.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base :chaveA 1000)))
+    (slot-value object 'chaveA))
+#+end_src
+
+#+RESULTS:
+: 1000
+
+*** Guardando Valores
+:PROPERTIES:
+:ID:       d073ac30-5a38-4e06-b3fa-92c1e92fb91c
+:END:
+
+Macro: *oset object slot value*
+
+Coloca o VALUE na chave SLOT de OBJECT
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base)))
+    (oset object chaveA 100)
+    object)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+Função: *set-slot-value object slot value*
+
+A diferença é que a chave SLOT precisa ter ' antes do simbolo.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (let ((object (class-base)))
+    (set-slot-value object 'chaveA 100)
+    object)
+#+end_src
+
+#+RESULTS:
+: [eieio-class-tag--class-base 100 (1 2 3 4)]
+
+** Escrevendo Métodos
+:PROPERTIES:
+:ID:       b4321a04-ab64-425f-a42f-9a0b5dd61173
+:END:
+
+Escrever métodos é simular a escrever funções. A diferença está na inclusão de algumas opções e a possibilidade de criar multiplas definições para um mesmo símbolo.
+
+Métodos definem uma implementação particular para um determinado tipo. 
+
+Métodos Genéricos aceitam qualquer argumento porém não possuem nenhum código. São usados para definir o nome da função e a documentação.
+
+*** Métodos Genéricos (defgeneric)
+:PROPERTIES:
+:ID:       720151e5-f9b3-4623-818c-1f24ff3101a5
+:END:
+
+Macro: *defgeneric method arglist [doc-string]*
+
+Um Método Genérico serve apenas para definir o simbolo da função com seus argumentos e documentação. Não há a necessidade de chamar este método pois "defmethod" o chama, caso necessário.
+
+*** Método (defmethod)
+:PROPERTIES:
+:ID:       7bed5e8a-614b-4cd5-ae2f-0a3dae2235e1
+:END:
+
+Macro: *defmethod method [:before | :primary | :after | :static ] arglist [doc-string] forms*
+
+Um método é uma função que é executada se o primeiro argumento passado combinar com a classe que tem o método.
+
+METHOD: o nome do método que esta sendo criado.
+
+[:before | :primary | :after | :static ]: diz quando o método será executado, o valor padrão é antes de :after e depois de :before.
+
+ARGLIST: uma lista de argumentos para o método. Apenas o primeiro argumento pode ter seu tipo especificado (classe que o método pertence). Se não tiver o tipo, então o método pode ser usado com qualquer objeto.
+
+[doc-string]: documentação referente ao método.
+
+FORMS: o corpo do método.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (defmethod base-method ((obj class-base) num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-base :chaveA 1000)))
+    (base-method object 10))
+#+end_src
+
+#+RESULTS:
+: 10
+
+**** Método Default
+:PROPERTIES:
+:ID:       c1de35b5-be1e-4d72-9f27-478809703605
+:END:
+
+Um método que não possue um tipo especifidado é chamado de Método Default. Pois se uma classe não tem a implementação do método o Método Default será executada.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA :initform 1)
+     (chaveB :initform '(1 2 3 4))))
+
+  (defmethod default-method (obj num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-base :chaveA 10)))
+    (base-method object 100))
+#+end_src
+
+#+RESULTS:
+: 100
+
+**** Método da Herança
+:PROPERTIES:
+:ID:       098c12fe-73a3-4768-8313-9da628fbb45e
+:END:
+
+Ao chamar um método de uma classe que não tem a implementação, antes de chamar o Método Default é tentado chamar o método de uma classe pai.
+
+#+begin_src emacs-lisp
+  (require 'eieio)
+
+  (defclass class-base ()
+    ((chaveA :initarg :chaveA)
+     (chaveB :initarg :chaveB)))
+
+  (defclass class-subclass (class-base)
+    ())
+
+  (defmethod base-method (obj num) 
+    "Documentação para esse método"
+    (+ 10000 num))
+
+  (defmethod base-method ((obj class-base) num) 
+    "Documentação para esse método"
+    num)
+
+  (let ((object (class-subclass :chaveA 1 :chaveB 2)))
+    (base-method object 100))
+
+#+end_src
+
+#+RESULTS:
+: 100
+
+* Listas
+:PROPERTIES:
+:ID:       38a6ba3e-669c-47ec-b294-3eb5c12c7e39
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/cl/Lists.html#Lists
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Lists.html#Lists
+
+Uma lista é uma sequência de zero ou mais elementos (estes elementos podem ser qualquer objeto LISP).
+
+Uma lista nada mais é do que uma "cons cell", que é uma representação de um par ordenado. Uma lista é um conjunto de "cons cells" no qual o primeiro elemento do par é o elemento da lista e o segundo elemento é a proxima "cons cell".
+
+Uma "cons cell" na variavel x1, pode ser representada como:
+
+#+begin_src text
+          --- --- 
+  x1---> |   |   | ---> 2
+          --- --- 
+           |      
+           |      
+            --> 1 
+#+end_src
+
+
+A ultima "cons cell" da lista tem como segundo elemento o valor "nil" indicando que a lista terminou.
+
+A lista (1 2 3) na variavel x1,  pode ser representada como:
+
+#+begin_src text
+          --- ---        --- ---      --- ---
+  x1---> |   |   |----> |   |   |--> |   |   |--> nil
+          --- ---        --- ---      --- ---
+           |              |            |
+           |              |            |
+            --> 1          --> 2        --> 3
+#+end_src
+
+** Construção
+:PROPERTIES:
+:ID:       e59c9a25-d93d-4804-b497-a319f0def929
+:END:
+
+Muitas funções criam listas, uma vez que listas é a principal estrutura de dados em elisp. No entanto existe um função em particular que pe a principal na criação de listas. A função "cons"
+
+*cons object1 object2*, funciona criando uma lista na qual o primeiro elemento é object1 e seu segundo object2. Esta função é normalmente utilizada para colocar um elemento na frente de uma lista.
+
+*list $rest objects* é uma outra forma de criar listas. Dessa forma todos os elementos em objects serão os elementos da lista, não limitado apenas por 2 objetos como em "cons".
+
+** Acessar elementos
+:PROPERTIES:
+:ID:       c58b5ea1-a9b2-495a-8064-2397223c6a78
+:END:
+
+*** Primeiro (CAR CONS-CELL)
+:PROPERTIES:
+:ID:       a22f46ed-5a0e-467f-9bec-526d175cf58d
+:END:
+
+Retorna o elemento que esta no primeiro par de CONS-CELL.
+
+Como uma lista é um conjunto de cons cells se uma lista for passada como parametro o primeiro elemento da lista será retornado.
+
+#+begin_src emacs-lisp
+  (car '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+: 1
+
+#+begin_src emacs-lisp
+  (car (cons 1 2))
+#+end_src
+
+#+RESULTS:
+: 1
+
+*** Resto (CDR CONS-CELL)
+:PROPERTIES:
+:ID:       d9e4321f-1f01-40a2-9920-cbde291e1156
+:END:
+
+Retorna o elemento que esta no segundo par de CONS-CELL.
+
+Como uma lista é um conjunto de cons cells se uma lista é passada como parametro o segundo elemento em diante será retornado.
+
+#+begin_src emacs-lisp
+  (cdr '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+| 2 | 3 | 4 |
+
+#+begin_src emacs-lisp
+  (cdr (cons 1 2))
+#+end_src
+
+#+RESULTS:
+: 2
+
+*** N-ésimo elemento (NTH N LIST)
+:PROPERTIES:
+:ID:       3ef93ba7-f9c1-452f-b539-de9556455bdb
+:END:
+
+Retorna o N-ésimo elemento de LIST.
+
+Os indices dos elementos começam com 0. Caso N seja maior que o tamanho de LIST "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (nth 2 '(1 2 3 4))
+#+end_src
+
+#+RESULTS:
+: 3
+
+#+begin_src emacs-lisp
+  (nth 100 '(1 2))
+#+end_src
+
+#+RESULTS:
+
+*** Elementos depois do N-ésimo elemento (NTHCDR N LIST)
+:PROPERTIES:
+:ID:       03fd5be6-4923-4ee9-a003-e4afc25efa8d
+:END:
+
+Retorna os elementos depoi do N-ésimo elemento de LIST.
+
+Os indices dos elementos começam com 0. Se N for 0 então retorna todos os elementos da lista, Se N for maior que o tamanho de LIST "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (nthcdr 3 '(0 1 2 3 4 5 6 7))
+#+end_src
+
+#+RESULTS:
+| 3 | 4 | 5 | 6 | 7 |
+
+#+begin_src emacs-lisp
+  (nthcdr 0 '(1 2 3))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 |
+
+#+begin_src emacs-lisp
+  (nthcdr 100 '(1 2))
+#+end_src
+
+#+RESULTS:
+
+** Adicionar elementos
+:PROPERTIES:
+:ID:       b7529299-f5fe-4720-8638-505754740358
+:END:
+
+*** add-to-list
+:PROPERTIES:
+:ID:       cefd0948-6ffa-4493-8cd5-fd9463745284
+:END:
+
+Função *add-to-list symbol element &optional append compare-fn*.
+
+Coloca ELEMENT na lista SYMBOL se o elemento não esta presente. Retorna a lista atualizada ou não.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 3))
+#+end_src
+
+#+RESULTS:
+| 3 | 1 | 2 |
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 1))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 |
+
+Por padrão os elementos são colocados no inicio da lista. Caso o argumento "append" seja não nulo, eles são adicionados ao final.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2)))
+    (add-to-list 'list 3 t))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 |
+
+Utiliza o argumento "compare-fn" para encontrar os elementos existentes na lista. Por padrão esta função é o "equal"
+
+"compare-fn" recebe dois argumentos, o elemento da lista e o a entrar.
+
+#+begin_src emacs-lisp
+  (let ((list '((1 2) (2 3))))
+    (add-to-list 'list '(3 4) t #'(lambda (x y)
+                                    (equal (car x) (car y)))))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 |
+| 2 | 3 |
+| 3 | 4 |
+
+*** TODO add-to-ordered-list
+:PROPERTIES:
+:ID:       af2160b8-4c3b-4b53-8975-681fcd5848d0
+:END:
+
+Função: *add-to-ordered-list symbol element &optional order*
+
+Coloca um elemento na lista. Os elementos são procurados utilizando a função "eq". Caso o elemento ja esteja na lista ele não será inserido. Retorna a lista atualizada ou não.
+
+Os elementos são ordenados em ordem crescente do argumento ORDER.
+
+#+begin_src emacs-lisp
+  (let ((list '()))
+      (add-to-ordered-list 'list 1 0)
+      (add-to-ordered-list 'list 2 2)
+      (add-to-ordered-list 'list 3)
+      (add-to-ordered-list 'list 4))
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 4 | 3 |
+
+#+begin_src emacs-lisp
+  (let ((list '(9 8)))
+      (add-to-ordered-list 'list 1 0)
+      (add-to-ordered-list 'list 2 3)
+      (add-to-ordered-list 'list 3 2)
+      (add-to-ordered-list 'list 4 1))
+#+end_src
+
+#+RESULTS:
+| 1 | 4 | 3 | 2 | 9 | 8 |
+
+** Modificando elementos
+:PROPERTIES:
+:ID:       c754e3ed-9cec-4cac-b1e9-4462c1445475
+:END:
+
+É possível modificar elementos da lista. No entanto essas operações são destrutivas, pois elas podem alterar a estrutura da lista.
+
+*** Alterar o CAR de uma lista
+:PROPERTIES:
+:ID:       50a0aed8-4172-4e6a-a563-0351294ccaf3
+:END:
+
+Função: *setcar cons object*
+
+Essa função altera o elemento presente no CAR de uma "cons cell".
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3)))
+    (setcar list 10)
+    list)
+#+end_src
+
+#+RESULTS:
+| 10 | 2 | 3 |
+
+Caso elementos sejam compartilhados entre várias listas, como *setcar* é uma função destrutiva, as alterações serão compartilhadas com todos.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3))
+         (list2 (cons '10 list1)))
+    (setcar (cdr list1) 100)
+    list2)
+#+end_src
+
+#+RESULTS:
+| 10 | 1 | 100 | 3 |
+
+*** Alterar o CDR de uma lista
+:PROPERTIES:
+:ID:       35b84dad-1913-4366-aa2a-77519870c568
+:END:
+
+Função: *setcdr cons object*
+
+Essa função altera o cdr de uma "cons cell"
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list '(10))
+    list)
+#+end_src
+
+#+RESULTS:
+
+É possível remover um elemento no meio de uma lista. Passando alterando o cdr de um elemento para o cdr do cdr deste elemento.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list (cdr (cdr list)))
+    list)
+#+end_src
+
+E analogamente inserir um elemento no meio de uma lista.
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (setcdr list (cons 100 (cdr list)))
+    list)
+#+end_src
+
+Assim como setcar como é uma função destrutiva, alterar uma lista dessa forma alterará todas as listas que são compartilhadas.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3))
+         (list2 (cons '10 list1)))
+    (setcdr list1 nil)
+    list2)
+#+end_src
+
+* Conjuntos (Listas)
+:PROPERTIES:
+:ID:       e043d6ec-1d4b-4cf4-aa1e-20dc13391d65
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Sets-And-Lists.html#Sets-And-Lists
+
+Um conjunto é uma representação não ordenada de uma lista, na qual não existem elementos repetidos.
+
+** Verificar se elemento esta no conjunto
+:PROPERTIES:
+:ID:       faf654a4-d9c5-4c7c-9fab-3f8ac0f863e2
+:END:
+
+*** memq utilizando "eq"
+:PROPERTIES:
+:ID:       28f15bdd-0819-4aa0-bda8-ebcf0ed0b63c
+:END:
+
+Função *memq object list*
+
+Verifica se OBJECT pertence a LIST, se existir retorna a listacomeçando naquele elemento. Se não existir retorna "nil".
+
+#+begin_src emacs-lisp
+  (let ((list '(1 2 3 4)))
+    (memq 3 list))
+#+end_src
+
+#+RESULTS:
+| 3 | 4 |
+
+#+begin_src emacs-lisp
+  (let ((list '((1) (2) (3) (4))))
+    (memq '(1) list))
+#+end_src
+
+*** memql utilizando "eql"
+:PROPERTIES:
+:ID:       fba97f20-3c8a-446b-b146-613041404dff
+:END:
+
+A mesma coisa que memq, porem utilizando "eql".
+
+#+begin_src emacs-lisp
+  (memql 1.2 '(1.1 1.2 1.3))
+#+end_src
+
+#+RESULTS:
+| 1.2 | 1.3 |
+
+#+begin_src emacs-lisp
+  (memq 1.2 '(1.1 1.2 1.3))
+#+end_src
+
+#+RESULTS:
+
+*** member utilizando "equal"
+:PROPERTIES:
+:ID:       42b75b35-77c9-47b5-bfd9-c444dda1e26f
+:END:
+
+A mesma coisa que memq, porem utilizando "equal".
+
+#+begin_src emacs-lisp
+  (member '(2) '((1) (2) (3)))
+#+end_src
+
+#+RESULTS:
+| 2 |
+| 3 |
+
+#+begin_src emacs-lisp
+  (memq '(2) '((1) (2) (3)))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+  (member "bar" '("foo" "bar" "baz"))
+#+end_src
+
+#+RESULTS:
+| bar | baz |
+
+** Deletar elemento (destrutivamente)
+:PROPERTIES:
+:ID:       93a437d5-b4f1-423f-a0a2-872c21b232dd
+:END:
+
+*** delq utilizando "eq"
+:PROPERTIES:
+:ID:       c58c273f-60e4-49dd-a2a9-43b333bb15e5
+:END:
+
+Função: *delq object list*
+
+Remove todos os elementos OBJECT de LIST utilizando "eq" como verificação. Retornando a lista resultante.
+
+#+begin_src emacs-lisp
+  (let* ((list1 '(1 2 3 2 4))
+         (list2 (cons 10 list1)))
+    (delq 2 list1)
+    list2)
+#+end_src
+
+#+RESULTS:
+| 10 | 1 | 3 | 4 |
+
+*** delete utilizando "equal"
+:PROPERTIES:
+:ID:       257da233-47fa-4337-9a8b-e604fe8a2832
+:END:
+
+Função: *delete object sequence*
+
+Faz a mesma coisa que delq, porém utilizando "equal" como função de comparação.
+
+#+begin_src emacs-lisp
+  (delete '(2) '((2) (1) (2)))
+#+end_src
+
+#+RESULTS:
+| 1 |
+
+*** delete-dups
+:PROPERTIES:
+:ID:       f7e41758-c4d2-4650-85d3-7d0f3027ea99
+:END:
+
+Função: *delete-dups list*
+
+Deleta todos os elemento duplicados de LIST.
+
+#+begin_src emacs-lisp
+  (delete-dups '(1 1 1 1 1 1 1 1 1 1 2))
+#+end_src
+
+** Retornar lista sem elemento
+:PROPERTIES:
+:ID:       7180a2d0-c372-412d-96e4-f14eedc24afd
+:END:
+
+*** remq utilizando "eq"
+:PROPERTIES:
+:ID:       d9747704-ce0c-45d1-b0de-caef759814ed
+:END:
+
+Função: *remq object list*
+
+Retorna uma cópia de LIST sem os elementos iguais a OBJECT. Utilizando "eq" para verificar os elementos. 
+
+#+begin_src emacs-lisp
+  (remq 1 '(1 1 1 1 1 2))
+#+end_src
+
+#+RESULTS:
+| 2 |
+
+*** remove utilizando "equal"
+:PROPERTIES:
+:ID:       e31d6111-3a97-49cd-aff1-73d4e8be950f
+:END:
+
+Igual remq, porem utilizando "equal" para verificar os elementos.
+
+#+begin_src emacs-lisp
+  (remove '(1) '((1) (1) (1) (1) (2)))
+#+end_src
+
+#+RESULTS:
+| 2 |
+
+* Listas de Associação
+:PROPERTIES:
+:ID:       c168ce96-e866-45ad-a08f-fb92c759559a
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Association-Lists.html#Association-Lists
+
+Uma lista de associação ou alist grava um mapa de chave valores. É uma lista de "cons cells" na qual o primeiro valor é a chave e o segundo o valor associado. 
+
+É recomendado utilizar a notação de pares ordenados por ponto. Aonde o primeiro elemento é a chave e o segundo o seu valor associado.
+
+#+begin_src text
+  (chave . valor)
+
+   --- ---
+  |   |   |--> valor
+   --- ---
+    |
+    |
+     --> chave
+#+end_src
+
+Essa é um exemplo de lista de associação na qual a chave "arvore" esta relacionada ao valor "alta". 
+
+#+begin_src emacs-lisp
+  '((arvore . alta)
+    (arbusto . pequeno)
+    (grama . minusculo))
+#+end_src
+
+#+RESULTS:
+: ((arvore . alta) (arbusto . pequeno) (grama . minusculo))
+
+Tanto a chave quanto o valor guardados em uma alist podem ser quaisquer objetos lisp.
+
+#+begin_src emacs-lisp
+  '((a . 1)
+    ("b" 2 3))
+#+end_src
+
+#+RESULTS:
+: ((a . 1) (b 2 3))
+
+Alist são normalmente utilizados para guardar informações que poderiam ser guardadas em uma pilha, visto que novas associações podem ser adicionadas facilmente na frent da lista. Ao procurar por uma associação a primeira encontrada é retornada.
+
+** Acessar Elemento
+:PROPERTIES:
+:ID:       2a8273c1-8cdd-4441-8310-a3bbbbda2fe7
+:END:
+
+*** Via chave (assoc)
+:PROPERTIES:
+:ID:       587c70b2-a213-41a4-94d5-2228fd8f55b1
+:END:
+Função: *assoc key alist*
+
+Retorna a primeira ocorrencia de KEY em ALIST. A função de comparação é "equal". Retorna "nil" caso não encontre.
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi tchau) (verao inverno)))
+#+end_src
+
+#+RESULTS:
+| oi | tchau |
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi . tchau) (verao . inverno)))
+#+end_src
+
+#+RESULTS:
+: (oi . tchau)
+
+#+begin_src emacs-lisp
+  (assoc 'oi '((oi tchau) (verao inverno) (oi algo)))
+#+end_src
+
+#+RESULTS:
+| oi | tchau |
+
+*** Via valor (rassoc) usando equal
+:PROPERTIES:
+:ID:       64e4044d-a718-4366-8db9-1cb27f1700cf
+:END:
+
+Função: *rassoc value alist*
+
+A mesma coisa que "assoc" no entanto utiliza os valores de "cdr" como objetos de comparação ao inves das chaves. Como o "cdr" de uma associação é uma lista, é necessário colocar o valor sendo uma lista.
+
+#+begin_src emacs-lisp
+  (rassoc '(inverno) '((oi tchau) (verao inverno)))
+#+end_src
+
+#+RESULTS:
+| verao | inverno |
+
+#+begin_src emacs-lisp
+  (rassoc 'inverno '((oi . tchau) (verao . inverno)))
+#+end_src
+
+#+RESULTS:
+: (verao . inverno)
+
+*** Via valor (rassq) usando eq
+:PROPERTIES:
+:ID:       44b0c6be-1071-46df-b77b-a2207099c6f9
+:END:
+
+A mesma coisa que "rassoc", no entanto é utilizado a função "eq" como comparador.
+
+#+begin_src emacs-lisp
+  (rassq 2 '((oi . 1) (verao . 2)))
+#+end_src
+
+* Lista de Propriedades
+:PROPERTIES:
+:ID:       e3c3cbe0-ed32-49ef-a675-3ccd89da54ce
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Property-Lists.html#Property-Lists
+
+A uma lista de propriedades não difere muito de lista normal, pois estruturalmente não há nada de diferente de uma lista. É uma lista de pares ordenados no qual os elementos de indice par são chaves e os de indice impar são valores. Os indices começam em 0.
+
+Essa é uma lista de propriedade na qual a chave "arvore" tem como valor "feliz". 
+
+#+begin_src emacs-lisp
+  '(arvore feliz lisp elisp)
+#+end_src
+
+#+RESULTS:
+| arvore | feliz | lisp | elisp |
+
+** Existe propriedade (plist-member)? 
+:PROPERTIES:
+:ID:       f4b05431-0614-475b-9ae7-2546b4e295fd
+:END:
+
+Função: *plist-member plist property*
+
+Retorna o resto da lista caso encontre PROPERTY em PLIST.
+
+#+begin_src emacs-lisp
+  (plist-member '(1 2 3 4) 3)
+#+end_src
+
+#+RESULTS:
+| 3 | 4 | 
+
+#+begin_src emacs-lisp
+  (plist-member '(1 2 3 4) 10)
+#+end_src  
+
+#+RESULTS:
+
+** Adicionar propriedades
+:PROPERTIES:
+:ID:       b8c4cc21-1106-46d8-b8cd-f72bdb89e3d3
+:END:
+
+*** plist-get usando "eq"
+:PROPERTIES:
+:ID:       e8dfb9cb-a435-4680-8745-5a3aa9671b51
+:END:
+
+Função: *plist-get plist property*
+
+Retorna o valor de PROPERTY guardado em PLIST, se não for encontrado "nil" será retornado.
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4) 'foo)
+#+end_src
+
+#+RESULTS:
+: 4
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4 bad) 'foo)
+#+end_src
+
+#+RESULTS:
+: 4
+
+#+begin_src emacs-lisp
+  (plist-get '(foo 4 bad) 'bad)
+#+end_src
+
+#+RESULTS:
+
+*** lax-plist-get usando "equal"
+:PROPERTIES:
+:ID:       225043ef-2cfa-41f1-92a9-cf3a74c53f19
+:END:
+
+Função: *lax-plist-get plist property*
+
+Iqual a plist-get mas utiliza "equal" ao inves de "eq".
+
+** Recuperar propriedades
+:PROPERTIES:
+:ID:       7b8cd5eb-26e5-4f46-9837-e8d3d475bf4c
+:END:
+
+*** plist-put usando "eq"
+:PROPERTIES:
+:ID:       5bcb1dee-0362-41ef-adbe-521b70c9fa6a
+:END:
+
+Função: *plist-put plist property value*
+
+Guarda VALUE com a chave PROPERTY em PLIST. Caso PROPERTY já exita ele será atualizado. Se não existir um novo valor será inserido.
+
+#+begin_src emacs-lisp
+  (plist-put '(1 2 3 4) 1 10)
+#+end_src
+
+#+RESULTS:
+| 1 | 10 | 3 | 4 |
+
+#+begin_src emacs-lisp
+  (plist-put '(1 2 3 4) 5 10)
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 | 5 | 10 |
+
+*** lax-plist-put usando "equal"
+:PROPERTIES:
+:ID:       bd073278-3160-46e5-8748-2a43f9de383f
+:END:
+
+Função: *lax-plist-put plist property value*
+
+Faz a mesma coisa que plist-put, porem utiliza "equal" para verificações.
+
+* Estruturas
+:PROPERTIES:
+:ID:       31f7cd19-1442-4360-8e24-172393737b50
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/cl/Structures.html#Structures
+
+Uma estrutura é um objeto lisp que contem um conjunto de chaves-valores. Cada um destes pode conter um qualquer objeto lisp. Funções são fornecidas para acessar tais valores, criar, copiar e reconhecer essa estrutura.
+
+** Criar
+:PROPERTIES:
+:ID:       d21ab911-7b6e-484f-8237-de9736dc7c33
+:END:
+
+Macro: *cl-defstruct name slots...*
+
+Cria uma nova estrutura chamada NAME, e um conjunto de chaves. Na real é criado um vetor (ou lista) identificado e funções para acessar esse novo vetor.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+#+end_src
+
+#+RESULTS:
+: pessoa
+
+O código acima, define uma estrutura "pessoa" com três chaves. 
+
+Um objeto dessa estrutura pode ser criado utilizando a função "make-(nome estrutura)". Essa função utiliza argumentos nomeados ":nome", ":idade" e ":sexo" para especificar valores iniciais para essas chaves. Omitindo algum desses argumentos nomeados o valor padrão será "nil".
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)
+#+end_src
+
+#+RESULTS:
+: [cl-struct-pessoa "Zé" 23 homem]
+
+*** Argumentos para cada chave-valor
+:PROPERTIES:
+:ID:       a4483713-caac-4356-9290-2683b5f9e165
+:END:
+
+Ao criar uma estrutura nova é possível identificar as chaves como uma lista, de forma a ter algumas propriedades específicas para a chave-valor.
+
+Essa lista é definida como
+
+#+begin_src emacs-lisp
+  '(nome-chave valor-padrao propriedade)
+#+end_src
+
+Essa propriedade é ":read-only" fazendo com que o valor colocado inicialmente naquela chave não pode ser alterado.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa 
+    (nome nil :read-only t)
+    idade 
+    sexo)
+#+end_src
+
+#+RESULTS:
+: pessoa
+
+** Reconhecer Estrutura
+:PROPERTIES:
+:ID:       7ea4e96a-e649-458c-8dd8-b55537aa73a0
+:END:
+
+Dado um objeto X, a função "((nome estrutura)-p X) diz se X é da estrutura. Se sim retorna t, nil caso contrário.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-p p))
+#+end_src
+
+#+RESULTS:
+: t
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-p ()))
+#+end_src
+
+#+RESULTS:
+
+** Acessar valores
+:PROPERTIES:
+:ID:       7baaf15b-087b-4674-98e1-7d8431a89690
+:END:
+
+Para cada chave idenficada na hora da declaração da estrutura é criada uma função para acessar tal o valor associado. Essas funções são da forma ((nome-estrutura)-(chave) (objeto-estrutura)). 
+
+Dado um objeto "pessoa" P, é possível acessar os valores guardados utilizando o código abaixo. É feito uma checagem para ver se P é realmente uma pessoa.
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem)))
+    (pessoa-nome p)
+    (pessoa-idade p)
+    (pessoa-sexo p))
+#+end_src
+
+#+RESULTS:
+: homem
+
+** Copiar
+:PROPERTIES:
+:ID:       f7f7087e-b647-4131-9240-e794da2fe8ae
+:END:
+
+Dado um objeto da estrura "pessoa" P. (copy-pessoa p) cria um novo objeto com os mesmos valores de chave-valor utilizando "eq"
+
+#+begin_src emacs-lisp
+  (cl-defstruct pessoa nome idade sexo)
+  (let* ((p (make-pessoa :nome "Zé" :idade 23 :sexo 'homem))
+         (copia (copy-pessoa p)))
+    (setf (pessoa-idade p) 10)
+    copia)
+#+end_src
+
+#+RESULTS:
+: [cl-struct-pessoa "Zé" 23 homem]
+
+* Hash Table
+:PROPERTIES:
+:ID:       c064d4a0-4a0d-4dfa-9bd5-bcb4d04cf990
+:END:
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Hash-Tables.html
+
+Hash table é um tipo de tabela de rápido acesso. Cada chave correspode a um valor. Algumas das suas caracteristicas são: Rapidade de acesso a valores guardados independente da quantidade de dados armazenados; Seus valores e chaves não estão em uma ordem específica;
+
+Elisp provê um tipo para "hash table" junto com uma série de funções pra operar com este tipo de dado. Eles apresentam uma forma especial de representação gráfica
+
+#+begin_src emacs-lisp
+  (make-hash-table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
+** Criando Hash tables
+:PROPERTIES:
+:ID:       9c99981a-1e5b-4615-9fcf-82b44a3213bc
+:END:
+
+A principal função parar criar "hash tables" é (make-hash-table), ela apresenta alguns parametros que podem ser alterados tornando as tabelas mais expecíficas para cada oportunidade.
+
+*** Argumento :test
+:PROPERTIES:
+:ID:       3f80d21a-a45b-4cc7-9cf9-f48a28172d2e
+:END:
+
+Este tipo especifica o método utilizado para comparar chaves a fim de verificar se encontrou o valor procurado.
+
+O valor padrão é "eql". Outros valores que podem ser colocados são: "eq" e "equal".
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'eql)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'eq)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eq rehash-size 1.5 rehash-threshold 0.8 data ())
+
+#+begin_src emacs-lisp
+  (make-hash-table :test 'equal)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+
+
+*** Argumento :weakness
+:PROPERTIES:
+:ID:       89416869-2328-4bb1-9cff-d9f8ebe1ae4b
+:END:
+
+Esse argumento verifica se as chaves e os valores na tabela são preservados do coletor de lixo do sistema. 
+
+O valor deve ser: "nil", "key", "value", "key-or-value", "key-and-value". 
+
+Se o valor for "key" então a tabela não previne suas chaves de serem coletadas; Se uma chave for coletada a associação correspondente é removida da tabela.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "value" então a tabela não previne seus valores de serem coletados; Se um valor é coletado a associação correspondente é removida.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "key-and-value" então tanto a chave quanto o valor devem estar carregados para preservar a associação, portanto nem a chave nem o valor é preservado de serem coletados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key-and-value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key-and-value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+Se o valor for "key-or-value" então tanto a chave quando o valor podem preservar a associação, portanto a associação só é removida caso a chave e o valor sejam coletados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'key-or-value)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql weakness key-or-value rehash-size 1.5 rehash-threshold 0.8 data ())
+
+O valor padrão é "nil". Com este argumento todas as chaves e valores são preservados.
+
+#+begin_src emacs-lisp
+  (make-hash-table :weakness 'nil)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data ())
+
+** Manipulando Dados
+:PROPERTIES:
+:ID:       c787cce8-6d79-4446-908f-3b8efceb9013
+:END:
+
+Qualquer objeto LISP pode ser usado como *chave*, no entanto é preciso que o argumento "test" da criação da tabela seja apropriado.
+
+Qualquer objeto LISP pode ser usado como *valor*.
+
+*** Colocar valores (puthash)
+:PROPERTIES:
+:ID:       e8c21956-9d0e-4e2f-815d-424777dfefc2
+:END:
+
+*puthash key value table*, coloca na TABLE o valor VALUE associada com a chave KEY.
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table)))
+    (puthash '3 2 table)
+    (puthash "string" 2 table)
+    (puthash '(a 2) 2 table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8 data (3 2 "string" 2 (a 2) 2))
+
+*** Acessar valores (gethash)
+:PROPERTIES:
+:ID:       8ac3422d-b81f-4f27-b574-f021cabc48bb
+:END:
+
+*gethash key table &optional default*, procura por KEY em TABLE e retorna o valor encontrado. Se nenhum valor for encontrado DEFAULT será retornado. Por padrão DEFAULT é "nil".
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (gethash "string" table))
+#+end_src
+
+#+RESULTS:
+: 6
+
+*** Remover valores (remhash)
+:PROPERTIES:
+:ID:       6f4c0770-906a-42b1-b358-d29b6b4254f3
+:END:
+
+*remhash key table*, remove KEY de TABLE
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (remhash "string" table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (3 2 (a 2) 9))
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (remhash 'chave-inexistente table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (3 2 "string" 6 (a 2) 9))
+
+*** Limpar tabela (clrhash)
+:PROPERTIES:
+:ID:       bb72550c-6fc1-4b44-9b78-a6c4ef48628a
+:END:
+
+*clrhash table*, limpa TABLE de todos os valores presenters nela.
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal)))
+    (puthash '3 2 table)
+    (puthash "string" 6 table)
+    (puthash '(a 2) 9 table)
+
+    (clrhash table)
+    table)
+#+end_src
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+
+*** Mapear função (maphash)
+:PROPERTIES:
+:ID:       d01ac337-b060-4da3-aa5c-0a9e9bbe2e09
+:END:
+
+*maphash function table*, executa FUNCTION em todos os valores de TABLE. Function deve ser uma função que aceita dois argumentos a *chave* e o *valor*
+
+#+begin_src emacs-lisp
+  (let ((table (make-hash-table :test 'equal))
+        (res '()))
+    (puthash 1 2 table)
+    (puthash 3 4 table)
+    (puthash 5 6 table)
+
+    (maphash #'(lambda (key value) 
+                 (setq res (cons (cons key value) res))) 
+             table)
+    res)
+#+end_src
+
+#+RESULTS:
+: ((5 . 6) (3 . 4) (1 . 2))
+
