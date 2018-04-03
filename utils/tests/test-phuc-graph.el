@@ -34,33 +34,37 @@
 (defvar test-graph nil "Graph to be used on tests")
 (defvar test-node nil "Node to be used on tests")
 
-(defmacro with-test-setup-teardown (setup teardown &rest body)
+;; (setf test-graph nil)
+;; (setf test-node nil)
+
+(defmacro with-setup-teardown (setup teardown &rest body)
   `(unwind-protect
-       (progn ,setup
+       (progn (funcall ,setup)
 	      ,body)
-     ,teardown))
+     (funcall ,teardown)))
 
 (defun test-setup-add-graph ()
   (setq test-graph (phuc-graph-create))
   (setq test-node (make-phuc-node :value 1)))
 
 (defun test-teardown-add-graph ()
-  (setf test-graph nil)
-  (setf test-node nil))
+  (setq test-graph nil)
+  (setq test-node nil))
 
-;; (with-test-setup-teardown 'test-setup-add-graph  
-;; 			  'test-teardown-add-graph 
-;; 			  (lambda () 
-;; 			    (phuc-graph-show (phuc-graph-add-node test-graph 
-;; 								  test-node))))
+;; (with-setup-teardown 'test-setup-add-graph  
+;; 		     'test-teardown-add-graph 
+;; 		     (lambda () 
+;; 		       (phuc-graph-show (phuc-graph-add-node test-graph 
+;; 							     test-node))))
 
 (ert-deftest add-node-graph ()
-  (should (equal (with-test-setup-teardown 'test-setup-add-graph  
-					   'test-teardown-add-graph 
-					   (lambda () 
-					     (phuc-graph-show (phuc-graph-add-node test-graph 
-										   test-node))))
+  (should (equal (with-setup-teardown 'test-setup-add-graph  
+				      'test-teardown-add-graph 
+				      (lambda () 
+					(phuc-graph-show (phuc-graph-add-node test-graph 
+									      test-node))))
 		 '(([cl-struct-phuc-node 1])(())))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (ert-deftest show-graph ()
