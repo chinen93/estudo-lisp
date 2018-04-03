@@ -24,6 +24,24 @@
 (cl-defstruct phuc-node
   value)
 
+(defun phuc-compare-nodes (nodeX nodeY)
+  "Compare a pair of nodes and tell something about their relationship:
+
+- NODEX > NODEY returns 1
+- NODEX = NODEY returns 0
+- NODEX < NODEY returns -1"
+
+  ;; Check if parameters are the expected ones.
+  (unless (and (phuc-node-p nodeX) (phuc-node-p nodeY))
+    (error "nodeX and nodeY must be phuc-node"))
+  
+  (let ((valX (phuc-node-value nodeX))
+        (valY (phuc-node-value nodeY)))
+    (cond
+     ((< valX valY) -1)
+     ((> valX valY) 1)
+     (t 0))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Graph
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
