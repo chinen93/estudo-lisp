@@ -90,5 +90,21 @@
   (queue-pop test-queue)
   (should (equal (queue-to-list test-queue) '(42 8 (8 42) 2))))
 
-;; Run all tests
-(ert t)
+(ert-deftest test-copy-queue ()
+  (setup)
+  (queue-push test-queue '42)
+  (queue-push test-queue '8)
+  (queue-push test-queue '7)
+  (let ((new-queue (queue-copy test-queue)))
+    (should (equal (queue-to-list new-queue)
+                   (queue-to-list test-queue)))))
+
+(ert-deftest test-copy-queue-and-change ()
+  (setup)
+  (queue-push test-queue '42)
+  (queue-push test-queue '8)
+  (queue-push test-queue '7)
+  (let ((new-queue (queue-copy test-queue)))
+    (queue-push new-queue '200)
+    (should-not (equal (queue-to-list new-queue)
+                       (queue-to-list test-queue)))))

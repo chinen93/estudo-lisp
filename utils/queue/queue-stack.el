@@ -30,6 +30,24 @@
   (null (queue-elements queue)))
 
 
+(defun queue-copy (queue)
+  "return a copy of the `queue'."
+
+  ;; Create new queue
+  (let ((new-queue (queue-create))
+        (head (queue-head queue))
+        (tail (queue-tail queue))
+        (elements (queue-elements queue))
+        (size (queue-size queue)))
+
+    ;; Set all values as of the copied queue
+    (setf (queue-head new-queue) head)
+    (setf (queue-tail new-queue) tail)
+    (setf (queue-elements new-queue) elements)
+    (setf (queue-size new-queue) size)
+
+    new-queue))
+
 (defun queue-enqueue (queue elem)
   "Enqueue `elem' as the last element of `queue'.
 First In First Out strategy. (FIFO)"
